@@ -1,0 +1,1 @@
+{"nodes": [{"id": "prisma_upgrade_v7_breaking_changes", "label": "v7 Breaking Changes", "file_type": "concept", "source_file": ".claude/skills/prisma-upgrade-v7/SKILL.md", "rationale": "Covers driver adapters, prisma.config.ts, and ESM-first setup.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

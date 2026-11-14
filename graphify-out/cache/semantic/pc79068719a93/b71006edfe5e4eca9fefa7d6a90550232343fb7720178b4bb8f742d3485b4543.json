@@ -1,0 +1,1 @@
+{"nodes": [{"id": "env_variables", "label": "Environment Variables", "file_type": "document", "source_file": ".windsurf/skills/prisma-upgrade-v7/references/env-variables.md", "rationale": "Guidance on explicit environment variable loading in v7.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

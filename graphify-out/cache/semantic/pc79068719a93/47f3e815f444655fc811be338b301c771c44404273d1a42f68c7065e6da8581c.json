@@ -1,0 +1,1 @@
+{"nodes": [{"id": "prisma_client_generator", "label": "prisma-client generator", "file_type": "concept", "source_file": ".agents/skills/prisma-upgrade-v7/references/schema-changes.md", "rationale": "Prisma v7 promotes prisma-client to the default generator, requiring explicit output paths.", "_origin": "semantic"}], "edges": [], "hyperedges": []}
