@@ -1,0 +1,1 @@
+{"nodes": [{"id": "v7_postgresql_postgresql_setup", "label": "PostgreSQL Setup", "file_type": "document", "source_file": ".agents/skills/prisma-orm-setup/references/v7-postgresql.md", "_origin": "semantic"}], "edges": [], "hyperedges": []}

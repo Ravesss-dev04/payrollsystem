@@ -1,0 +1,1 @@
+{"nodes": [{"id": "prisma_validate_validate", "label": "Prisma Validate", "file_type": "concept", "source_file": ".windsurf/skills/prisma-cli/references/validate.md", "rationale": "Validates the Prisma schema file for syntax and definition errors.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

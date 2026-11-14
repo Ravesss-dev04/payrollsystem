@@ -1,0 +1,1 @@
+{"nodes": [{"id": "prisma_mongodb_upgrade_upgrade", "label": "Prisma MongoDB Upgrade", "file_type": "concept", "source_file": ".windsurf/skills/prisma-mongodb-upgrade/SKILL.md", "rationale": "Migration path for MongoDB projects from v6 to Prisma 8 (skipping v7).", "_origin": "semantic"}], "edges": [], "hyperedges": []}

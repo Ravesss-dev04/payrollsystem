@@ -1,0 +1,1 @@
+{"nodes": [{"id": "removed_features", "label": "Removed Features", "file_type": "document", "source_file": ".windsurf/skills/prisma-upgrade-v7/references/removed-features.md", "rationale": "Migration paths for features removed in Prisma v7.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

@@ -1,0 +1,1 @@
+{"nodes": [{"id": "prisma_driver_adapter_implementation_adapter", "label": "Prisma Driver Adapter Implementation", "file_type": "concept", "source_file": ".windsurf/skills/prisma-driver-adapter-implementation/SKILL.md", "rationale": "Reference for implementing SQL driver adapters for Prisma ORM 7.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

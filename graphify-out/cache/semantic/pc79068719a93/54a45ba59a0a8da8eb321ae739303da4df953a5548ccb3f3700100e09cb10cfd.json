@@ -1,0 +1,1 @@
+{"nodes": [{"id": "driver_adapters", "label": "Driver Adapters", "file_type": "concept", "source_file": ".agents/skills/prisma-upgrade-v7/references/driver-adapters.md", "rationale": "Required for SQL providers in Prisma 7 to handle connectivity without native engine binaries.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

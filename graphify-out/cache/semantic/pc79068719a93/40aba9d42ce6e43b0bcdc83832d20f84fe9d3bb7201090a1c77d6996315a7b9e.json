@@ -1,0 +1,1 @@
+{"nodes": [{"id": "v7_cockroachdb_cockroachdb_setup", "label": "CockroachDB Setup", "file_type": "document", "source_file": ".agents/skills/prisma-orm-setup/references/v7-cockroachdb.md", "_origin": "semantic"}], "edges": [], "hyperedges": []}
