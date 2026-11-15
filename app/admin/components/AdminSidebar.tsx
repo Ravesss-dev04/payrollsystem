@@ -7,7 +7,6 @@ import {
   LuUsers,
   LuClipboardCheck,
   LuWallet,
-  LuCalendarClock,
   LuMonitor,
   LuChartNoAxesCombined,
   LuShieldCheck,
@@ -31,17 +30,12 @@ const items = [
     icon: LuClipboardCheck,
     available: true,
   },
-  { label: "Compensation", href: "/admin/compensation", icon: LuWallet },
-  {
-    label: "Attendance Policies",
-    href: "/admin/attendance-policies",
-    icon: LuCalendarClock,
-  },
+  { label: "Compensation", href: "/admin/compensation", icon: LuWallet, available: true },
   { label: "Floor & Assets", href: "/admin/florsets", icon: LuMonitor },
   { label: "Analytics", href: "/admin/analytics", icon: LuChartNoAxesCombined },
   { label: "Compliance", href: "/admin/compliance", icon: LuShieldCheck },
   { label: "Audit Logs", href: "/admin/audit-logs", icon: LuHistory },
-  { label: "Billing & Subscription", icon: LuCreditCard },
+
   { label: "Settings", href: "/admin/settings", icon: LuSettings },
 ];
 export default function AdminSidebar({
@@ -113,4 +107,5 @@ export default function AdminSidebar({
     </aside>
   );
 }
+
 

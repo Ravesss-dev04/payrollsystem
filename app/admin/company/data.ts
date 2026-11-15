@@ -1,18 +1,120 @@
-import { BusinessType, CompanyBranch, CompanyDepartment, CompanyHoliday, CompanyProfile, HolidayType } from './types';
-export const businessTypes: BusinessType[] = ['BPO / IT Services', 'Information Technology', 'Manufacturing', 'Retail', 'Healthcare', 'Education', 'Logistics', 'Professional Services', 'Other'];
-export const holidayTypes: HolidayType[] = ['Regular Holiday', 'Special Non-Working Day', 'Special Working Day', 'Company Holiday'];
-export const initialCompany: CompanyProfile = { name: 'Acme Solutions Inc.', businessType: 'BPO / IT Services', tin: '123-456-789-000', email: 'admin@acmesolutions.com', phone: '(02) 8123 4567', address: 'Orange Building, Alabang, Muntinlupa City', logo: '', status: 'Active', established: 'Jan 15, 2020', description: 'A business process outsourcing (BPO) and IT services company providing customer support, back-office, and IT solutions.' };
+import {
+  BusinessType,
+  CompanyBranch,
+  CompanyDepartment,
+  CompanyHoliday,
+  CompanyProfile,
+  HolidayType,
+} from "./types";
+export const businessTypes: BusinessType[] = [
+  "BPO / IT Services",
+  "Information Technology",
+  "Manufacturing",
+  "Retail",
+  "Healthcare",
+  "Education",
+  "Logistics",
+  "Professional Services",
+  "Other",
+];
+export const holidayTypes: HolidayType[] = [
+  "Regular Holiday",
+  "Special Non-Working Day",
+  "Special Working Day",
+  "Company Holiday",
+];
+export const initialCompany: CompanyProfile = {
+  name: "Acme Solutions Inc.",
+  businessType: "BPO / IT Services",
+  tin: "123-456-789-000",
+  email: "admin@acmesolutions.com",
+  phone: "(02) 8123 4567",
+  address: "Orange Building, Alabang, Muntinlupa City",
+  logo: "",
+  status: "Active",
+  established: "Jan 15, 2020",
+  description:
+    "A business process outsourcing (BPO) and IT services company providing customer support, back-office, and IT solutions.",
+};
 export const initialBranches: CompanyBranch[] = [
- { id: '1', name: 'Main Office', code: 'MAIN', address: 'Orange Building, Alabang', location: 'Muntinlupa City', phone: '(02) 8123 4567', manager: 'Alex Reyes (demo)', status: 'Active', employees: 82 },
- { id: '2', name: 'Cavite Site', code: 'CAV', address: 'Demo office', location: 'Bacoor, Cavite', phone: '(046) 123 4567', manager: 'Sam Cruz (demo)', status: 'Active', employees: 46 },
+  {
+    id: "1",
+    name: "Main Office",
+    code: "MAIN",
+    address: "Orange Building, Alabang",
+    location: "Muntinlupa City",
+    phone: "(02) 8123 4567",
+    manager: "Alex Reyes (demo)",
+    status: "Active",
+    employees: 82,
+  },
+  {
+    id: "2",
+    name: "Cavite Site",
+    code: "CAV",
+    address: "Demo office",
+    location: "Bacoor, Cavite",
+    phone: "(046) 123 4567",
+    manager: "Sam Cruz (demo)",
+    status: "Active",
+    employees: 46,
+  },
 ];
 export const initialDepartments: CompanyDepartment[] = [
- { id: '1', name: 'Operations', code: 'OPS', head: 'Alex Reyes (demo)', description: 'Operations team', status: 'Active', employees: 90 },
- { id: '2', name: 'IT', code: 'IT', head: 'Sam Cruz (demo)', description: 'Technology team', status: 'Active', employees: 18 },
- { id: '3', name: 'Human Resources', code: 'HR', head: 'Jamie Santos (demo)', description: 'People team', status: 'Active', employees: 12 },
- { id: '4', name: 'Finance', code: 'FIN', head: 'Taylor Lim (demo)', description: 'Finance team', status: 'Active', employees: 8 },
+  {
+    id: "1",
+    name: "Operations",
+    code: "OPS",
+    head: "Alex Reyes (demo)",
+    description: "Operations team",
+    status: "Active",
+    employees: 90,
+  },
+  {
+    id: "2",
+    name: "IT",
+    code: "IT",
+    head: "Sam Cruz (demo)",
+    description: "Technology team",
+    status: "Active",
+    employees: 18,
+  },
+  {
+    id: "3",
+    name: "Human Resources",
+    code: "HR",
+    head: "Jamie Santos (demo)",
+    description: "People team",
+    status: "Active",
+    employees: 12,
+  },
+  {
+    id: "4",
+    name: "Finance",
+    code: "FIN",
+    head: "Taylor Lim (demo)",
+    description: "Finance team",
+    status: "Active",
+    employees: 8,
+  },
 ];
 export const initialHolidays: CompanyHoliday[] = [
- { id: '1', name: 'New Year’s Day (demo)', date: '2026-01-01', type: 'Regular Holiday', appliesTo: 'All Branches', description: 'Illustrative demo record.', status: 'Active' },
- { id: '2', name: 'Company Foundation Day (demo)', date: '2026-11-15', type: 'Company Holiday', appliesTo: 'All Branches', description: 'Company-created demo record.', status: 'Active' },
+  {
+    id: "1",
+    name: "New Year’s Day (demo)",
+    date: "2026-01-01",
+    type: "Regular Holiday",
+    appliesTo: "All Branches",
+    description: "Illustrative demo record.",
+    status: "Active",
+  },
+  {
+    id: "2",
+    name: "Company Foundation Day (demo)",
+    date: "2026-11-15",
+    type: "Company Holiday",
+    appliesTo: "All Branches",
+    description: "Company-created demo record.",
+    status: "Active",
+  },
 ];
