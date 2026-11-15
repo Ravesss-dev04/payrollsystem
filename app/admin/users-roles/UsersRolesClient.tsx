@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LuShieldCheck } from "react-icons/lu";
 import UsersTable, {
   Avatar,
@@ -11,6 +11,7 @@ import UsersTable, {
 import UserFormModal from "../components/UserFormModal";
 import RolesPermissions from "../components/RolesPermissions";
 import RoleFormModal from "../components/RoleFormModal";
+import AttendancePolicies from "../components/AttendancePolicies";
 import { initialRoles, initialUsers, modules } from "./data";
 import { Role, User } from "./types";
 type Dialog =
@@ -22,6 +23,28 @@ export default function UsersRolesClient() {
   const [users, setUsers] = useState(initialUsers);
   const [roles, setRoles] = useState(initialRoles);
   const [tab, setTab] = useState(0);
+  useEffect(() => {
+    const sync = () => {
+      const selectedTab = new URLSearchParams(window.location.search).get("tab");
+      setTab(
+        selectedTab === "attendance-policies"
+          ? 2
+          : selectedTab === "roles"
+            ? 1
+            : 0,
+      );
+    };
+    sync();
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+  function selectTab(index: number) {
+    setTab(index);
+    const url = new URL(window.location.href);
+    if (index === 0) url.searchParams.delete("tab");
+    else url.searchParams.set("tab", index === 1 ? "roles" : "attendance-policies");
+    window.history.pushState(null, "", url);
+  }
   const [filter, setFilter] = useState("All Roles");
   const [dialog, setDialog] = useState<Dialog>(null);
   const [notice, setNotice] = useState("");
@@ -83,16 +106,17 @@ export default function UsersRolesClient() {
         className="mt-6 flex border-b border-[#E2DFED]"
         onKeyDown={(e) => {
           let next = tab;
-          if (e.key === "ArrowRight" || e.key === "ArrowLeft") next = 1 - tab;
+          if (e.key === "ArrowRight") next = (tab + 1) % 3;
+          else if (e.key === "ArrowLeft") next = (tab + 2) % 3;
           else if (e.key === "Home") next = 0;
-          else if (e.key === "End") next = 1;
+          else if (e.key === "End") next = 2;
           else return;
           e.preventDefault();
-          setTab(next);
+          selectTab(next);
           tabs.current[next]?.focus();
         }}
       >
-        {["Users", "Roles & Permissions"].map((label, i) => (
+        {["Users", "Roles & Permissions", "Attendance Policies"].map((label, i) => (
           <button
             key={label}
             ref={(el) => {
@@ -103,8 +127,8 @@ export default function UsersRolesClient() {
             aria-controls={`access-panel-${i}`}
             aria-selected={tab === i}
             tabIndex={tab === i ? 0 : -1}
-            onClick={() => setTab(i)}
-            className={`rounded-t-lg border-b-2 px-4 py-3 text-sm ${tab === i ? "border-purple-600 bg-white font-semibold text-purple-700" : "border-transparent text-[#57556B] hover:bg-purple-50"}`}
+            onClick={() => selectTab(i)}
+            className={`shrink-0 whitespace-nowrap rounded-t-lg border-b-2 px-4 py-3 text-sm ${tab === i ? "border-purple-600 bg-white font-semibold text-purple-700" : "border-transparent text-[#57556B] hover:bg-purple-50"}`}
           >
             {label}
           </button>
@@ -127,7 +151,7 @@ export default function UsersRolesClient() {
             onEdit={(user) => setDialog({ kind: "userForm", user })}
             onStatus={(user) => setDialog({ kind: "userStatus", user })}
           />
-        ) : (
+        ) : tab === 1 ? (
           <RolesPermissions
             roles={roles}
             users={users}
@@ -143,7 +167,10 @@ export default function UsersRolesClient() {
             }
             onStatus={(role) => setDialog({ kind: "roleStatus", role })}
           />
-        )}
+        ) : null}
+        <div hidden={tab !== 2}>
+          <AttendancePolicies />
+        </div>
       </div>
       {dialog?.kind === "userForm" && (
         <UserFormModal
@@ -380,7 +407,7 @@ export default function UsersRolesClient() {
                 className="mt-4 text-sm font-semibold text-purple-700 underline"
                 onClick={() => {
                   setFilter(selectedRole.id);
-                  setTab(0);
+                  selectTab(0);
                   setDialog(null);
                 }}
               >
