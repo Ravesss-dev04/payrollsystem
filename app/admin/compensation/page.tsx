@@ -1332,6 +1332,7 @@ function Detail({
               string,
               string,
             ],
+            
             ["Current Pay Grade", e?.grade || "—"] as [string, string],
           ]
         : []),

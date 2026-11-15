@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminHeader from "./components/AdminHeader";
+import { AdminProfileProvider } from "./components/AdminProfileContext";
 export default function AdminLayout({
   children,
 }: {
@@ -13,7 +14,7 @@ export default function AdminLayout({
     dialog.current?.close();
   }
   return (
-    <div className="flex h-dvh overflow-hidden bg-[#F7F6FF] font-sans text-[#17152D]">
+    <AdminProfileProvider><div className="flex h-dvh overflow-hidden bg-[#F7F6FF] font-sans text-[#17152D]">
       <div className="hidden h-full shrink-0 lg:block">
         <AdminSidebar />
       </div>
@@ -44,6 +45,9 @@ export default function AdminLayout({
           {children}
         </main>
       </div>
-    </div>
+    </div></AdminProfileProvider>
   );
 }
+
+
+
