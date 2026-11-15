@@ -31,11 +31,6 @@ const items = [
     available: true,
   },
   { label: "Compensation", href: "/admin/compensation", icon: LuWallet, available: true },
-  { label: "Floor & Assets", href: "/admin/florsets", icon: LuMonitor },
-  { label: "Analytics", href: "/admin/analytics", icon: LuChartNoAxesCombined },
-  { label: "Compliance", href: "/admin/compliance", icon: LuShieldCheck },
-  { label: "Audit Logs", href: "/admin/audit-logs", icon: LuHistory },
-
   { label: "Settings", href: "/admin/settings", icon: LuSettings },
 ];
 export default function AdminSidebar({
