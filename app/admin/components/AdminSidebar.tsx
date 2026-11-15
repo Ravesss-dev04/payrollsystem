@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { AdminAvatar, useAdminProfile } from "./AdminProfileContext";
 import { usePathname } from "next/navigation";
 import {
   LuLayoutDashboard,
@@ -24,14 +25,14 @@ const items = [
   },
   { label: "Company", href: "/admin/company", icon: LuBuilding2, available: true },
   { label: "Users & Roles", href: "/admin/users-roles", icon: LuUsers, available: true },
-  {
+  { 
     label: "Payroll Approvals",
     href: "/admin/payapprove",
     icon: LuClipboardCheck,
     available: true,
   },
   { label: "Compensation", href: "/admin/compensation", icon: LuWallet, available: true },
-  { label: "Settings", href: "/admin/settings", icon: LuSettings },
+  { label: "Settings", href: "/admin/settings", icon: LuSettings, available: true },
 ];
 export default function AdminSidebar({
   onNavigate,
@@ -39,6 +40,7 @@ export default function AdminSidebar({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const { profile } = useAdminProfile();
   return (
     <aside className="flex h-full w-64 flex-col bg-[#211D3B] text-white">
       <div className="shrink-0 px-5 pt-6 pb-5">
@@ -91,16 +93,16 @@ export default function AdminSidebar({
         </ul>
       </nav>
       <div className="m-3 flex shrink-0 items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ddd6fe] text-xs font-bold text-[#5b21b6]">
-          AU
-        </span>
+        <AdminAvatar profile={profile} size="h-9 w-9" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold">Admin User</p>
+          <p className="truncate text-sm font-semibold">{profile.name}</p>
           <p className="text-xs text-[#b9b3c9]">Company Administrator</p>
         </div>
       </div>
     </aside>
   );
 }
+
+
 
 
