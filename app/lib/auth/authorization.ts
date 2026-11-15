@@ -28,7 +28,6 @@ const permissionsByRole: Record<Role, ReadonlySet<Permission>> = {
     "users:read",
     "users:manage",
     "employees:read",
-    "employees:manage",
     "payroll:read",
     "payroll:approve",
     "payslip:read",
@@ -39,7 +38,6 @@ const permissionsByRole: Record<Role, ReadonlySet<Permission>> = {
     "reports:read",
   ]),
   hr: new Set([
-    "dashboard:read",
     "employees:read",
     "employees:manage",
     "attendance:read",

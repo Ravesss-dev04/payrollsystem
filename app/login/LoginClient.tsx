@@ -2,6 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import {
+  buildMfaVerificationPayload,
+  type MfaVerificationMethod,
+} from "./mfa-verification";
 
 type LoginResponse = {
   authenticated?: boolean;
@@ -16,6 +20,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [mfaMethod, setMfaMethod] =
+    useState<MfaVerificationMethod>("totp");
   const [setupUri, setSetupUri] = useState("");
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [setupRequired, setSetupRequired] = useState(false);
@@ -74,7 +80,9 @@ export default function LoginPage() {
       const response = await fetch("/api/auth/mfa/verify", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify(
+          buildMfaVerificationPayload(mfaMethod, code),
+        ),
         cache: "no-store",
       });
       const result = (await response.json()) as {
@@ -141,7 +149,9 @@ export default function LoginPage() {
         {step === "mfa" && (
           <>
             <p className="mt-2 text-sm text-[#73718A]">
-              {setupRequired
+              {mfaMethod === "recovery"
+                ? "Enter one of your saved recovery codes. Each code can be used once."
+                : setupRequired
                 ? "Add this account to an authenticator app, then enter its six-digit code."
                 : "Enter the six-digit code from your authenticator app."}
             </p>
@@ -155,28 +165,64 @@ export default function LoginPage() {
             )}
             <form className="mt-5 space-y-4" onSubmit={submitMfa}>
               <label className="block text-sm font-medium">
-                Authentication code
+                {mfaMethod === "recovery"
+                  ? "Recovery code"
+                  : "Authentication code"}
                 <input
-                  inputMode="numeric"
+                  type="text"
+                  inputMode={mfaMethod === "totp" ? "numeric" : "text"}
                   autoComplete="one-time-code"
-                  pattern="[0-9]{6}"
-                  maxLength={6}
+                  pattern={
+                    mfaMethod === "totp"
+                      ? "[0-9]{6}"
+                      : "([A-Fa-f0-9]{32}|[A-Fa-f0-9]{8}(-[A-Fa-f0-9]{8}){3})"
+                  }
+                  maxLength={mfaMethod === "totp" ? 6 : 35}
                   required
                   value={code}
                   onChange={(event) =>
-                    setCode(event.target.value.replace(/\D/g, "").slice(0, 6))
+                    setCode(
+                      mfaMethod === "totp"
+                        ? event.target.value.replace(/\D/g, "").slice(0, 6)
+                        : event.target.value
+                            .replace(/[^a-f\d-]/gi, "")
+                            .slice(0, 35),
+                    )
                   }
                   className="mt-1 w-full rounded-lg border border-[#D8D5E4] px-3 py-2.5"
                 />
               </label>
               <button
                 type="submit"
-                disabled={busy || code.length !== 6}
+                disabled={
+                  busy ||
+                  (mfaMethod === "totp"
+                    ? code.length !== 6
+                    : code.length === 0)
+                }
                 className="w-full rounded-lg bg-purple-700 px-4 py-2.5 font-semibold text-white disabled:opacity-60"
               >
                 {busy ? "Verifying..." : "Verify"}
               </button>
             </form>
+            {!setupRequired && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setCode("");
+                  setError("");
+                  setMfaMethod(
+                    mfaMethod === "totp" ? "recovery" : "totp",
+                  );
+                }}
+                className="mt-4 w-full text-sm font-medium text-purple-700 underline disabled:opacity-60"
+              >
+                {mfaMethod === "totp"
+                  ? "Use a recovery code instead"
+                  : "Use an authenticator code instead"}
+              </button>
+            )}
           </>
         )}
         {step === "recovery" && (

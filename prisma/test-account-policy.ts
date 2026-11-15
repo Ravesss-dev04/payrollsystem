@@ -112,17 +112,16 @@ export function assertTestAccountProvisioningAllowed(
     throw new Error("Test-account database target could not be verified");
   }
 
-  if (!["postgres:", "postgresql:"].includes(database.protocol)) {
+  if (database.protocol !== "mysql:") {
     throw new Error("Test-account database target is not permitted");
   }
 
   const hostname = database.hostname.toLowerCase();
-  if (!["localhost", "127.0.0.1", "[::1]"].includes(hostname)) {
-    throw new Error("Test-account provisioning is restricted to local databases");
-  }
-
   const databaseName = decodeDatabaseName(database.pathname);
-  const port = database.port || "5432";
+  if (!/(test|dev|stage|sandbox)/.test(databaseName)) {
+    throw new Error("Test-account provisioning requires a non-production database name");
+  }
+  const port = database.port || "3306";
   const target = `${hostname}:${port}/${databaseName}`;
   const allowlistedTargets = rawAllowlist
     .split(",")

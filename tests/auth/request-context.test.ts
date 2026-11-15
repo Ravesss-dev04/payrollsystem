@@ -40,4 +40,32 @@ describe("request security context", () => {
       ),
     ).toBe(true);
   });
+
+  it("accepts a same-origin GET without Origin only with same-origin Fetch Metadata", () => {
+    const request = new Request("https://payroll.example.com/api/admin/dashboard/summary", {
+      method: "GET",
+      headers: { "sec-fetch-site": "same-origin" },
+    });
+
+    expect(isSameOrigin(request, "https://payroll.example.com")).toBe(true);
+  });
+
+  it("fails closed when a missing Origin has no trusted same-origin signal", () => {
+    const getRequest = new Request(
+      "https://payroll.example.com/api/admin/dashboard/summary",
+      { method: "GET" },
+    );
+    const mutationRequest = new Request(
+      "https://payroll.example.com/api/admin/settings/organization",
+      {
+        method: "POST",
+        headers: { "sec-fetch-site": "same-origin" },
+      },
+    );
+
+    expect(isSameOrigin(getRequest, "https://payroll.example.com")).toBe(false);
+    expect(
+      isSameOrigin(mutationRequest, "https://payroll.example.com"),
+    ).toBe(false);
+  });
 });

@@ -9,6 +9,7 @@ export interface LoginAccountRecord {
   status: unknown;
   sessionVersion: number;
   mfaEnabled: boolean;
+  isTestAccount: boolean;
 }
 
 export interface AuthenticatedLoginAccount {
@@ -18,6 +19,7 @@ export interface AuthenticatedLoginAccount {
   role: Role;
   sessionVersion: number;
   mfaEnabled: boolean;
+  isTestAccount: boolean;
 }
 
 export async function authenticateCredentials(input: {
@@ -45,9 +47,39 @@ export async function authenticateCredentials(input: {
     role: input.account.role,
     sessionVersion: input.account.sessionVersion,
     mfaEnabled: input.account.mfaEnabled,
+    isTestAccount: input.account.isTestAccount,
   };
 }
 
+const MFA_REAUTHENTICATION_INTERVAL_MS = 60 * 24 * 60 * 60 * 1000;
+
 export function requiresMfa(role: unknown): boolean {
   return role !== "employee";
+}
+
+export function requiresMfaReauthentication(
+  role: unknown,
+  isTestAccount: boolean,
+  lastVerifiedAt: Date | null,
+  now = new Date(),
+  environment = process.env.NODE_ENV ?? "production",
+): boolean {
+  const nonProductionTestEnvironment =
+    environment === "development" || environment === "test";
+  if (
+    !requiresMfa(role) ||
+    (isTestAccount && nonProductionTestEnvironment)
+  ) {
+    return false;
+  }
+
+  const lastVerifiedTime = lastVerifiedAt?.getTime();
+  const currentTime = now.getTime();
+  return (
+    lastVerifiedTime === undefined ||
+    !Number.isFinite(lastVerifiedTime) ||
+    !Number.isFinite(currentTime) ||
+    lastVerifiedTime > currentTime ||
+    currentTime - lastVerifiedTime >= MFA_REAUTHENTICATION_INTERVAL_MS
+  );
 }

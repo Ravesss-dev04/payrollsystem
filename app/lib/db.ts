@@ -1,6 +1,7 @@
 import "server-only";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "../generated/prisma/client";
+import { getMySqlPoolConfig } from "./mysql-adapter-config";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -14,7 +15,7 @@ const prismaGlobal = globalThis as typeof globalThis & {
 export const prisma =
   prismaGlobal.payrollPrisma ??
   new PrismaClient({
-    adapter: new PrismaPg({ connectionString }),
+    adapter: new PrismaMariaDb(getMySqlPoolConfig(connectionString)),
   });
 
 if (process.env.NODE_ENV !== "production") {

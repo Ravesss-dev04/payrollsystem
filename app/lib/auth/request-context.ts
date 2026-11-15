@@ -19,8 +19,12 @@ export function getRequestContext(_request: Request) {
 
 export function isSameOrigin(request: Request, expectedOrigin: string): boolean {
   const origin = request.headers.get("origin");
+  const fetchSite = request.headers.get("sec-fetch-site");
   if (!origin) {
-    return false;
+    return (
+      (request.method === "GET" || request.method === "HEAD") &&
+      fetchSite === "same-origin"
+    );
   }
   try {
     if (new URL(origin).origin !== expectedOrigin) {
@@ -29,6 +33,5 @@ export function isSameOrigin(request: Request, expectedOrigin: string): boolean 
   } catch {
     return false;
   }
-  const fetchSite = request.headers.get("sec-fetch-site");
   return fetchSite === null || fetchSite === "same-origin";
 }

@@ -31,6 +31,26 @@ describe("authorization policy", () => {
     ).toBe(false);
   });
 
+  it("allows only Admin to read the admin dashboard", () => {
+    for (const role of ["hr", "employee", "team_leader", "ADMIN"]) {
+      expect(
+        hasPermission({
+          role,
+          permission: "dashboard:read",
+          actorId: `${role}-1`,
+        }),
+      ).toBe(false);
+    }
+
+    expect(
+      hasPermission({
+        role: "admin",
+        permission: "dashboard:read",
+        actorId: "admin-1",
+      }),
+    ).toBe(true);
+  });
+
   it("allows HR employee-management access without inheriting admin access", () => {
     expect(
       hasPermission({
@@ -46,6 +66,18 @@ describe("authorization policy", () => {
         actorId: "hr-1",
       }),
     ).toBe(false);
+  });
+
+  it("denies Admin and Employee accounts HR-only employee mutation access", () => {
+    for (const role of ["admin", "employee"]) {
+      expect(
+        hasPermission({
+          role,
+          permission: "employees:manage",
+          actorId: `${role}-1`,
+        }),
+      ).toBe(false);
+    }
   });
 
   it("limits employee payslip access to the signed-in employee", () => {

@@ -12,12 +12,12 @@ const safeEnvironment = {
   APP_ENV: "test",
   NODE_ENV: "test",
   PROVISION_TEST_ACCOUNTS: "true",
-  DATABASE_URL: "postgresql://test:test@localhost:5432/payroll_test",
-  TEST_ACCOUNT_DATABASE_ALLOWLIST: "localhost:5432/payroll_test",
+  DATABASE_URL: "mysql://test:test@localhost:3306/payroll_test",
+  TEST_ACCOUNT_DATABASE_ALLOWLIST: "localhost:3306/payroll_test",
 };
 
 describe("test account provisioning policy", () => {
-  it("allows provisioning only for an explicitly allowlisted local test database", () => {
+  it("allows only explicitly allowlisted MySQL test databases", () => {
     expect(() =>
       assertTestAccountProvisioningAllowed(safeEnvironment),
     ).not.toThrow();
@@ -30,14 +30,29 @@ describe("test account provisioning policy", () => {
     expect(() =>
       assertTestAccountProvisioningAllowed({
         ...safeEnvironment,
-        DATABASE_URL:
-          "mysql://tester:secret@remote.example:3306/payroll_test",
+        DATABASE_URL: "mysql://test:secret@remote.example:3306/payroll_test",
+        TEST_ACCOUNT_DATABASE_ALLOWLIST:
+          "remote.example:3306/payroll_test",
+      }),
+    ).not.toThrow();
+    expect(() =>
+      assertTestAccountProvisioningAllowed({
+        ...safeEnvironment,
+        DATABASE_URL: "mysql://test:secret@remote.example:3306/payroll_prod",
+        TEST_ACCOUNT_DATABASE_ALLOWLIST:
+          "remote.example:3306/payroll_prod",
       }),
     ).toThrow();
     expect(() =>
       assertTestAccountProvisioningAllowed({
         ...safeEnvironment,
-        TEST_ACCOUNT_DATABASE_ALLOWLIST: "localhost:5432/other_db",
+        DATABASE_URL: "postgresql://test:test@localhost:5432/payroll_test",
+      }),
+    ).toThrow();
+    expect(() =>
+      assertTestAccountProvisioningAllowed({
+        ...safeEnvironment,
+        TEST_ACCOUNT_DATABASE_ALLOWLIST: "localhost:3306/other_db",
       }),
     ).toThrow();
   });

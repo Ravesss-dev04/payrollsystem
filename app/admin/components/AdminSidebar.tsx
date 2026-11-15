@@ -3,7 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LuLayoutDashboard,
-  LuBuilding2,
   LuUsers,
   LuClipboardCheck,
   LuWallet,
@@ -22,7 +21,6 @@ const items = [
     icon: LuLayoutDashboard,
     available: true,
   },
-  { label: "Company", href: "/admin/company", icon: LuBuilding2, available: true },
   { label: "Users & Roles", href: "/admin/users-roles", icon: LuUsers, available: true },
   {
     label: "Payroll Approvals",
@@ -31,7 +29,12 @@ const items = [
     available: true,
   },
   { label: "Compensation", href: "/admin/compensation", icon: LuWallet, available: true },
-  { label: "Settings", href: "/admin/settings", icon: LuSettings },
+  {
+    label: "Settings",
+    href: "/admin/settings",
+    icon: LuSettings,
+    available: true,
+  },
 ];
 export default function AdminSidebar({
   onNavigate,

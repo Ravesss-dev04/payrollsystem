@@ -2,21 +2,23 @@
 
 ## Provisioning
 
-`bun run provision:test-accounts` is a local-only, opt-in provisioning utility.
+`bun run provision:test-accounts` is an opt-in provisioning utility for an
+explicitly allowlisted, non-production MySQL database.
 It refuses to run unless all of these are true:
 
 - `APP_ENV` is `development` or `test`.
 - `NODE_ENV` is not `production`.
 - `PROVISION_TEST_ACCOUNTS=true`.
-- `DATABASE_URL` uses PostgreSQL and points to a loopback host.
-- `TEST_ACCOUNT_DATABASE_ALLOWLIST` contains the exact local `host:port/database`
-  target.
+- `DATABASE_URL` uses MySQL and its database name includes `test`, `dev`,
+  `stage`, or `sandbox`.
+- `TEST_ACCOUNT_DATABASE_ALLOWLIST` contains the exact
+  `host:port/database` target.
 
-The Prisma schema uses PostgreSQL. Do not point the utility at production,
-staging, a remote database, or a database containing real employee records. The
-database target must be an intentionally designated local development/test
-database. The utility checks reserved email identities and all records marked
-as test accounts before making changes. It creates missing accounts only and
+The Prisma schema and runtime adapter use MySQL. Remote database connections
+require certificate-verified TLS; loopback development connections do not.
+Never point the utility at production or a database containing real employee
+records. The utility checks reserved email identities and records marked as
+test accounts before making changes. It creates missing accounts only and
 never changes or reactivates existing accounts.
 
 The three reserved identities are `test-admin@payroll.test`,
@@ -34,6 +36,31 @@ to a uniquely named directory under `%LOCALAPPDATA%` (or the local user's
 the current Windows user, or applies owner-only permissions on POSIX. The
 command prints the file path, not credential contents. Protect or securely
 delete that file after use.
+
+For admin and HR sign-in, enroll the `totpSecret` from that protected local
+credential file in an authenticator app. The login page also accepts one
+unused `recoveryCodes` entry as an alternative second factor; each recovery
+code is single-use. Do not share either value.
+
+## MFA sign-in policy
+
+The login flow reads `isTestAccount` from the account's database record.
+Already-marked test accounts skip MFA verification at sign-in only in
+development and test environments; the flag is never accepted from a login
+request. In production, Admin and HR accounts require MFA according to the
+normal reauthentication schedule regardless of the test-account marker. This
+does not bypass password verification, account status, role validation, rate
+limits, or session controls. The provisioning utility continues to refuse
+production databases, and this change adds no production test-account creation
+or marking workflow.
+
+Admin and HR accounts with MFA enabled must verify MFA when they have no
+recorded successful MFA challenge or when their latest successful setup or
+verification is at least 60 days old. A successful authenticator-code or
+single-use recovery-code verification updates the challenge record used for
+this interval. Admin and HR accounts without MFA enabled still go through
+initial MFA setup. Provisioned test admin and HR accounts are MFA-enabled and
+skip the second-factor prompt only in development and test environments.
 
 Provisioning does not rotate existing credentials. To rotate one reserved
 account, set `ROTATE_TEST_ACCOUNT_PASSWORD=true` and
@@ -53,20 +80,22 @@ The application and local provisioning require:
 - `APP_ENV`
 - `AUTH_ENCRYPTION_KEY` (canonical base64 for 32 random bytes)
 - `RATE_LIMIT_SECRET` (canonical base64 for 32 random bytes)
-- `DATABASE_URL` (PostgreSQL connection string for the permitted local DB)
+- `DATABASE_URL` (MySQL connection string for the explicitly allowlisted
+  non-production database)
 - `PROVISION_TEST_ACCOUNTS=true` only when intentionally provisioning
 - `TEST_ACCOUNT_DATABASE_ALLOWLIST` with the exact local `host:port/database`
 - `ROTATE_TEST_ACCOUNT_PASSWORD=true` and
   `TEST_ACCOUNT_ROTATION_EMAIL` only for an intentional test-account rotation
 
 Never commit or print these values. Do not set the provisioning flag in
-production. The local provisioning command must not be used until a migration
-has been reviewed and applied to the intended empty local database.
+production. Do not provision until the existing MySQL schema has been
+inspected and any required non-destructive migration has been reviewed and
+applied to the intended non-production database.
 
 ## Session behavior
 
 Sessions use opaque random cookie values; only their SHA-256 digests are stored
-in the shared PostgreSQL session table. Cookies are HttpOnly, SameSite=Lax,
+in the shared MySQL session table. Cookies are HttpOnly, SameSite=Lax,
 Secure for HTTPS deployments, and path-scoped to `/`. CSRF tokens are checked
 for state-changing requests.
 
@@ -88,9 +117,10 @@ visible.
 
 ## Current deployment boundary
 
-No database connection or migration is performed by this change. The current
-workspace database configuration must be checked privately by an authorized
-operator; this utility will reject non-PostgreSQL, non-loopback, or
-non-allowlisted targets before connecting. Provisioning is not complete until
-the Prisma schema migration and the local provisioning command have been run
-against the intended local database.
+No database connection or migration is performed by this change. An authorized
+operator must inspect the target schema and migration state before running any
+migration or provisioning command. The utility rejects non-MySQL, unnamed or
+non-allowlisted targets and refuses database names that do not identify a
+non-production environment. Provisioning is not complete until accounts are
+verified in the intended MySQL database and login is tested through the
+application.

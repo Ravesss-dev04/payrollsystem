@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { LuShieldCheck } from "react-icons/lu";
+import { DemoDataNotice } from "../components/DemoDataNotice";
 import UsersTable, {
   Avatar,
   Badge,
@@ -92,6 +93,9 @@ export default function UsersRolesClient() {
       <p className="mt-1 text-sm text-[#73718A]">
         Manage system users, roles, and access permissions.
       </p>
+      <div className="mt-4">
+        <DemoDataNotice />
+      </div>
       {notice && (
         <div
           role="status"

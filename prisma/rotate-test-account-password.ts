@@ -1,10 +1,13 @@
+/// <reference types="bun" />
+
 import { rm } from "node:fs/promises";
 import { join } from "node:path";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import {
   PrismaClient,
   SecurityEventType,
 } from "../app/generated/prisma/client";
+import { getMySqlPoolConfig } from "../app/lib/mysql-adapter-config";
 import { decryptSecret } from "../app/lib/auth/secret-encryption";
 import { hashPassword } from "../app/lib/auth/password";
 import {
@@ -32,7 +35,9 @@ export async function rotateTestAccountPassword(
   }
 
   const prisma = new PrismaClient({
-    adapter: new PrismaPg({ connectionString: environment.DATABASE_URL }),
+    adapter: new PrismaMariaDb(
+      getMySqlPoolConfig(environment.DATABASE_URL),
+    ),
   });
   let credentialDirectory: string | null = null;
   let rotated = false;

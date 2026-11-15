@@ -2,7 +2,11 @@ import { SecurityEventType } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/db";
 import { createMfaChallenge, createSessionForUser, setMfaChallengeCookie, setSessionCookies } from "../../../lib/auth/session.server";
 import { loginSchema } from "../../../lib/auth/schemas";
-import { authenticateCredentials, requiresMfa } from "../../../lib/auth/login-policy";
+import {
+  authenticateCredentials,
+  requiresMfa,
+  requiresMfaReauthentication,
+} from "../../../lib/auth/login-policy";
 import { normalizeEmail, hashPassword, verifyPassword } from "../../../lib/auth/password";
 import { createOpaqueToken } from "../../../lib/auth/tokens";
 import { databaseRateLimitStore } from "../../../lib/auth/database-rate-limit";
@@ -84,6 +88,7 @@ export async function POST(request: Request): Promise<Response> {
       status: true,
       sessionVersion: true,
       mfaEnabled: true,
+      isTestAccount: true,
     },
   });
   dummyHashPromise ??= hashPassword(createOpaqueToken());
@@ -112,13 +117,35 @@ export async function POST(request: Request): Promise<Response> {
       setupRequired: true,
     });
   }
-  if (requiresMfa(account.role) || account.mfaEnabled) {
-    const challenge = await createMfaChallenge(account.id, "Verify");
-    await setMfaChallengeCookie(challenge);
-    return jsonResponse({
-      mfaRequired: true,
-      setupRequired: false,
-    });
+  if (account.mfaEnabled) {
+    let verificationRequired = !account.isTestAccount;
+    if (requiresMfa(account.role)) {
+      const lastMfaChallenge = await prisma.mfaChallenge.findFirst({
+        where: {
+          userId: account.id,
+          purpose: { in: ["Setup", "Verify"] },
+          consumedAt: { not: null },
+        },
+        orderBy: { consumedAt: "desc" },
+        select: { consumedAt: true },
+      });
+      verificationRequired = requiresMfaReauthentication(
+        account.role,
+        account.isTestAccount,
+        lastMfaChallenge?.consumedAt ?? null,
+        new Date(),
+        process.env.NODE_ENV ?? "production",
+      );
+    }
+
+    if (verificationRequired) {
+      const challenge = await createMfaChallenge(account.id, "Verify");
+      await setMfaChallengeCookie(challenge);
+      return jsonResponse({
+        mfaRequired: true,
+        setupRequired: false,
+      });
+    }
   }
 
   const session = await createSessionForUser(
