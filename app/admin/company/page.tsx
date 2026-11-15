@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { LuBuilding2, LuMapPin, LuUsersRound, LuCalendarDays } from "react-icons/lu";
 import CompanyProfile from "../components/CompanyProfile";
 import CompanyBranches from "../components/CompanyBranches";
 import CompanyDepartments from "../components/CompanyDepartments";
@@ -35,14 +36,15 @@ export default function CompanyPage() {
   }
   return (
     <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">
-      <h1 className="text-2xl font-bold tracking-tight">Company Management</h1>
-      <p className="mt-1 text-sm text-[#73718A]">
-        Manage company details, branches, departments, and business information.
-      </p>
+      <div className="flex items-center gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EDE5FF] text-[#7C3AED]"><LuBuilding2 size={23} /></span>
+        <div><h1 className="text-2xl font-bold tracking-tight">Company Management</h1>
+        <p className="mt-1 text-sm text-[#73718A]">Manage company details, branches, departments, and business information.</p></div>
+      </div>
       <div
         role="tablist"
         aria-label="Company management sections"
-        className="mt-6 flex overflow-x-auto border-b border-[#E2DFED]"
+        className={`mt-6 flex overflow-x-auto border-b border-[#E2DFED] ${active === 1 ? "rounded-lg bg-white/50" : ""}`}
         onKeyDown={(e) => {
           let i = active;
           if (e.key === "ArrowRight") i = (active + 1) % tabs.length;
@@ -68,9 +70,9 @@ export default function CompanyPage() {
             aria-selected={active === i}
             tabIndex={active === i ? 0 : -1}
             onClick={() => select(i)}
-            className={`shrink-0 border-b-2 px-4 py-3 text-sm transition-colors ${active === i ? "border-purple-600 bg-white font-semibold text-purple-700" : "border-transparent text-[#57556B] hover:bg-purple-50"}`}
+            className={`shrink-0 border-b-2 px-4 py-3 text-sm transition-colors ${active === i ? `border-purple-600 ${active === 1 ? "bg-[#EEE6FF]" : "bg-white"} font-semibold text-purple-700` : "border-transparent text-[#57556B] hover:bg-purple-50"}`}
           >
-            {tab}
+            <span className="mr-2 inline-block align-middle">{i === 0 ? <LuBuilding2 /> : i === 1 ? <LuMapPin /> : i === 2 ? <LuUsersRound /> : <LuCalendarDays />}</span>{tab}
           </button>
         ))}
       </div>
