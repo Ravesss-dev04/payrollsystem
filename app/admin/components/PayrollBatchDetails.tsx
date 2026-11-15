@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LuArrowLeft, LuCheck, LuClipboardCheck, LuDownload, LuSearch, LuTriangleAlert, LuUsers, LuWallet, LuX } from "react-icons/lu";
+import { DemoDataNotice } from "./DemoDataNotice";
 import { deductions, gross, initialBatches, money, net } from "../payapprove/data";
 import type { Adjustment, Batch, Employee, Exception, Status } from "../payapprove/types";
 
@@ -26,7 +27,7 @@ function Dialog({ title, children, onClose }: { title: string; children: React.R
 }
 function download(batches: Batch[]) { const rows = [["Batch ID", "Period", "Employees", "Net payable", "Status"], ...batches.map(b => [b.id, b.period, String(b.count), String(b.net), b.status])]; const csv = rows.map(row => row.map(v => `"${v.replaceAll('"', '""')}"`).join(",")).join("\n"); const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); const a = document.createElement("a"); a.href = url; a.download = "sample-payroll-report.csv"; a.click(); URL.revokeObjectURL(url); }
 function TabBar({ tabs, active, setActive }: { tabs: string[]; active: string; setActive: (v: string) => void }) { return <div role="tablist" aria-label="Payroll views" className="flex overflow-x-auto border-b border-[#EDEAF6]">{tabs.map(t => <button key={t} role="tab" aria-selected={active === t} onClick={() => setActive(t)} className={`shrink-0 border-b-2 px-4 py-4 text-sm font-semibold ${active === t ? "border-[#7C3AED] text-[#7C3AED]" : "border-transparent text-[#73718A] hover:text-[#17152D]"}`}>{t}</button>)}</div>; }
-function Page({ children }: { children: React.ReactNode }) { return <div className="mx-auto max-w-[1600px] space-y-6 px-4 py-7 sm:px-7 lg:px-9">{children}</div>; }
+function Page({ children }: { children: React.ReactNode }) { return <div className="mx-auto max-w-[1600px] space-y-6 px-4 py-7 sm:px-7 lg:px-9"><DemoDataNotice />{children}</div>; }
 function Metric({ label, value, icon }: { label: string; value: string | number; icon: React.ReactNode }) { return <div className={`${card} flex items-center gap-4 p-5`}><span className="rounded-xl bg-[#F3E8FF] p-3 text-[#7C3AED]">{icon}</span><div><p className="text-sm text-[#73718A]">{label}</p><p className="mt-1 text-xl font-bold">{value}</p></div></div>; }
 
 export function PayrollList() {

@@ -1,13 +1,287 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
+}
+
+enum UserRole {
+  admin
+  hr
+  employee
+}
+
+enum AccountStatus {
+  Active
+  Invited
+  Suspended
+  Inactive
+}
+
+enum MfaChallengePurpose {
+  Setup
+  Verify
+}
+
+enum SecurityEventType {
+  LoginSuccess
+  LoginFailure
+  LoginRateLimited
+  MfaFailure
+  MfaEnrolled
+  PasswordChanged
+  PasswordResetRequested
+  SessionCreated
+  SessionTerminated
+  SessionRevoked
+  AccountStatusChanged
+  RoleChanged
+  AccessDenied
+}
+
+model User {
+  id                        String               @id @default(cuid())
+  email                     String               @unique @db.VarChar(320)
+  name                      String               @db.VarChar(160)
+  passwordHash              String?              @db.VarChar(255)
+  role                      UserRole
+  status                    AccountStatus
+  mfaSecretEncrypted        String?              @db.Text
+  pendingMfaSecretEncrypted String?              @db.Text
+  mfaEnabled                Boolean              @default(false)
+  sessionVersion            Int                  @default(0)
+  lastLoginAt               DateTime?            @db.DateTime(3)
+  isTestAccount             Boolean              @default(false)
+  createdAt                 DateTime             @default(now()) @db.DateTime(3)
+  updatedAt                 DateTime             @updatedAt @db.DateTime(3)
+  sessions                  Session[]
+  mfaChallenges             MfaChallenge[]
+  recoveryCodes             MfaRecoveryCode[]
+  passwordResetTokens       PasswordResetToken[]
+  securityEvents            SecurityAuditEvent[] @relation("SecurityEventActor")
+  targetedSecurityEvents    SecurityAuditEvent[] @relation("SecurityEventTarget")
+  domainAuditEvents         DomainAuditEvent[]   @relation("DomainAuditActor")
+  createdEmploymentPolicies EmploymentStatusPolicy[] @relation("EmploymentPolicyCreator")
+  employeeRecord            Employee?
+
+  @@index([status, role])
+}
+
+model Session {
+  id                String    @id @default(cuid())
+  tokenHash         String    @unique @db.Char(64)
+  csrfTokenHash     String    @db.Char(64)
+  userId            String
+  sessionVersion    Int
+  createdAt         DateTime  @default(now()) @db.DateTime(3)
+  lastActivityAt    DateTime  @default(now()) @db.DateTime(3)
+  idleExpiresAt     DateTime  @db.DateTime(3)
+  absoluteExpiresAt DateTime  @db.DateTime(3)
+  revokedAt         DateTime? @db.DateTime(3)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([idleExpiresAt])
+  @@index([absoluteExpiresAt])
+}
+
+model MfaChallenge {
+  id         String              @id @default(cuid())
+  tokenHash  String              @unique @db.Char(64)
+  userId     String
+  purpose    MfaChallengePurpose
+  attempts   Int                 @default(0)
+  createdAt  DateTime            @default(now()) @db.DateTime(3)
+  expiresAt  DateTime            @db.DateTime(3)
+  consumedAt DateTime?           @db.DateTime(3)
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model MfaRecoveryCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String    @unique @db.Char(64)
+  createdAt DateTime  @default(now()) @db.DateTime(3)
+  usedAt    DateTime? @db.DateTime(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique @db.Char(64)
+  userId     String
+  createdAt  DateTime  @default(now()) @db.DateTime(3)
+  expiresAt  DateTime  @db.DateTime(3)
+  consumedAt DateTime? @db.DateTime(3)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model AuthRateLimitBucket {
+  id           String    @id @db.VarChar(160)
+  count        Int       @default(0)
+  createdAt    DateTime  @default(now()) @db.DateTime(3)
+  expiresAt    DateTime  @db.DateTime(3)
+  blockedUntil DateTime? @db.DateTime(3)
+
+  @@index([expiresAt])
+}
+
+model SecurityAuditEvent {
+  id           String            @id @default(cuid())
+  eventType    SecurityEventType
+  userId       String?
+  targetUserId String?
+  resourceId   String?           @db.VarChar(160)
+  sourceIp     String?           @db.VarChar(64)
+  userAgent    String?           @db.VarChar(512)
+  requestId    String?           @db.VarChar(128)
+  succeeded    Boolean
+  createdAt    DateTime          @default(now()) @db.DateTime(3)
+  user         User?             @relation("SecurityEventActor", fields: [userId], references: [id], onDelete: SetNull)
+  targetUser   User?             @relation("SecurityEventTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model OrganizationSettings {
+  id                 String                    @id @default("primary") @db.VarChar(32)
+  name               String                    @db.VarChar(160)
+  timeZone           String                    @db.VarChar(64)
+  createdAt          DateTime                  @default(now()) @db.DateTime(3)
+  updatedAt          DateTime                  @updatedAt @db.DateTime(3)
+  branches           Branch[]
+  departments        Department[]
+  employmentPolicies EmploymentStatusPolicy[]
+}
+
+model Branch {
+  id             String               @id @default(cuid())
+  organizationId String               @db.VarChar(32)
+  name           String               @db.VarChar(120)
+  active         Boolean              @default(true)
+  createdAt      DateTime             @default(now()) @db.DateTime(3)
+  updatedAt      DateTime             @updatedAt @db.DateTime(3)
+  organization   OrganizationSettings @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, name])
+  @@index([organizationId, active, name])
+}
+
+model Department {
+  id             String               @id @default(cuid())
+  organizationId String               @db.VarChar(32)
+  name           String               @db.VarChar(120)
+  active         Boolean              @default(true)
+  createdAt      DateTime             @default(now()) @db.DateTime(3)
+  updatedAt      DateTime             @updatedAt @db.DateTime(3)
+  organization   OrganizationSettings @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  teams          Team[]
+  employeeAssignments EmployeeAssignment[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, active, name])
+}
+
+model Team {
+  id           String     @id @default(cuid())
+  departmentId String     @db.VarChar(191)
+  name         String     @db.VarChar(120)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @db.DateTime(3)
+  updatedAt    DateTime   @updatedAt @db.DateTime(3)
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@unique([departmentId, name])
+  @@index([departmentId, active, name])
+}
+
+model EmploymentStatusPolicy {
+  id               String               @id @default(cuid())
+  organizationId   String               @db.VarChar(32)
+  version          Int
+  effectiveFrom    DateTime             @db.Date
+  createdByUserId  String               @db.VarChar(191)
+  createdAt        DateTime             @default(now()) @db.DateTime(3)
+  organization     OrganizationSettings @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  createdBy        User                 @relation("EmploymentPolicyCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  definitions      EmploymentStatusDefinition[]
+
+  @@unique([organizationId, version])
+  @@unique([organizationId, effectiveFrom])
+  @@index([organizationId, effectiveFrom, version])
+}
+
+model EmploymentStatusDefinition {
+  id                 String                 @id @default(cuid())
+  policyId           String
+  code               String                 @db.VarChar(40)
+  label              String                 @db.VarChar(100)
+  active             Boolean                @default(true)
+  headcountEligible  Boolean
+  createdAt          DateTime               @default(now()) @db.DateTime(3)
+  policy             EmploymentStatusPolicy @relation(fields: [policyId], references: [id], onDelete: Restrict)
+  employeeAssignments EmployeeAssignment[]
+
+  @@unique([policyId, code])
+  @@index([policyId, active, code])
+  @@index([policyId, headcountEligible, active])
+}
+
+model Employee {
+  id             String                @id @default(cuid())
+  employeeNumber String                @unique @db.VarChar(64)
+  firstName      String                @db.VarChar(80)
+  lastName       String                @db.VarChar(80)
+  workEmail      String                @unique @db.VarChar(320)
+  userId         String?               @unique @db.VarChar(191)
+  createdAt      DateTime              @default(now()) @db.DateTime(3)
+  updatedAt      DateTime              @updatedAt @db.DateTime(3)
+  user           User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  assignments    EmployeeAssignment[]
+
+  @@index([lastName, firstName])
+}
+
+model EmployeeAssignment {
+  id                     String                    @id @default(cuid())
+  employeeId             String
+  statusDefinitionId     String
+  departmentId           String
+  effectiveFrom          DateTime                  @db.Date
+  effectiveTo            DateTime?                 @db.Date
+  createdAt              DateTime                  @default(now()) @db.DateTime(3)
+  employee               Employee                  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  statusDefinition       EmploymentStatusDefinition @relation(fields: [statusDefinitionId], references: [id], onDelete: Restrict)
+  department             Department                @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, effectiveFrom])
+  @@index([employeeId, effectiveTo, effectiveFrom])
+  @@index([departmentId, effectiveFrom, effectiveTo])
+  @@index([statusDefinitionId, effectiveFrom, effectiveTo])
+}
+
+model DomainAuditEvent {
+  id          String    @id @default(cuid())
+  actorUserId String?   @db.VarChar(191)
+  actorRole   UserRole
+  action      String    @db.VarChar(100)
+  entityType  String    @db.VarChar(80)
+  entityId    String    @db.VarChar(191)
+  summary     String    @db.VarChar(255)
+  createdAt   DateTime  @default(now()) @db.DateTime(3)
+  actor       User?     @relation("DomainAuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([actorUserId, createdAt])
 }
