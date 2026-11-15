@@ -1,18 +1,20 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { Role } from "../../lib/auth/authorization";
 import {
   LuLayoutDashboard,
   LuUsers,
   LuClipboardCheck,
   LuWallet,
-  LuMonitor,
-  LuChartNoAxesCombined,
-  LuShieldCheck,
-  LuHistory,
-  LuCreditCard,
   LuSettings,
 } from "react-icons/lu";
+
+const roleLabels: Record<Role, string> = {
+  admin: "Administrator",
+  hr: "Human Resources",
+  employee: "Employee",
+};
 
 const items = [
   {
@@ -22,8 +24,7 @@ const items = [
     available: true,
   },
   { label: "Users & Roles", href: "/admin/users-roles", icon: LuUsers, available: true },
-  {
-    label: "Payroll Approvals",
+  { label: "Payroll Approvals",
     href: "/admin/payapprove",
     icon: LuClipboardCheck,
     available: true,
@@ -38,10 +39,19 @@ const items = [
 ];
 export default function AdminSidebar({
   onNavigate,
+  user,
 }: {
   onNavigate?: () => void;
+  user: { name: string; role: Role };
 }) {
   const pathname = usePathname();
+  const initials =
+    user.name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "U";
   return (
     <aside className="flex h-full w-64 flex-col bg-[#211D3B] text-white">
       <div className="shrink-0 px-5 pt-6 pb-5">
@@ -95,15 +105,14 @@ export default function AdminSidebar({
       </nav>
       <div className="m-3 flex shrink-0 items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ddd6fe] text-xs font-bold text-[#5b21b6]">
-          AU
+          {initials}
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-semibold">Admin User</p>
-          <p className="text-xs text-[#b9b3c9]">Company Administrator</p>
+          <p className="truncate text-sm font-semibold">{user.name}</p>
+          <p className="text-xs text-[#b9b3c9]">{roleLabels[user.role]}</p>
         </div>
       </div>
     </aside>
   );
 }
-
 

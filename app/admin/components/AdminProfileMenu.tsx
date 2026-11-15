@@ -1,4 +1,6 @@
 "use client";
+
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { LuChevronDown } from "react-icons/lu";
 import { useRouter } from "next/navigation";
@@ -36,6 +38,7 @@ export default function AdminProfileMenu({
   const [error, setError] = useState("");
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+
   async function signOut() {
     setBusy(true);
     setError("");
@@ -57,18 +60,21 @@ export default function AdminProfileMenu({
       }
       router.replace("/login");
     } catch {
-      setError("Sign out could not be completed while the server is unavailable.");
+      setError(
+        "Sign out could not be completed while the server is unavailable.",
+      );
     } finally {
       setBusy(false);
     }
   }
+
   useEffect(() => {
     if (!open) return;
-    function outside(e: MouseEvent) {
-      if (!root.current?.contains(e.target as Node)) setOpen(false);
+    function outside(event: MouseEvent) {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
     }
-    function key(e: KeyboardEvent) {
-      if (e.key === "Escape") {
+    function key(event: KeyboardEvent) {
+      if (event.key === "Escape") {
         setOpen(false);
         trigger.current?.focus();
       }
@@ -80,6 +86,15 @@ export default function AdminProfileMenu({
       document.removeEventListener("keydown", key);
     };
   }, [open]);
+
+  const initials =
+    user.name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "U";
+
   return (
     <div ref={root}>
       <button
@@ -92,16 +107,13 @@ export default function AdminProfileMenu({
         className="flex items-center gap-2 rounded-lg p-1 text-left hover:bg-purple-50 focus-visible:outline-2 focus-visible:outline-[#7C3AED]"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EDE9FE] text-xs font-bold text-[#6D28D9]">
-          {user.name
-            .split(/\s+/)
-            .filter(Boolean)
-            .slice(0, 2)
-            .map((part) => part[0]?.toUpperCase())
-            .join("")}
+          {initials}
         </span>
         <span className="hidden sm:block">
           <span className="block text-sm font-semibold">{user.name}</span>
-          <span className="block text-xs text-[#73718A]">{roleLabels[user.role]}</span>
+          <span className="block text-xs text-[#73718A]">
+            {roleLabels[user.role]}
+          </span>
         </span>
         <LuChevronDown size={16} className="hidden sm:block" />
       </button>
@@ -113,7 +125,18 @@ export default function AdminProfileMenu({
         >
           <p className="font-semibold">{user.name}</p>
           <p className="text-xs text-[#73718A]">{user.email}</p>
-          <p className="mt-1 text-xs text-[#73718A]">{roleLabels[user.role]}</p>
+          <p className="mt-1 text-xs text-[#73718A]">
+            {roleLabels[user.role]}
+          </p>
+          {user.role === "admin" && (
+            <Link
+              href="/admin/settings"
+              onClick={() => setOpen(false)}
+              className="mt-3 block rounded-lg px-2 py-2 text-sm hover:bg-purple-50"
+            >
+              Settings
+            </Link>
+          )}
           {error && (
             <p role="alert" className="mt-3 text-xs text-red-700">
               {error}

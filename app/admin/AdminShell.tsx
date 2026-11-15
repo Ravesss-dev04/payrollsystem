@@ -20,7 +20,7 @@ export default function AdminShell({
   return (
     <div className="flex h-dvh overflow-hidden bg-[#F7F6FF] font-sans text-[#17152D]">
       <div className="hidden h-full shrink-0 lg:block">
-        <AdminSidebar />
+        <AdminSidebar user={user} />
       </div>
       <dialog
         ref={dialog}
@@ -32,7 +32,7 @@ export default function AdminShell({
         className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-black/50 lg:hidden"
       >
         <div className="h-full w-64 max-w-[85vw]">
-          <AdminSidebar onNavigate={close} />
+          <AdminSidebar onNavigate={close} user={user} />
         </div>
       </dialog>
       <div

@@ -14,11 +14,15 @@ describe("Admin settings navigation", () => {
     expect(sidebarModule).not.toBeNull();
 
     const markup = renderToStaticMarkup(
-      createElement(sidebarModule!.default),
+      createElement(sidebarModule!.default, {
+        user: { name: "Riley Admin", role: "admin" },
+      }),
     );
 
     expect(markup).toContain('href="/admin/settings"');
     expect(markup).toContain('aria-current="page"');
+    expect(markup).toContain("Riley Admin");
+    expect(markup).toContain("Administrator");
     expect(markup).not.toContain('href="/admin/company"');
     expect(markup).not.toContain("<span>Company</span>");
   });
