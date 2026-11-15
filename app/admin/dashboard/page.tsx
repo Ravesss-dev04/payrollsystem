@@ -8,8 +8,10 @@ import AttendanceSummaryChart from "../components/dashboard/AttendanceSummaryCha
 import RecentActivities from "../components/dashboard/RecentActivities";
 import PendingApprovalsList from "../components/dashboard/PendingApprovalsList";
 import { dashboardData as data } from "./data";
+import { requirePagePermission } from "../../lib/auth/page-guard.server";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await requirePagePermission("dashboard:read");
   const total = data.attendance.reduce((sum, item) => sum + item.count, 0);
   return (
     <div className="min-w-0 p-4 sm:p-6 lg:p-8">

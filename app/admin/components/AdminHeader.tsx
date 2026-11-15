@@ -1,7 +1,15 @@
 import { LuCircleHelp, LuMenu, LuSearch } from "react-icons/lu";
 import AdminNotifications from "./AdminNotifications";
 import AdminProfileMenu from "./AdminProfileMenu";
-export default function AdminHeader({ onMenu }: { onMenu: () => void }) {
+import type { Role } from "../../lib/auth/authorization";
+
+export default function AdminHeader({
+  onMenu,
+  user,
+}: {
+  onMenu: () => void;
+  user: { id: string; name: string; email: string; role: Role };
+}) {
   return (
     <header className="relative z-10 flex h-[68px] shrink-0 items-center justify-between gap-2 border-b border-[#EDEAF6] bg-white px-3 text-[#17152D] sm:px-6">
       <div className="flex min-w-0 items-center gap-2">
@@ -35,7 +43,7 @@ export default function AdminHeader({ onMenu }: { onMenu: () => void }) {
         >
           <LuCircleHelp size={20} />
         </span>
-        <AdminProfileMenu />
+        <AdminProfileMenu user={user} />
       </div>
     </header>
   );

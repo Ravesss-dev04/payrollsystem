@@ -11,3 +11,146 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum UserRole {
+  admin
+  hr
+  employee
+}
+
+enum AccountStatus {
+  Active
+  Invited
+  Suspended
+  Inactive
+}
+
+enum MfaChallengePurpose {
+  Setup
+  Verify
+}
+
+enum SecurityEventType {
+  LoginSuccess
+  LoginFailure
+  LoginRateLimited
+  MfaFailure
+  MfaEnrolled
+  PasswordChanged
+  PasswordResetRequested
+  SessionCreated
+  SessionTerminated
+  SessionRevoked
+  AccountStatusChanged
+  RoleChanged
+  AccessDenied
+}
+
+model User {
+  id                         String              @id @default(cuid())
+  email                      String              @unique @db.VarChar(320)
+  name                       String              @db.VarChar(160)
+  passwordHash               String?             @db.VarChar(255)
+  role                       UserRole
+  status                     AccountStatus
+  mfaSecretEncrypted         String?             @db.Text
+  pendingMfaSecretEncrypted  String?             @db.Text
+  mfaEnabled                 Boolean             @default(false)
+  sessionVersion             Int                 @default(0)
+  lastLoginAt                DateTime?            @db.Timestamptz(6)
+  isTestAccount              Boolean             @default(false)
+  createdAt                  DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt                  DateTime            @updatedAt @db.Timestamptz(6)
+  sessions                   Session[]
+  mfaChallenges              MfaChallenge[]
+  recoveryCodes              MfaRecoveryCode[]
+  passwordResetTokens        PasswordResetToken[]
+  securityEvents             SecurityAuditEvent[] @relation("SecurityEventActor")
+  targetedSecurityEvents     SecurityAuditEvent[] @relation("SecurityEventTarget")
+
+  @@index([status, role])
+}
+
+model Session {
+  id                String    @id @default(cuid())
+  tokenHash         String    @unique @db.Char(64)
+  csrfTokenHash     String    @db.Char(64)
+  userId            String
+  sessionVersion    Int
+  createdAt         DateTime  @default(now()) @db.Timestamptz(6)
+  lastActivityAt    DateTime  @default(now()) @db.Timestamptz(6)
+  idleExpiresAt     DateTime  @db.Timestamptz(6)
+  absoluteExpiresAt DateTime  @db.Timestamptz(6)
+  revokedAt         DateTime? @db.Timestamptz(6)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([idleExpiresAt])
+  @@index([absoluteExpiresAt])
+}
+
+model MfaChallenge {
+  id          String               @id @default(cuid())
+  tokenHash   String               @unique @db.Char(64)
+  userId      String
+  purpose     MfaChallengePurpose
+  attempts    Int                  @default(0)
+  createdAt   DateTime             @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime             @db.Timestamptz(6)
+  consumedAt  DateTime?            @db.Timestamptz(6)
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model MfaRecoveryCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String    @unique @db.Char(64)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  usedAt    DateTime? @db.Timestamptz(6)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+}
+
+model PasswordResetToken {
+  id          String    @id @default(cuid())
+  tokenHash   String    @unique @db.Char(64)
+  userId      String
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime  @db.Timestamptz(6)
+  consumedAt  DateTime? @db.Timestamptz(6)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model AuthRateLimitBucket {
+  id          String    @id @db.VarChar(160)
+  count       Int       @default(0)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  expiresAt   DateTime  @db.Timestamptz(6)
+  blockedUntil DateTime? @db.Timestamptz(6)
+
+  @@index([expiresAt])
+}
+
+model SecurityAuditEvent {
+  id             String           @id @default(cuid())
+  eventType      SecurityEventType
+  userId         String?
+  targetUserId   String?
+  resourceId     String?          @db.VarChar(160)
+  sourceIp       String?          @db.VarChar(64)
+  userAgent      String?          @db.VarChar(512)
+  requestId      String?          @db.VarChar(128)
+  succeeded      Boolean
+  createdAt      DateTime         @default(now()) @db.Timestamptz(6)
+  user           User?            @relation("SecurityEventActor", fields: [userId], references: [id], onDelete: SetNull)
+  targetUser     User?            @relation("SecurityEventTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([eventType, createdAt])
+}

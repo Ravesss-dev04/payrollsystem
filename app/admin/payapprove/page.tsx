@@ -1,2 +1,7 @@
 import { PayrollList } from "../components/PayrollBatchDetails";
-export default function Page() { return <PayrollList />; }
+import { requirePagePermission } from "../../lib/auth/page-guard.server";
+
+export default async function Page() {
+  await requirePagePermission("payroll:approve");
+  return <PayrollList />;
+}
