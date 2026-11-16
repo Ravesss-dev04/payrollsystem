@@ -5,29 +5,42 @@ import { LuChevronDown } from "react-icons/lu";
 import { AdminAvatar, useAdminProfile } from "./AdminProfileContext";
 import { Modal, secondary } from "./AdminSettingsUI";
 export default function AdminProfileMenu() {
+
   const [open, setOpen] = useState(false);
+
   const [showSignOutInfo, setShowSignOutInfo] = useState(false);
+
   const root = useRef<HTMLDivElement>(null);
+
   const trigger = useRef<HTMLButtonElement>(null);
+
   const { profile } = useAdminProfile();
+
   useEffect(() => {
     if (!open) return;
     const outside = (e: MouseEvent) => {
       if (!root.current?.contains(e.target as Node)) setOpen(false);
     };
+
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
         trigger.current?.focus();
       }
     };
+
     document.addEventListener("mousedown", outside);
+
     document.addEventListener("keydown", key);
+
     return () => {
       document.removeEventListener("mousedown", outside);
       document.removeEventListener("keydown", key);
     };
+
   }, [open]);
+
+  
   return (
     <div ref={root}>
       <button
