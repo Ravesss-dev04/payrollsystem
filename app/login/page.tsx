@@ -7,7 +7,7 @@ export const instant = false;
 export default async function LoginPage() {
   const session = await getCurrentSession();
   if (session) {
-    redirect(session.role === "employee" ? "/account" : "/admin/dashboard");
+    redirect(session.role === "hr" ? "/hr/dashboard" : session.role === "employee" ? "/account" : "/admin/dashboard");
   }
   return <LoginClient />;
 }

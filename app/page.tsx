@@ -6,5 +6,5 @@ export const instant = false;
 export default async function Home() {
   const session = await getCurrentSession();
   if (!session) redirect("/login");
-  redirect(session.role === "employee" ? "/account" : "/admin/dashboard");
+  redirect(session.role === "hr" ? "/hr/dashboard" : session.role === "employee" ? "/account" : "/admin/dashboard");
 }

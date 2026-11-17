@@ -1,6 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { LuUsersRound, LuUpload, LuPlus, LuSearch, LuListFilter, LuList, LuLayoutGrid, LuFolder, LuEye, LuPencil, LuEllipsis, LuX, LuChevronLeft, LuChevronRight, LuChevronsUpDown } from "react-icons/lu";
+import TotalEmployees from "../components/TotalEmployees";
+import ActiveEmployeesCard from "../components/ActiveEmployeesCard";
+import AssignedAssetsCard from "../components/AssignAssetsCards";
+import UpcomingShiftCard from "../components/UpcomingShiftCards";
 import { ZodError } from "zod";
 import {
   createEmployeeSchema,
@@ -97,6 +102,30 @@ export function EmployeesClient({
   employmentStatuses,
 }: EmployeeWorkspace) {
   const [employees, setEmployees] = useState(initialEmployees);
+  const [search, setSearch] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const filteredEmployees = employees.filter((employee) => {
+    const query = search.trim().toLowerCase();
+    return (!query || `${employee.firstName} ${employee.lastName} ${employee.employeeNumber} ${employee.workEmail}`.toLowerCase().includes(query)) &&
+      (!departmentFilter || employee.department.id === departmentFilter) &&
+      (!statusFilter || employee.employmentStatus.code === statusFilter);
+  });
+  const [modal, setModal] = useState<"form" | "view" | "import" | null>(null);
+  const [viewing, setViewing] = useState<EmployeeSummary | null>(null);
+  const [menu, setMenu] = useState<string | null>(null);
+  const [grid, setGrid] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [sort, setSort] = useState<"name" | "department">("name");
+  const [descending, setDescending] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [importPreview, setImportPreview] = useState("");
+  const sortedEmployees = [...filteredEmployees].sort((a, b) => (sort === "name" ? `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`) : a.department.name.localeCompare(b.department.name)) * (descending ? -1 : 1));
+  const pageCount = Math.max(1, Math.ceil(sortedEmployees.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const visibleEmployees = sortedEmployees.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const [form, setForm] = useState(emptyForm);
   const [editing, setEditing] = useState<EmployeeSummary | null>(null);
   const [saving, setSaving] = useState(false);
@@ -111,6 +140,8 @@ export function EmployeesClient({
   }
 
   function startEditing(employee: EmployeeSummary) {
+    setModal("form");
+    setMenu(null);
     setEditing(employee);
     setForm({
       employeeNumber: employee.employeeNumber,
@@ -194,6 +225,7 @@ export function EmployeesClient({
       }
       setEditing(null);
       setForm(emptyForm);
+      setModal(null);
     } catch (caught) {
       setError(
         caught instanceof ZodError
@@ -221,10 +253,30 @@ export function EmployeesClient({
       : departments;
 
   return (
-    <div className="space-y-6">
-      <form
+    <div className="space-y-4 text-[#17152D]">
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4"><div className="grid h-16 w-16 shrink-0 place-items-center rounded-xl bg-[#F3E8FF] text-[#7C3AED]"><LuUsersRound size={30}/></div><div><h1 className="text-2xl font-bold tracking-tight sm:text-[28px]">Employee Management</h1><p className="mt-1 text-sm text-[#73718A]">Manage employees, shifts, schedules, assets and devices across your organization.</p></div></div>
+        <div className="flex flex-wrap gap-3"><button onClick={() => { setImportPreview(""); setModal("import"); }} className="flex h-11 items-center gap-2 rounded-lg border border-[#DED7EF] bg-white px-4 text-sm font-semibold shadow-sm hover:bg-purple-50"><LuUpload className="text-[#7C3AED]" size={19}/> Import Employees</button><button onClick={() => { resetForm(); setModal("form"); }} className="flex h-11 items-center gap-2 rounded-lg bg-[#7C3AED] px-5 text-sm font-semibold text-white shadow-sm hover:bg-[#6D28D9]"><LuPlus size={20}/> Add Employee</button></div>
+      </header>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"><TotalEmployees value={employees.length.toLocaleString()} /><ActiveEmployeesCard value={employees.filter(e => e.employmentStatus.code.toUpperCase() === "ACTIVE").length.toLocaleString()} /><AssignedAssetsCard /><UpcomingShiftCard /></div>
+      {message && <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">{message}</p>}
+      <section aria-label="Employee directory" className="rounded-xl border border-[#EDEAF6] bg-white shadow-[0_3px_12px_rgba(62,32,120,.07)]">
+        <div className="flex flex-wrap items-center gap-2 p-3">
+          <div className="relative min-w-[220px] flex-1"><LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#73718A]"/><input aria-label="Search employees" placeholder="Search employees by name, ID, or email..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="h-10 w-full rounded-lg border border-[#E1DCEC] bg-[#FAF9FE] pl-9 pr-3 text-sm outline-none focus:border-purple-500"/></div>
+          <label className="flex items-center gap-2 text-xs font-medium">Department: <select value={departmentFilter} onChange={e => { setDepartmentFilter(e.target.value); setPage(1); }} className="h-10 rounded-lg border border-[#E1DCEC] bg-white px-2 text-xs"><option value="">All Departments</option>{departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
+          <label className="flex items-center gap-2 text-xs font-medium">Status: <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }} className="h-10 rounded-lg border border-[#E1DCEC] bg-white px-2 text-xs"><option value="">All Statuses</option>{employmentStatuses.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select></label>
+          <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className="flex h-10 items-center gap-2 rounded-lg border border-[#E1DCEC] px-3 text-sm hover:bg-purple-50"><LuListFilter/> Filters</button>
+          <div className="flex gap-1"><button aria-label="List view" aria-pressed={!grid} onClick={() => setGrid(false)} className={`rounded-lg p-2 ${!grid ? "bg-purple-100 text-purple-700" : "text-[#73718A]"}`}><LuList size={20}/></button><button aria-label="Grid view" aria-pressed={grid} onClick={() => setGrid(true)} className={`rounded-lg p-2 ${grid ? "bg-purple-100 text-purple-700" : "text-[#73718A]"}`}><LuLayoutGrid size={20}/></button></div>
+        </div>
+        {showFilters && <div className="flex items-center justify-between border-t border-[#EDEAF6] px-4 py-2 text-xs text-[#73718A]">Filter by department and employment status above.<button onClick={() => { setSearch(""); setDepartmentFilter(""); setStatusFilter(""); setPage(1); }} className="font-semibold text-purple-700">Clear filters</button></div>}
+        {grid ? <div className="grid gap-3 border-t border-[#EDEAF6] p-4 sm:grid-cols-2 xl:grid-cols-3">{visibleEmployees.map(e => <button key={e.id} onClick={() => { setViewing(e); setModal("view"); }} className="rounded-xl border border-[#EDEAF6] p-4 text-left hover:bg-purple-50"><span className="font-semibold">{e.firstName} {e.lastName}</span><span className="block text-xs text-[#73718A]">{e.employeeNumber} - {e.department.name}</span></button>)}</div> : <div className="overflow-x-auto"><table className="w-full min-w-[1050px] text-left text-xs"><caption className="sr-only">Employee directory</caption><thead className="bg-[#F7F5FC] text-[#34304F]"><tr><th className="px-4 py-3"><input type="checkbox" aria-label="Select all employees on page" checked={visibleEmployees.length > 0 && visibleEmployees.every(e => selected.includes(e.id))} onChange={e => setSelected(e.target.checked ? Array.from(new Set([...selected, ...visibleEmployees.map(x => x.id)])) : selected.filter(id => !visibleEmployees.some(x => x.id === id)))}/></th>{([['Employee','name'],['Department','department'],['Role',''],['Shift',''],['Schedule Status',''],['Assigned Assets',''],['Actions','']] as const).map(([label,key]) => <th key={label} className="px-3 py-3 font-semibold">{key ? <button onClick={() => { if (sort === key) setDescending(!descending); else { setSort(key); setDescending(false); } }}>{label} <LuChevronsUpDown className="inline" aria-hidden="true" /></button> : label}</th>)}</tr></thead><tbody className="divide-y divide-[#F0EDF7]">{visibleEmployees.map(e => <tr key={e.id} className="h-16 hover:bg-[#FCFBFE]"><td className="px-4"><input type="checkbox" aria-label={`Select ${e.firstName} ${e.lastName}`} checked={selected.includes(e.id)} onChange={event => setSelected(event.target.checked ? [...selected,e.id] : selected.filter(id => id !== e.id))}/></td><td className="px-3"><div className="flex items-center gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#F3E8FF] font-semibold text-purple-700">{e.firstName[0]}{e.lastName[0]}</span><span><strong className="block whitespace-nowrap text-[#17152D]">{e.firstName} {e.lastName}</strong><span className="text-[#73718A]">{e.employeeNumber}</span></span></div></td><td className="px-3"><span className="inline-flex items-center gap-1 rounded-md bg-purple-100 px-2 py-1.5 font-medium text-purple-700"><LuFolder size={14}/>{e.department.name}</span></td><td className="px-3 text-[#73718A]">0</td><td className="px-3 text-[#73718A]">0</td><td className="px-3 text-[#73718A]">0</td><td className="px-3 text-[#73718A]">0</td><td className="relative px-3"><div className="flex gap-1">{[["View",LuEye],["Edit",LuPencil],["More",LuEllipsis]].map(([label, Icon]) => { const I = Icon as typeof LuEye; return <button key={label as string} aria-label={`${label as string} ${e.firstName} ${e.lastName}`} onClick={() => label === "View" ? (setViewing(e),setModal("view")) : label === "Edit" ? startEditing(e) : setMenu(menu === e.id ? null : e.id)} className="rounded-md bg-purple-50 p-2 text-purple-600 hover:bg-purple-100"><I size={15}/></button>; })}</div>{menu === e.id && <div className="absolute right-2 z-10 w-36 rounded-lg border border-[#EDEAF6] bg-white p-1 shadow-lg"><button onClick={() => { setViewing(e); setModal("view"); setMenu(null); }} className="block w-full rounded px-3 py-2 text-left hover:bg-purple-50">View details</button><button onClick={() => startEditing(e)} className="block w-full rounded px-3 py-2 text-left hover:bg-purple-50">Edit employee</button></div>}</td></tr>)}</tbody></table></div>}
+        {!visibleEmployees.length && <p className="px-5 py-8 text-center text-sm text-[#73718A]">No employees found.</p>}
+        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[#EDEAF6] px-4 py-3 text-xs text-[#73718A]"><span>Showing {sortedEmployees.length ? (currentPage-1)*pageSize+1 : 0}-{Math.min(currentPage*pageSize,sortedEmployees.length)} of {sortedEmployees.length.toLocaleString()} employees</span><div className="flex items-center gap-2"><label>Rows per page: <select value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }} className="rounded border border-[#EDEAF6] bg-white p-1">{[5,10,25,50].map(n => <option key={n}>{n}</option>)}</select></label><button aria-label="Previous page" disabled={currentPage===1} onClick={() => setPage(currentPage-1)} className="p-1 disabled:opacity-30"><LuChevronLeft/></button><span className="rounded-md bg-purple-600 px-2.5 py-1.5 text-white">{currentPage}</span><span>of {pageCount}</span><button aria-label="Next page" disabled={currentPage===pageCount} onClick={() => setPage(currentPage+1)} className="p-1 disabled:opacity-30"><LuChevronRight/></button></div></footer>
+      </section>
+      {modal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17152D]/40 p-4" onClick={() => { if (!saving) setModal(null); }}><div role="dialog" aria-modal="true" aria-label={modal === "form" ? (editing ? "Edit employee" : "Add employee") : modal === "view" ? "Employee details" : "Import employees"} onClick={e => e.stopPropagation()} className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white shadow-xl"><button aria-label="Close" onClick={() => setModal(null)} className="absolute right-4 top-4 rounded p-1 text-[#73718A] hover:bg-purple-50"><LuX size={20}/></button>
+      {modal === "form" && <form
         onSubmit={(event) => void submit(event)}
-        className="space-y-5 rounded-xl border border-[#EDEAF6] bg-white p-5 shadow-sm sm:p-6"
+        className="space-y-5 rounded-xl bg-white p-5 sm:p-6"
       >
         <div>
           <h2 className="text-lg font-semibold">
@@ -382,10 +434,10 @@ export function EmployeesClient({
           >
             {saving ? "Saving..." : editing ? "Save employee changes" : "Add employee"}
           </button>
-          {editing && (
+          {(
             <button
               type="button"
-              onClick={resetForm}
+              onClick={() => { resetForm(); setModal(null); }}
               disabled={saving}
               className="rounded-lg border border-[#D8D4E5] px-4 py-2.5 text-sm font-semibold hover:bg-purple-50 disabled:opacity-60"
             >
@@ -393,83 +445,10 @@ export function EmployeesClient({
             </button>
           )}
         </div>
-      </form>
-
-      <section
-        aria-labelledby="employee-records-heading"
-        className="overflow-hidden rounded-xl border border-[#EDEAF6] bg-white shadow-sm"
-      >
-        <div className="border-b border-[#EDEAF6] px-5 py-4 sm:px-6">
-          <h2 id="employee-records-heading" className="text-lg font-semibold">
-            Employee records
-          </h2>
-          <p className="mt-1 text-sm text-[#73718A]">
-            Latest assignments are shown with their effective dates.{" "}
-            {employees.length} {employees.length === 1 ? "record" : "records"}
-          </p>
-        </div>
-        {employees.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[#73718A]">
-            No employee records have been added.
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <caption className="sr-only">Employee records</caption>
-              <thead className="bg-[#F8F7FC] text-xs uppercase tracking-wide text-[#73718A]">
-                <tr>
-                  <th scope="col" className="px-5 py-3 font-semibold">
-                    Employee
-                  </th>
-                  <th scope="col" className="px-5 py-3 font-semibold">
-                    Work email
-                  </th>
-                  <th scope="col" className="px-5 py-3 font-semibold">
-                    Status on effective date
-                  </th>
-                  <th scope="col" className="px-5 py-3 font-semibold">
-                    Department
-                  </th>
-                  <th scope="col" className="px-5 py-3 font-semibold">
-                    Effective from
-                  </th>
-                  <th scope="col" className="px-5 py-3 font-semibold">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F0EDF7]">
-                {employees.map((employee) => (
-                  <tr key={employee.id} className="hover:bg-[#FCFBFE]">
-                    <th scope="row" className="px-5 py-3 font-medium">
-                      <span className="block text-[#211D3B]">
-                        {employee.firstName} {employee.lastName}
-                      </span>
-                      <span className="text-xs text-[#73718A]">
-                        {employee.employeeNumber}
-                      </span>
-                    </th>
-                    <td className="px-5 py-3">{employee.workEmail}</td>
-                    <td className="px-5 py-3">{employee.employmentStatus.label}</td>
-                    <td className="px-5 py-3">{employee.department.name}</td>
-                    <td className="px-5 py-3">{employee.effectiveFrom}</td>
-                    <td className="px-5 py-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() => startEditing(employee)}
-                        className="rounded-md px-2 py-1 font-medium text-[#6D28D9] hover:bg-purple-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7C3AED]"
-                        aria-label={`Edit ${employee.firstName} ${employee.lastName}`}
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      </form>}
+        {modal === "view" && viewing && <div className="space-y-3 p-6"><h2 className="text-xl font-bold">Employee details</h2><p className="text-lg font-semibold">{viewing.firstName} {viewing.lastName}</p><p>{viewing.employeeNumber} - {viewing.workEmail}</p><p>Department: {viewing.department.name}</p><p>Employment status: {viewing.employmentStatus.label}</p><p>Effective from: {viewing.effectiveFrom}</p><button onClick={() => startEditing(viewing)} className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white">Edit employee</button></div>}
+        {modal === "import" && <div className="space-y-4 p-6"><h2 className="text-xl font-bold">Import Employees</h2><p className="text-sm text-[#73718A]">Choose a CSV file to preview. This preview does not save or import records.</p><input type="file" accept=".csv,text/csv" onChange={async e => { const file = e.target.files?.[0]; setImportPreview(file ? (await file.text()).slice(0, 5000) : ""); }} className="text-sm"/>{importPreview && <pre className="max-h-64 overflow-auto rounded-lg bg-[#F7F6FF] p-3 text-xs">{importPreview}</pre>}</div>}
+      </div></div>}
     </div>
   );
 }

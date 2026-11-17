@@ -37,6 +37,7 @@ export default function AdminProfileMenu({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const root = useRef<HTMLDivElement>(null);
+
   const trigger = useRef<HTMLButtonElement>(null);
 
   async function signOut() {
@@ -80,11 +81,14 @@ export default function AdminProfileMenu({
       }
     }
     document.addEventListener("mousedown", outside);
+
     document.addEventListener("keydown", key);
+
     return () => {
       document.removeEventListener("mousedown", outside);
       document.removeEventListener("keydown", key);
     };
+
   }, [open]);
 
   const initials =

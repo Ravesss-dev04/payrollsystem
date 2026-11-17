@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { Prisma, SecurityEventType } from "../../generated/prisma/client";
 import { prisma } from "../db";
 import {
@@ -113,6 +114,7 @@ const sessionStore: SessionStore = {
 };
 
 export async function getCurrentSession(): Promise<SessionPrincipal | null> {
+  await connection();
   const config = loadSecurityConfig();
   const cookieStore = await cookies();
   const cookieName = config.secureCookies
