@@ -1,7 +1,10 @@
-import Image from "next/image";
+import { redirect } from "next/navigation";
+import { getCurrentSession } from "./lib/auth/session.server";
 
-export default function Home() {
-  return (
-    <div></div>
-  );
+export const instant = false;
+
+export default async function Home() {
+  const session = await getCurrentSession();
+  if (!session) redirect("/login");
+  redirect(session.role === "hr" ? "/hr/dashboard" : session.role === "employee" ? "/account" : "/admin/dashboard");
 }

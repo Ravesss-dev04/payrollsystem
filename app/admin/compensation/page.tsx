@@ -18,6 +18,7 @@ import {
   LuSearch,
   LuX,
 } from "react-icons/lu";
+import { DemoDataNotice } from "../components/DemoDataNotice";
 import {
   grades as initialGrades,
   allowances as initialAllowances,
@@ -794,6 +795,9 @@ export default function CompensationPage() {
           </select>
         </label>
       </div>
+      <div className="mt-4">
+        <DemoDataNotice />
+      </div>
       <div
         role="tablist"
         aria-label="Compensation sections"
@@ -1332,7 +1336,6 @@ function Detail({
               string,
               string,
             ],
-            
             ["Current Pay Grade", e?.grade || "—"] as [string, string],
           ]
         : []),

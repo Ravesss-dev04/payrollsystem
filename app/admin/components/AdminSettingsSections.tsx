@@ -97,11 +97,11 @@ export function OrganizationSettings({
           {initialCompany.name} · {initialCompany.status}
         </p>
         <p className="mt-2 text-sm text-[#73718A]">
-          Legal details, addresses and branches are managed in Company
-          Management.
+          Legal details and addresses are managed separately. Organization
+          structure is available in settings.
         </p>
-        <Link className={`${secondary} mt-4`} href="/admin/company">
-          Open Company Management
+        <Link className={`${secondary} mt-4`} href="/admin/settings/structure">
+          Open organization structure
         </Link>
       </section>
       <p className="text-xs text-[#73718A]">
