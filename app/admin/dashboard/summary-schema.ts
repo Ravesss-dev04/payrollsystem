@@ -12,6 +12,7 @@ export const dashboardSnapshotSchema = z.object({
     byRole: z.object({
       admin: z.number().int().nonnegative(),
       hr: z.number().int().nonnegative(),
+      tl: z.number().int().nonnegative(),
       employee: z.number().int().nonnegative(),
     }),
     byStatus: z.record(z.enum(accountStatusValues), z.number().int().nonnegative()),

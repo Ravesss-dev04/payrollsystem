@@ -19,6 +19,8 @@ export async function requirePagePermission(permission?: Permission) {
       role: session.role,
       permission,
       actorId: session.userId,
+      grantedPermissions: session.grantedPermissions,
+      deniedPermissions: session.deniedPermissions,
     })
   ) {
     const config = loadSecurityConfig();

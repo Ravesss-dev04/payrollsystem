@@ -34,9 +34,9 @@ Dashboard is read-only; review links route to the designated workflow.
 6. **Leave Management**.
 7. **Announcements** — company-wide HR announcements.
 
-### Team Leader (Deferred; not a runtime role)
+### Team Leader (Recognized; workspace deferred)
 
-This legacy target section is not part of the approved implementation. Only `admin`, `hr`, and `employee` are recognized; do not expose Team Leader navigation or APIs.
+The `tl` role is recognized but has no permissions or team-scoped workspace until trusted assignment and authorization rules are implemented. Do not expose Team Leader navigation or APIs before then.
 
 1. **Dashboard** — assigned-team operational summary.
 2. **Team Management**.

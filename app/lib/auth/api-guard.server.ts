@@ -67,6 +67,8 @@ export async function requireApiPermission(
       role: session.role,
       permission,
       actorId: session.userId,
+      grantedPermissions: session.grantedPermissions,
+      deniedPermissions: session.deniedPermissions,
     })
   ) {
     await writeSecurityEvent({

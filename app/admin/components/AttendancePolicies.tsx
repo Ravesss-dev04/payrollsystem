@@ -1,68 +1,968 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { LuArchive, LuCalendarClock, LuCircleCheck, LuCopy, LuEye, LuLayers, LuCirclePause, LuPencil, LuPlus, LuSearch, LuX } from "react-icons/lu";
-import { initialBranches, initialDepartments } from "../company/data";
-import { input, primary, secondary } from "./UsersTable";
 
-type Status = "Draft" | "Active" | "Paused" | "Archived";
-type Policy = { id:string; name:string; code:string; description:string; status:Status; startDate:string; endDate:string; scope:string; targets:string[]; precedence:number; schedule:string; days:string[]; start:string; end:string; breakStart:string; breakEnd:string; breakPaid:boolean; timezone:string; grace:number; missingIn:string; missingOut:string; undertime:string; absence:string; correction:boolean; overtime:boolean; approval:boolean; groups:string; minimum:string; rounding:string; maximum:string; history:string[] };
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const base: Policy = { id:"", name:"", code:"", description:"", status:"Draft", startDate:"2026-01-01", endDate:"", scope:"All employees", targets:[], precedence:100, schedule:"Fixed", days:days.slice(0,5), start:"09:00", end:"18:00", breakStart:"12:00", breakEnd:"13:00", breakPaid:false, timezone:"Asia/Manila", grace:15, missingIn:"Request correction", missingOut:"Request correction", undertime:"Flag for review", absence:"Review before classification", correction:true, overtime:true, approval:true, groups:"All eligible employees", minimum:"", rounding:"", maximum:"", history:[] };
-const initial:Policy[] = [
-  {...base,id:"1",name:"Regular Work Schedule",code:"REGULAR",description:"Default schedule for office employees",status:"Active",history:["Created", "Activated"]},
-  {...base,id:"2",name:"Operations Shift",code:"OPERATIONS",description:"Schedule for operations staff",status:"Active",scope:"Specific departments",targets:["Operations"],precedence:20,start:"06:00",end:"15:00",history:["Created", "Activated"]},
-  {...base,id:"3",name:"Night Shift",code:"NIGHT",description:"Overnight operations schedule",status:"Paused",scope:"Specific employee groups",targets:["Night shift"],precedence:10,start:"22:00",end:"07:00",breakStart:"02:00",breakEnd:"03:00",history:["Created", "Activated", "Paused"]},
-  {...base,id:"4",name:"Flexible Schedule",code:"FLEX",description:"For approved flexible workers",status:"Active",scope:"Specific employee groups",targets:["Flexible workers"],precedence:20,schedule:"Flexible",history:["Created", "Activated"]},
-];
-const badge:Record<Status,string> = {Draft:"bg-gray-100 text-gray-600",Active:"bg-green-100 text-green-700",Paused:"bg-amber-100 text-amber-700",Archived:"bg-slate-100 text-slate-600"};
-function StatusBadge({status}:{status:Status}) { return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${badge[status]}`}>{status}</span>; }
-function Dialog({title,children,onClose,wide=false}:{title:string;children:React.ReactNode;onClose:()=>void;wide?:boolean}) {
- const ref=useRef<HTMLDialogElement>(null);
- useEffect(()=>{const d=ref.current; const previous=document.activeElement as HTMLElement|null; d?.showModal(); return ()=>{d?.close();previous?.focus();};},[]);
- return <dialog ref={ref} aria-label={title} onCancel={e=>{e.preventDefault();onClose();}} className={`fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] ${wide?"max-w-5xl":"max-w-lg"} overflow-hidden rounded-2xl bg-white p-0 text-[#17152D] shadow-2xl backdrop:bg-black/50`}><div className="flex max-h-[90dvh] flex-col"><header className="flex shrink-0 items-center justify-between border-b border-[#EDEAF6] px-5 py-4"><h2 className="text-lg font-bold">{title}</h2><button onClick={onClose} aria-label="Close" className="rounded-lg p-2 hover:bg-purple-50"><LuX /></button></header>{children}</div></dialog>;
-}
-function Field({label,children}:{label:string;children:React.ReactNode}) {return <label className="block text-sm font-medium text-[#57556B]">{label}<span className="mt-1 block">{children}</span></label>;}
-function formatSchedule(p:Policy){return `${p.days.join(", ")} · ${p.schedule === "Flexible" ? "Flexible" : `${p.start}–${p.end}${p.end <= p.start ? " (overnight)" : ""}`}`;}
-function scopeText(p:Policy){return p.scope === "All employees" ? p.scope : `${p.scope}: ${p.targets.join(", ") || "None selected"}`;}
-function conflicts(p:Policy, policies:Policy[]) {return policies.filter(q=>q.id!==p.id && q.status==="Active" && p.status==="Active" && (!p.endDate || p.endDate>=q.startDate) && (!q.endDate || q.endDate>=p.startDate) && (p.scope!==q.scope || p.scope==="All employees" || p.targets.some(t=>q.targets.includes(t))));}
-function Editor({policy,source,policies,onClose,onSave}:{policy:Policy|null;source:Policy|null;policies:Policy[];onClose:()=>void;onSave:(p:Policy)=>void}) {
- const [form,setForm]=useState<Policy>(()=>policy ? structuredClone(policy) : source ? {...structuredClone(source),id:"",name:`${source.name} Copy`,code:`${source.code}-COPY`,status:"Draft",scope:"Specific employee groups",targets:[],history:[]} : structuredClone(base));
- const [original]=useState(()=>JSON.stringify(form)); const [discard,setDiscard]=useState(false); const [errors,setErrors]=useState<string[]>([]); const [ack,setAck]=useState(false);
- const set=<K extends keyof Policy>(key:K,value:Policy[K])=>setForm(f=>({...f,[key]:value}));
- const close=()=>JSON.stringify(form)!==original?setDiscard(true):onClose();
- const overlaps=conflicts(form,policies);
- function save(){const e:string[]=[]; if(!form.name.trim())e.push("Policy name is required."); if(!form.code.trim()||policies.some(p=>p.id!==form.id&&p.code.toLowerCase()===form.code.trim().toLowerCase()))e.push("Enter a unique policy code."); if(policies.some(p=>p.id!==form.id&&p.name.toLowerCase()===form.name.trim().toLowerCase()))e.push("Policy name must be unique."); if(!form.startDate || (form.endDate&&form.endDate<form.startDate))e.push("Enter a valid effective date range."); if(!form.days.length)e.push("Select at least one workday."); if(form.schedule==="Fixed"&&(!form.start||!form.end||form.start===form.end))e.push("Enter distinct shift start and end times."); if(form.schedule==="Fixed" && ((!!form.breakStart!==!!form.breakEnd)||(form.breakStart&&form.breakStart===form.breakEnd)))e.push("Enter valid break start and end times."); if(form.schedule==="Fixed"&&form.breakStart&&form.breakEnd&&form.start&&form.end){const mins=(v:string)=>Number(v.slice(0,2))*60+Number(v.slice(3));const duration=(a:string,b:string)=>(mins(b)-mins(a)+1440)%1440; if(duration(form.start,form.breakStart)>=duration(form.start,form.end)||duration(form.start,form.breakStart)+duration(form.breakStart,form.breakEnd)>duration(form.start,form.end))e.push("Break must fit within the shift, including overnight shifts.");} if(!Number.isFinite(form.grace)||form.grace<0)e.push("Grace period must be nonnegative."); if(form.scope!=="All employees"&&!form.targets.length)e.push("Select or enter an applicable scope."); if(!Number.isFinite(form.precedence)||form.precedence<1)e.push("Enter a valid precedence of at least 1."); if(form.overtime && [form.minimum,form.rounding,form.maximum].some(v=>v!==""&&(!Number.isFinite(Number(v))||Number(v)<=0)))e.push("Overtime limits must be positive numbers."); if(form.overtime && form.minimum && form.maximum && Number(form.minimum)>Number(form.maximum))e.push("Minimum overtime cannot exceed the maximum."); if(overlaps.length && (!ack||overlaps.some(q=>q.precedence===form.precedence)))e.push("Resolve equal precedence and acknowledge overlapping policies before saving."); if(e.length){setErrors(e);return;} onSave({...form,name:form.name.trim(),code:form.code.trim(),id:form.id||crypto.randomUUID(),history:[...form.history,policy?"Edited":"Created",...(!policy&&form.status==="Active"?["Activated"]:[])]}); }
- const options=form.scope==="Specific departments"?initialDepartments.map(x=>x.name):form.scope==="Specific branches"?initialBranches.map(x=>x.name):[];
- return <><Dialog title={policy?"Edit Attendance Policy":"Create Attendance Policy"} onClose={close} wide><div className="min-h-0 space-y-6 overflow-y-auto p-5 sm:p-6">
- {errors.length>0&&<div role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{errors.map(e=><p key={e}>{e}</p>)}</div>}
- <section><h3 className="mb-3 font-bold">General Information</h3><div className="grid gap-4 sm:grid-cols-2"><Field label="Policy name"><input className={input} value={form.name} onChange={e=>set("name",e.target.value)} /></Field><Field label="Policy code"><input className={input} value={form.code} onChange={e=>set("code",e.target.value)} /></Field><Field label="Description"><input className={input} value={form.description} onChange={e=>set("description",e.target.value)} /></Field><Field label="Status"><select className={input} value={form.status} onChange={e=>set("status",e.target.value as Status)}>{(policy ? [policy.status] : ["Draft","Active"]).map(s=><option key={s}>{s}</option>)}</select></Field><Field label="Effective start date"><input type="date" className={input} value={form.startDate} onChange={e=>set("startDate",e.target.value)} /></Field><Field label="End date (optional)"><input type="date" className={input} value={form.endDate} onChange={e=>set("endDate",e.target.value)} /></Field></div></section>
- <section><h3 className="mb-3 font-bold">Employee Applicability</h3><div className="grid gap-4 sm:grid-cols-2"><Field label="Scope"><select className={input} value={form.scope} onChange={e=>{setForm(f=>({...f,scope:e.target.value,targets:[]}));setAck(false);}}>{["All employees","Specific departments","Specific branches","Specific employee groups"].map(x=><option key={x}>{x}</option>)}</select></Field><Field label="Precedence (lower number takes priority)"><input type="number" min="1" className={input} value={form.precedence} onChange={e=>{set("precedence",Number(e.target.value));setAck(false);}} /></Field></div>{options.length>0&&<div className="mt-3 flex flex-wrap gap-3">{options.map(x=><label key={x} className="text-sm"><input type="checkbox" checked={form.targets.includes(x)} onChange={e=>set("targets",e.target.checked?[...form.targets,x]:form.targets.filter(t=>t!==x))} /> {x}</label>)}</div>}{form.scope==="Specific employee groups"&&<div className="mt-3"><Field label="Employee groups (comma separated)"><input className={input} value={form.targets.join(", ")} onChange={e=>set("targets",e.target.value.split(",").map(x=>x.trim()).filter(Boolean))} /></Field></div>}<p className="mt-2 text-xs text-[#73718A]">The default company policy applies where no higher-priority policy applies. Rules are not merged.</p></section>
- <section><h3 className="mb-3 font-bold">Work Schedule</h3><div className="grid gap-4 sm:grid-cols-2"><Field label="Schedule type"><select className={input} value={form.schedule} onChange={e=>set("schedule",e.target.value)}><option>Fixed</option><option>Flexible</option></select></Field><Field label="Timezone"><input className={input} value={form.timezone} onChange={e=>set("timezone",e.target.value)} /></Field></div><div className="my-3 flex flex-wrap gap-3">{days.map(d=><label key={d} className="text-sm"><input type="checkbox" checked={form.days.includes(d)} onChange={e=>set("days",e.target.checked?days.filter(x=>x===d||form.days.includes(x)):form.days.filter(x=>x!==d))} /> {d}</label>)}</div>{form.schedule==="Fixed"?<div className="grid gap-4 sm:grid-cols-2">{([ ["Shift start","start"],["Shift end","end"],["Break start","breakStart"],["Break end","breakEnd"] ] as const).map(([label,key])=><Field key={key} label={label}><input type="time" className={input} value={form[key]} onChange={e=>set(key,e.target.value)} /></Field>)}</div>:<p className="text-sm text-[#73718A]">Flexible schedules do not require fixed shift or break times.</p>}<label className="mt-3 block text-sm"><input type="checkbox" checked={form.breakPaid} onChange={e=>set("breakPaid",e.target.checked)} /> Paid break</label></section>
- <section><h3 className="mb-3 font-bold">Attendance Rules</h3><div className="grid gap-4 sm:grid-cols-2"><Field label="Late grace period (minutes)"><input type="number" min="0" className={input} value={form.grace} onChange={e=>set("grace",Number(e.target.value))} /></Field>{([ ["Missing time-in handling","missingIn"],["Missing time-out handling","missingOut"],["Undertime classification","undertime"],["Absence classification","absence"] ] as const).map(([label,key])=><Field label={label} key={key}><input className={input} value={form[key]} onChange={e=>set(key,e.target.value)} /></Field>)}</div><label className="mt-3 block text-sm"><input type="checkbox" checked={form.correction} onChange={e=>set("correction",e.target.checked)} /> Attendance corrections require approval</label><p className="mt-2 text-xs text-[#73718A]">Grace is for attendance classification and does not establish paid time.</p></section>
- <section><h3 className="mb-3 font-bold">Overtime Rules</h3><div className="space-y-2 text-sm"><label className="block"><input type="checkbox" checked={form.overtime} onChange={e=>setForm(f=>({...f,overtime:e.target.checked,approval:e.target.checked?f.approval:false}))} /> Overtime requests enabled</label>{form.overtime&&<label className="block"><input type="checkbox" checked={form.approval} onChange={e=>set("approval",e.target.checked)} /> Prior approval required</label>}</div>{form.overtime&&<div className="mt-3 grid gap-4 sm:grid-cols-2">{([ ["Eligible employee groups","groups"],["Minimum request duration (minutes)","minimum"],["Rounding increment (minutes)","rounding"],["Maximum request limit (minutes)","maximum"] ] as const).map(([label,key])=><Field key={key} label={label}><input className={input} type={key==="groups"?"text":"number"} min={key==="groups"?undefined:"1"} value={form[key]} onChange={e=>set(key,e.target.value)} /></Field>)}</div>}<p className="mt-2 text-xs text-[#73718A]">Eligibility and approval do not determine legally applicable overtime pay.</p></section>
- <section className="rounded-xl bg-[#F7F6FF] p-4"><h3 className="font-bold">Review Summary</h3><p className="mt-2 text-sm">{form.name || "Untitled policy"} · {form.status} · {scopeText(form)}</p><p className="mt-1 text-sm">{formatSchedule(form)} · Precedence {form.precedence} · Grace {form.grace} minutes</p>{overlaps.length>0&&<div className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800"><p>Potential overlap: {overlaps.map(x=>`${x.name} (priority ${x.precedence})`).join(", ")}. Different scope types may overlap; review actual assignments. Equal precedence must be resolved.</p><label className="mt-2 block"><input type="checkbox" checked={ack} onChange={e=>setAck(e.target.checked)} /> I reviewed the scope and precedence for these overlaps.</label></div>}</section>
- </div><footer className="flex shrink-0 justify-end gap-3 border-t border-[#EDEAF6] p-4"><button className={secondary} onClick={close}>Cancel</button><button className={primary} onClick={save}>Save Policy</button></footer></Dialog>{discard&&<Dialog title="Discard Unsaved Changes?" onClose={()=>setDiscard(false)}><div className="p-5"><p className="text-sm">You have unsaved changes to this attendance policy. Leaving now will discard them.</p><div className="mt-6 flex justify-end gap-3"><button className={secondary} onClick={()=>setDiscard(false)}>Keep Editing</button><button className={primary} onClick={onClose}>Discard Changes</button></div></div></Dialog>}</>;
-}
-function Details({p,onClose,onEdit,onDuplicate,onStatus}:{p:Policy;onClose:()=>void;onEdit:()=>void;onDuplicate:()=>void;onStatus:()=>void}) {
- const [section,setSection]=useState("Overview"); const ref=useRef<HTMLDialogElement>(null);
- useEffect(()=>{const d=ref.current;const previous=document.activeElement as HTMLElement|null;d?.showModal();return()=>{d?.close();previous?.focus();};},[]);
- const rows:Record<string,string[][]>={Overview:[["Policy code",p.code],["Schedule type",p.schedule],["Workdays",p.days.join(", ")],["Shift",p.schedule==="Flexible"?"Flexible":`${p.start}–${p.end}${p.end<=p.start?" (overnight)":""}`],["Break",p.schedule==="Flexible"?"Flexible":`${p.breakStart || "—"}–${p.breakEnd || "—"} (${p.breakPaid?"paid":"unpaid"})`],["Timezone",p.timezone],["Effective period",`${p.startDate} – ${p.endDate||"Ongoing"}`],["Status",p.status]],Rules:[["Late attendance",`Flag after ${p.grace} minutes grace for classification`],["Missing time-in",p.missingIn],["Missing time-out",p.missingOut],["Undertime",p.undertime],["Absence",p.absence],["Overtime requests",p.overtime?`Enabled; ${p.approval?"prior approval required":"no prior approval required"}`:"Disabled"],["Eligible groups",p.groups],["Minimum / rounding / maximum",`${p.minimum||"Not set"} / ${p.rounding||"Not set"} / ${p.maximum||"Not set"} minutes`],["Correction approval",p.correction?"Required":"Not required"]],"Assigned Employees":[["Configured scope",scopeText(p)],["Precedence",`${p.precedence} (lower takes priority)`],["Assignment note","Demo scope only; no employee roster is assigned."]],History:p.history.map((x,i)=>[`${i+1}`,x])};
- return <dialog ref={ref} aria-label="Policy details" onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget)onClose();}} className="fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-full max-w-xl overflow-y-auto bg-white p-0 text-[#17152D] shadow-2xl backdrop:bg-black/50"><div className="p-5 sm:p-6"><div className="flex justify-between gap-3"><div><h2 className="text-xl font-bold">{p.name}</h2><p className="mt-1 text-sm text-[#73718A]">{p.description}</p><div className="mt-3"><StatusBadge status={p.status}/></div></div><button onClick={onClose} aria-label="Close details" className="self-start rounded-lg p-2 hover:bg-purple-50"><LuX /></button></div><div className="mt-5 flex overflow-x-auto border-b border-[#EDEAF6]">{Object.keys(rows).map(x=><button key={x} onClick={()=>setSection(x)} className={`shrink-0 border-b-2 px-3 py-3 text-sm ${section===x?"border-purple-600 font-semibold text-purple-700":"border-transparent text-[#73718A]"}`}>{x}</button>)}</div><dl className="mt-4 divide-y divide-[#EDEAF6]">{rows[section].map(([k,v],i)=><div key={`${k}-${i}`} className="grid grid-cols-2 gap-3 py-3 text-sm"><dt className="text-[#73718A]">{k}</dt><dd className="break-words font-medium">{v}</dd></div>)}</dl><div className="mt-6 flex flex-wrap gap-2"><button className={secondary} onClick={onClose}>Close</button>{p.status!=="Archived"&&<button className={secondary} onClick={onEdit}>Edit Policy</button>}<button className={secondary} onClick={onDuplicate}>Duplicate Policy</button>{(p.status==="Active"||p.status==="Paused")&&<button className={primary} onClick={onStatus}>{p.status==="Active"?"Pause":"Resume"}</button>}</div></div></dialog>;
-}
-export default function AttendancePolicies(){
- const [policies,setPolicies]=useState(initial); const [query,setQuery]=useState("");const [department,setDepartment]=useState("All Departments");const [status,setStatus]=useState("All Statuses");const [detail,setDetail]=useState<string|null>(null);const [editor,setEditor]=useState<{policy:Policy|null;source:Policy|null}|null>(null);const [transition,setTransition]=useState<{policy:Policy;next:Status}|null>(null);const [effective,setEffective]=useState("");const [transitionAck,setTransitionAck]=useState(false);const [notice,setNotice]=useState("");
- const visible=policies.filter(p=>`${p.name} ${p.description} ${formatSchedule(p)} ${p.schedule}`.toLowerCase().includes(query.toLowerCase())&&(department==="All Departments"||p.scope==="All employees"||(p.scope==="Specific departments"&&p.targets.includes(department)))&&(status==="All Statuses"||p.status===status));
- const selected=policies.find(p=>p.id===detail); const metrics=[{label:"Total Policies",value:policies.length,Icon:LuLayers},{label:"Active Policies",value:policies.filter(p=>p.status==="Active").length,Icon:LuCircleCheck},{label:"Paused Policies",value:policies.filter(p=>p.status==="Paused").length,Icon:LuCirclePause},{label:"Archived Policies",value:policies.filter(p=>p.status==="Archived").length,Icon:LuArchive}];
- function change(p:Policy,next:Status){setEffective("");setTransitionAck(false);setTransition({policy:p,next});}
- function action(label:string,icon:React.ReactNode,fn:()=>void){return <button title={label} aria-label={label} onClick={fn} className="rounded-lg p-2 text-[#5c5684] hover:bg-purple-100 hover:text-purple-700">{icon}</button>;}
- return <section className="rounded-2xl border border-[#EDEAF6] bg-white p-4 shadow-sm sm:p-5"><div className="flex items-start gap-3"><span className="rounded-xl bg-purple-100 p-3 text-purple-600"><LuCalendarClock size={22}/></span><div><h2 className="text-xl font-bold">Attendance Policies</h2><p className="mt-1 text-sm text-[#73718A]">Configure attendance rules, work schedules, breaks, and overtime settings.</p></div></div><p className="mt-3 text-xs text-[#73718A]">Illustrative demo policies. Attendance settings require review against applicable labor requirements and do not calculate pay.</p>{notice&&<p role="status" className="mt-3 rounded-lg bg-green-50 p-3 text-sm text-green-700">{notice}</p>}
- <div className="mt-5 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 xl:grid-cols-4">{metrics.map(({label,value,Icon})=><div key={label} className="flex items-center gap-3 rounded-xl border border-[#EDEAF6] p-4 shadow-sm"><span className="rounded-xl bg-purple-100 p-3 text-purple-600"><Icon size={20}/></span><div><p className="text-xs text-[#73718A]">{label}</p><p className="mt-1 text-2xl font-bold">{value}</p></div></div>)}</div>
- <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_190px_170px_auto]"><label className="relative"><span className="sr-only">Search policies</span><LuSearch className="absolute top-3.5 left-3 text-[#73718A]"/><input className={`${input} pl-9`} placeholder="Search policies by name, schedule, or description..." value={query} onChange={e=>setQuery(e.target.value)}/></label><label><span className="sr-only">Department</span><select className={input} value={department} onChange={e=>setDepartment(e.target.value)}><option>All Departments</option>{initialDepartments.map(d=><option key={d.id}>{d.name}</option>)}</select></label><label><span className="sr-only">Status</span><select className={input} value={status} onChange={e=>setStatus(e.target.value)}>{["All Statuses","Draft","Active","Paused","Archived"].map(x=><option key={x}>{x}</option>)}</select></label><button className={primary} onClick={()=>setEditor({policy:null,source:null})}><LuPlus/> Add Policy</button></div>
- {(query||department!=="All Departments"||status!=="All Statuses")&&<button className="mt-3 text-sm font-semibold text-purple-700 underline" onClick={()=>{setQuery("");setDepartment("All Departments");setStatus("All Statuses");}}>Reset Filters</button>}
- <div className="mt-4 overflow-x-auto"><table className="w-full min-w-[950px] text-left text-sm"><thead className="bg-[#F7F6FF] text-xs text-[#57556B]"><tr>{["Policy Name","Work Schedule","Grace Period","Overtime Rule","Status","Actions"].map(x=><th key={x} className="px-3 py-3 font-semibold">{x}</th>)}</tr></thead><tbody className="divide-y divide-[#EDEAF6]">{visible.map(p=><tr key={p.id}><td className="px-3 py-3"><div className="flex items-center gap-3"><span className="rounded-lg bg-purple-100 p-2 text-purple-600"><LuCalendarClock/></span><div><div className="font-semibold">{p.name}</div><div className="max-w-52 text-xs text-[#73718A]">{p.description}</div></div></div></td><td className="px-3 py-3"><div className="font-medium">{p.days.join(", ")}</div><div className="text-xs text-[#73718A]">{p.schedule==="Flexible"?"Flexible":`${p.start} – ${p.end}${p.end<=p.start?" (+1 day)":""}`} · {p.schedule}</div></td><td className="px-3 py-3"><div>{p.grace} minutes</div><div className="text-xs text-[#73718A]">Late classification</div></td><td className="px-3 py-3"><div>{p.overtime?"Requests enabled":"Disabled"}</div><div className="text-xs text-[#73718A]">{p.overtime?(p.approval?"Prior approval required":"No prior approval"):"No requests"}{p.overtime&&p.minimum?` · ${p.minimum} min minimum`:""}</div></td><td className="px-3 py-3"><StatusBadge status={p.status}/></td><td className="whitespace-nowrap px-3 py-3">{action(`View ${p.name}`,<LuEye/>,()=>setDetail(p.id))}{p.status!=="Archived"&&action(`Edit ${p.name}`,<LuPencil/>,()=>setEditor({policy:p,source:null}))}{action(`Duplicate ${p.name}`,<LuCopy/>,()=>setEditor({policy:null,source:p}))}{(p.status==="Active"||p.status==="Paused")&&action(`${p.status==="Active"?"Pause":"Resume"} ${p.name}`,<LuCirclePause/>,()=>change(p,p.status==="Active"?"Paused":"Active"))}{p.status==="Draft"&&<button className="p-2 text-xs font-semibold text-purple-700" onClick={()=>change(p,"Active")}>Activate</button>}{p.status!=="Archived"&&action(`Archive ${p.name}`,<LuArchive/>,()=>change(p,"Archived"))}</td></tr>)}</tbody></table>{visible.length===0&&<div className="p-10 text-center text-sm text-[#73718A]">No policies match your filters.</div>}</div><p className="mt-4 text-xs text-[#73718A]">Showing {visible.length} of {policies.length} policies</p>
- {selected&&<Details p={selected} onClose={()=>setDetail(null)} onEdit={()=>{setDetail(null);setEditor({policy:selected,source:null});}} onDuplicate={()=>{setDetail(null);setEditor({policy:null,source:selected});}} onStatus={()=>{setDetail(null);change(selected,selected.status==="Active"?"Paused":"Active");}}/>}
- {editor&&<Editor policy={editor.policy} source={editor.source} policies={policies} onClose={()=>setEditor(null)} onSave={p=>{setPolicies(old=>old.some(x=>x.id===p.id)?old.map(x=>x.id===p.id?p:x):[...old,p]);setEditor(null);setNotice("Policy saved in this demo.");}}/>}
- {transition&&<Dialog title={`${transition.next==="Archived"?"Archive":transition.next==="Paused"?"Pause":transition.policy.status==="Draft"?"Activate":"Resume"} Policy?`} onClose={()=>setTransition(null)}><div className="p-5 text-sm"><p><strong>{transition.policy.name}</strong>: {transition.policy.status} → {transition.next}</p><p className="mt-2 text-[#73718A]">Scope: {scopeText(transition.policy)}. This changes demo configuration only; history remains available. Review the effective date and downstream attendance processes before applying changes.</p>{transition.next==="Active"&&conflicts({...transition.policy,status:"Active"},policies).length>0&&<p className="mt-3 rounded-lg bg-amber-50 p-3 text-amber-800">Potential overlap with {conflicts({...transition.policy,status:"Active"},policies).map(p=>`${p.name} (priority ${p.precedence})`).join(", ")}. Review scope and precedence before activating. Equal priorities must be resolved in the editor.<label className="mt-2 block"><input type="checkbox" checked={transitionAck} onChange={e=>setTransitionAck(e.target.checked)} /> I reviewed these scopes and priorities.</label></p>}{transition.next==="Archived"&&transition.policy.status==="Active"&&<div className="mt-4"><Field label="Archive effective date"><input type="date" className={input} value={effective} min={new Date().toISOString().slice(0,10)} onChange={e=>setEffective(e.target.value)}/></Field><p className="mt-1 text-xs text-[#73718A]">Choose today to archive now. Future scheduling is not implemented in this demo.</p></div>}<div className="mt-6 flex justify-end gap-3"><button className={secondary} onClick={()=>setTransition(null)}>Cancel</button><button className={primary} disabled={(transition.next==="Active"&&conflicts({...transition.policy,status:"Active"},policies).length>0&&(!transitionAck||conflicts({...transition.policy,status:"Active"},policies).some(p=>p.precedence===transition.policy.precedence)))||(transition.next==="Archived"&&transition.policy.status==="Active"&&effective!==new Date().toISOString().slice(0,10))} onClick={()=>{setPolicies(old=>old.map(p=>p.id===transition.policy.id?{...p,status:transition.next,endDate:transition.next==="Archived"&&effective?effective:p.endDate,history:[...p.history,`${transition.next==="Active"?"Activated":transition.next}${effective?` effective ${effective}`:""}`]}:p));setTransition(null);setNotice("Policy status updated in this demo.");}}>Confirm Action</button></div></div></Dialog>}
- </section>;
+import { useEffect, useMemo, useState } from "react";
+import {
+  LuArchive,
+  LuCalendarClock,
+  LuCirclePause,
+  LuEye,
+  LuPencil,
+  LuPlus,
+  LuSearch,
+} from "react-icons/lu";
+import type { AttendancePolicyInput } from "../../lib/attendance/policy-schemas";
+import {
+  Avatar,
+  Badge,
+  input,
+  Modal,
+  primary,
+  secondary,
+} from "./UsersTable";
+
+type PolicyStatus = "Active" | "Paused" | "Archived";
+type PolicyScope = "AllEmployees" | "Departments" | "Employees";
+type ScheduleType = "Fixed" | "Flexible";
+type PolicySummary = {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  status: PolicyStatus;
+  scope: PolicyScope;
+  precedence: number;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  scheduleType: ScheduleType;
+  timeZone: string;
+  workDays: string[];
+  shiftStart: string | null;
+  shiftEnd: string | null;
+  gracePeriodMinutes: number;
+  overtimeEnabled: boolean;
+  departmentNames: string[];
+  assignedEmployeeCount: number;
+  updatedAt: string;
+};
+type PolicyDetails = PolicySummary & Omit<AttendancePolicyInput, "departmentIds" | "employeeIds"> & {
+  departments: Array<{ id: string; name: string }>;
+  employees: Array<{ id: string; employeeNumber: string; name: string; email: string }>;
+  createdAt: string;
+  createdBy: { name: string; email: string };
+  updatedBy: { name: string; email: string } | null;
+  assignedEmployees: Array<{
+    id: string;
+    employeeNumber: string;
+    name: string;
+    email: string;
+    department: { id: string; name: string } | null;
+    assignmentSource: string;
+  }>;
+  history: Array<{
+    id: string;
+    action: string;
+    summary: string;
+    createdAt: string;
+    actor: { name: string; email: string } | null;
+  }>;
+};
+type DepartmentOption = { id: string; name: string };
+type EmployeeOption = {
+  id: string;
+  employeeNumber: string;
+  name: string;
+  email: string;
+  department: DepartmentOption;
+};
+type PolicyOptions = {
+  departments: DepartmentOption[];
+  employees: EmployeeOption[];
+  timeZone: string;
+};
+type ApiError = { error?: string };
+
+function csrfToken(): string | null {
+  const values = document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .filter(
+      (part) =>
+        part.startsWith("__Host-payroll-csrf=") ||
+        part.startsWith("payroll-csrf="),
+    )
+    .map((part) => part.slice(part.indexOf("=") + 1));
+  return values.length === 1 && /^[A-Za-z0-9_-]{43}$/.test(values[0])
+    ? values[0]
+    : null;
 }
 
+async function request<T>(
+  url: string,
+  init: RequestInit = {},
+): Promise<T> {
+  const headers = new Headers(init.headers);
+  if (init.method && init.method !== "GET") {
+    const token = csrfToken();
+    if (!token) throw new Error("Session validation required");
+    headers.set("x-csrf-token", token);
+  }
+  if (init.body && !headers.has("content-type")) {
+    headers.set("content-type", "application/json");
+  }
+  const response = await fetch(url, {
+    ...init,
+    headers,
+    cache: "no-store",
+  });
+  const body = (await response.json()) as T & ApiError;
+  if (!response.ok) throw new Error(body.error ?? "request_failed");
+  return body;
+}
+
+function message(error: unknown) {
+  const code = error instanceof Error ? error.message : "";
+  if (code === "policy_overlap") {
+    return "Another non-archived policy with the same scope and precedence overlaps these dates and assignments.";
+  }
+  if (code === "policy_conflict") {
+    return "A policy with this name or code already exists.";
+  }
+  if (code === "policy_scope_invalid") {
+    return "The selected department or employee is no longer eligible. Refresh the options and try again.";
+  }
+  if (code === "policy_status_conflict") {
+    return "The policy status changed or this archived policy can no longer be modified.";
+  }
+  if (code === "forbidden") {
+    return "You are not authorized to manage attendance policies.";
+  }
+  return "The request could not be completed. Refresh and try again.";
+}
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function emptyForm(timeZone: string): AttendancePolicyInput {
+  return {
+    name: "",
+    code: "",
+    description: null,
+    status: "Active",
+    scope: "AllEmployees",
+    precedence: 100,
+    effectiveFrom: today(),
+    effectiveTo: null,
+    scheduleType: "Fixed",
+    timeZone,
+    workDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    shiftStart: "09:00",
+    shiftEnd: "18:00",
+    breakStart: "12:00",
+    breakEnd: "13:00",
+    breakPaid: false,
+    gracePeriodMinutes: 15,
+    missingTimeInRule: "Request correction",
+    missingTimeOutRule: "Request correction",
+    earlyOutRule: "Flag for review",
+    undertimeRule: "Flag for review",
+    absenceRule: "Review before classification",
+    correctionsRequireApproval: true,
+    overtimeEnabled: false,
+    overtimePriorApproval: false,
+    overtimeMinimumMinutes: null,
+    overtimeRoundingMinutes: null,
+    overtimeMaximumMinutes: null,
+    departmentIds: [],
+    employeeIds: [],
+  };
+}
+
+function formFromPolicy(policy: PolicyDetails): AttendancePolicyInput {
+  return {
+    name: policy.name,
+    code: policy.code,
+    description: policy.description,
+    status: policy.status,
+    scope: policy.scope,
+    precedence: policy.precedence,
+    effectiveFrom: policy.effectiveFrom,
+    effectiveTo: policy.effectiveTo,
+    scheduleType: policy.scheduleType,
+    timeZone: policy.timeZone,
+    workDays: policy.workDays as AttendancePolicyInput["workDays"],
+    shiftStart: policy.shiftStart,
+    shiftEnd: policy.shiftEnd,
+    breakStart: policy.breakStart,
+    breakEnd: policy.breakEnd,
+    breakPaid: policy.breakPaid,
+    gracePeriodMinutes: policy.gracePeriodMinutes,
+    missingTimeInRule: policy.missingTimeInRule,
+    missingTimeOutRule: policy.missingTimeOutRule,
+    earlyOutRule: policy.earlyOutRule,
+    undertimeRule: policy.undertimeRule,
+    absenceRule: policy.absenceRule,
+    correctionsRequireApproval: policy.correctionsRequireApproval,
+    overtimeEnabled: policy.overtimeEnabled,
+    overtimePriorApproval: policy.overtimePriorApproval,
+    overtimeMinimumMinutes: policy.overtimeMinimumMinutes,
+    overtimeRoundingMinutes: policy.overtimeRoundingMinutes,
+    overtimeMaximumMinutes: policy.overtimeMaximumMinutes,
+    departmentIds: policy.departments.map(({ id }) => id),
+    employeeIds: policy.employees.map(({ id }) => id),
+  };
+}
+
+function dateTime(value: string) {
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime())
+    ? "Unavailable"
+    : new Intl.DateTimeFormat(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(parsed);
+}
+
+function scheduleSummary(policy: PolicySummary) {
+  const days = policy.workDays.join(", ");
+  const hours =
+    policy.scheduleType === "Flexible"
+      ? "Flexible"
+      : `${policy.shiftStart ?? "—"}–${policy.shiftEnd ?? "—"}`;
+  return `${days || "No days"} · ${hours}`;
+}
+
+function statusStyle(status: PolicyStatus) {
+  if (status === "Active") return "bg-green-100 text-green-700";
+  if (status === "Paused") return "bg-amber-100 text-amber-800";
+  return "bg-slate-100 text-slate-600";
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block text-sm font-medium text-[#57556B]">
+      {label}
+      <span className="mt-1 block">{children}</span>
+    </label>
+  );
+}
+
+export default function AttendancePolicies({
+  canManage = true,
+}: {
+  canManage?: boolean;
+}) {
+  const [policies, setPolicies] = useState<PolicySummary[]>([]);
+  const [queryInput, setQueryInput] = useState("");
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const [busy, setBusy] = useState(true);
+  const [error, setError] = useState("");
+  const [reloadCounter, setReloadCounter] = useState(0);
+  const [dialog, setDialog] = useState<
+    | { kind: "new" }
+    | { kind: "detail"; id: string }
+    | { kind: "edit"; id: string }
+    | null
+  >(null);
+  const [detail, setDetail] = useState<PolicyDetails | null>(null);
+  const [detailBusy, setDetailBusy] = useState(false);
+  const [detailError, setDetailError] = useState("");
+  const [options, setOptions] = useState<PolicyOptions | null>(null);
+  const [optionsError, setOptionsError] = useState("");
+  const [form, setForm] = useState<AttendancePolicyInput | null>(null);
+  const [initialForm, setInitialForm] = useState<AttendancePolicyInput | null>(null);
+  const [formBusy, setFormBusy] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [transitionBusy, setTransitionBusy] = useState(false);
+  const [transitionError, setTransitionError] = useState("");
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setQuery(queryInput.trim().replace(/\s+/g, " ")),
+      250,
+    );
+    return () => window.clearTimeout(timer);
+  }, [queryInput]);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    const params = new URLSearchParams({ q: query, status });
+    void Promise.resolve().then(() => {
+      if (!active) return;
+      setBusy(true);
+      setError("");
+    });
+    fetch(`/api/admin/attendance-policies?${params}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const body = (await response.json()) as {
+          policies: PolicySummary[];
+          error?: string;
+        };
+        if (!response.ok) throw new Error(body.error ?? "request_failed");
+        return body;
+      })
+      .then((body) => {
+        if (active) setPolicies(body.policies);
+      })
+      .catch((cause: unknown) => {
+        if (active && !(cause instanceof DOMException && cause.name === "AbortError")) {
+          setError(message(cause));
+        }
+      })
+      .finally(() => {
+        if (active) setBusy(false);
+      });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [query, status, reloadCounter]);
+
+  useEffect(() => {
+    if (!dialog || (dialog.kind !== "detail" && dialog.kind !== "edit")) return;
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (!active) return;
+      setDetailBusy(true);
+      setDetailError("");
+    });
+    request<PolicyDetails>(
+      `/api/admin/attendance-policies/${encodeURIComponent(dialog.id)}`,
+    )
+      .then((policy) => {
+        if (active) {
+          setDetail(policy);
+          if (dialog.kind === "edit") {
+            const initial = formFromPolicy(policy);
+            setForm(initial);
+            setInitialForm(initial);
+          }
+        }
+      })
+      .catch((cause: unknown) => {
+        if (active) setDetailError(message(cause));
+      })
+      .finally(() => {
+        if (active) setDetailBusy(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [dialog]);
+
+  useEffect(() => {
+    if (!dialog || (dialog.kind !== "new" && dialog.kind !== "edit")) return;
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (!active) return;
+      setOptionsError("");
+    });
+    request<PolicyOptions>("/api/admin/attendance-policies/options")
+      .then((value) => {
+        if (!active) return;
+        setOptions(value);
+        if (dialog.kind === "new") {
+          const initial = emptyForm(value.timeZone);
+          setForm((current) => current ?? initial);
+          setInitialForm((current) => current ?? initial);
+        }
+      })
+      .catch((cause: unknown) => {
+        if (active) setOptionsError(message(cause));
+      });
+    return () => {
+      active = false;
+    };
+  }, [dialog]);
+
+  const updateForm = <K extends keyof AttendancePolicyInput>(
+    key: K,
+    value: AttendancePolicyInput[K],
+  ) => {
+    setForm((current) => (current ? { ...current, [key]: value } : current));
+    setFormError("");
+  };
+  const selectedSummary = dialog?.kind === "detail"
+    ? policies.find(({ id }) => id === dialog.id)
+    : null;
+  const groupedEmployees = useMemo(() => {
+    const byDepartment = new Map<string, EmployeeOption[]>();
+    for (const employee of options?.employees ?? []) {
+      const group = byDepartment.get(employee.department.name) ?? [];
+      group.push(employee);
+      byDepartment.set(employee.department.name, group);
+    }
+    return byDepartment;
+  }, [options]);
+
+  async function savePolicy(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!form) return;
+    setFormBusy(true);
+    setFormError("");
+    try {
+      await request(
+        dialog?.kind === "edit" && detail
+          ? `/api/admin/attendance-policies/${encodeURIComponent(detail.id)}`
+          : "/api/admin/attendance-policies",
+        {
+          method: dialog?.kind === "edit" ? "PATCH" : "POST",
+          body: JSON.stringify({
+            ...form,
+            description: form.description?.trim() || null,
+          }),
+        },
+      );
+      setDialog(null);
+      setDetail(null);
+      setForm(null);
+      setInitialForm(null);
+      setReloadCounter((current) => current + 1);
+    } catch (cause) {
+      setFormError(message(cause));
+    } finally {
+      setFormBusy(false);
+    }
+  }
+
+  async function transitionPolicy(
+    policy: PolicySummary,
+    next: PolicyStatus,
+  ) {
+    const verb =
+      next === "Archived" ? "archive" : next === "Paused" ? "pause" : "resume";
+    if (!window.confirm(`${verb[0]?.toUpperCase()}${verb.slice(1)} "${policy.name}"?`)) {
+      return;
+    }
+    setTransitionBusy(true);
+    setTransitionError("");
+    try {
+      await request(
+        `/api/admin/attendance-policies/${encodeURIComponent(policy.id)}/status`,
+        {
+          method: "POST",
+          body: JSON.stringify({ status: next }),
+        },
+      );
+      setDetail(null);
+      setDialog(null);
+      setReloadCounter((current) => current + 1);
+    } catch (cause) {
+      setTransitionError(message(cause));
+    } finally {
+      setTransitionBusy(false);
+    }
+  }
+
+  function openEditor() {
+    setForm(null);
+    setInitialForm(null);
+    setFormError("");
+    setOptionsError("");
+    setDialog({ kind: "new" });
+  }
+
+  const workDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+  const formHasFields = form && options;
+
+  return (
+    <section className="rounded-2xl border border-[#EDEAF6] bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <span className="rounded-xl bg-purple-100 p-3 text-purple-700">
+            <LuCalendarClock size={22} aria-hidden="true" />
+          </span>
+          <div>
+            <h2 className="text-xl font-bold">Attendance Policies</h2>
+            <p className="mt-1 text-sm text-[#73718A]">
+              Configure persisted work schedules, attendance rules, and applicability.
+            </p>
+          </div>
+        </div>
+        {canManage ? (
+          <button className={primary} onClick={openEditor}>
+            <LuPlus aria-hidden="true" /> Create policy
+          </button>
+        ) : null}
+      </div>
+
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+        <div className="relative flex-1">
+          <LuSearch className="absolute top-3.5 left-3 text-[#73718A]" aria-hidden="true" />
+          <input
+            aria-label="Search attendance policies"
+            className={`${input} pl-9`}
+            value={queryInput}
+            onChange={(event) => setQueryInput(event.currentTarget.value)}
+            placeholder="Search policy, schedule, or affected department..."
+          />
+        </div>
+        <select
+          aria-label="Filter attendance policies by status"
+          className={`${input} sm:w-48`}
+          value={status}
+          onChange={(event) => setStatus(event.currentTarget.value)}
+        >
+          <option value="all">All statuses</option>
+          <option value="Active">Active</option>
+          <option value="Paused">Paused</option>
+          <option value="Archived">Archived</option>
+        </select>
+      </div>
+
+      {error ? (
+        <div role="alert" className="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          <p>{error}</p>
+          <button className="mt-2 font-semibold underline" onClick={() => setReloadCounter((current) => current + 1)}>
+            Retry
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[900px] text-left text-sm">
+              <thead className="bg-[#F7F6FF] text-xs text-[#57556B]">
+                <tr>
+                  {["Policy", "Work schedule", "Grace period", "Overtime", "Affected departments", "Status", "Actions"].map((heading) => (
+                    <th key={heading} scope="col" className="px-3 py-3 font-semibold">{heading}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody aria-busy={busy}>
+                {policies.map((policy) => (
+                  <tr key={policy.id} className="border-b border-[#f0eef6]">
+                    <td className="px-3 py-3">
+                      <p className="font-semibold">{policy.name}</p>
+                      <p className="mt-1 text-xs text-[#73718A]">{policy.code}</p>
+                    </td>
+                    <td className="px-3 py-3">
+                      <p>{scheduleSummary(policy)}</p>
+                      <p className="mt-1 text-xs text-[#73718A]">{policy.timeZone}</p>
+                    </td>
+                    <td className="px-3 py-3">{policy.gracePeriodMinutes} min</td>
+                    <td className="px-3 py-3">{policy.overtimeEnabled ? "Configured" : "Disabled"}</td>
+                    <td className="max-w-[240px] px-3 py-3">
+                      {policy.departmentNames.length
+                        ? policy.departmentNames.join(", ")
+                        : policy.scope === "Employees"
+                          ? `${policy.assignedEmployeeCount} selected employees`
+                          : "No assigned departments"}
+                    </td>
+                    <td className="px-3 py-3">
+                      <Badge>
+                        <span className={`rounded-full px-2 py-0.5 ${statusStyle(policy.status)}`}>{policy.status}</span>
+                      </Badge>
+                    </td>
+                    <td className="px-3 py-3">
+                      <div className="flex gap-1">
+                        <button
+                          className="rounded-lg p-2 text-[#73718A] hover:bg-purple-50 hover:text-purple-700"
+                          aria-label={`View ${policy.name}`}
+                          onClick={() => {
+                            setDetail(null);
+                            setDialog({ kind: "detail", id: policy.id });
+                          }}
+                        >
+                          <LuEye aria-hidden="true" />
+                        </button>
+                        {canManage && policy.status !== "Archived" ? (
+                          <button
+                            className="rounded-lg p-2 text-[#73718A] hover:bg-purple-50 hover:text-purple-700"
+                            aria-label={`Edit ${policy.name}`}
+                            onClick={() => {
+                              setDetail(null);
+                              setForm(null);
+                              setDialog({ kind: "edit", id: policy.id });
+                            }}
+                          >
+                            <LuPencil aria-hidden="true" />
+                          </button>
+                        ) : null}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {busy ? (
+            <p className="py-8 text-center text-sm text-[#73718A]">Loading policies…</p>
+          ) : policies.length === 0 ? (
+            <p className="py-12 text-center text-sm text-[#73718A]">
+              No attendance policies match this search and status.
+            </p>
+          ) : null}
+          <p className="mt-4 text-xs text-[#73718A]">{policies.length} matching policies</p>
+        </>
+      )}
+
+      {dialog?.kind === "detail" ? (
+        <Modal
+          title={detail?.name ?? selectedSummary?.name ?? "Policy details"}
+          subtitle="Persisted configuration, applicability, and audit history."
+          onClose={() => {
+            setDialog(null);
+            setDetail(null);
+          }}
+          wide
+        >
+          {detailBusy && !detail ? <p className="py-8 text-center text-sm">Loading policy…</p> : null}
+          {detailError ? <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{detailError}</p> : null}
+          {detail ? (
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-bold">{detail.name}</h3>
+                  <p className="text-sm text-[#73718A]">{detail.code} · {detail.description || "No description"}</p>
+                </div>
+                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusStyle(detail.status)}`}>{detail.status}</span>
+              </div>
+              <section>
+                <h3 className="font-semibold">Overview</h3>
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  <div><dt className="text-[#73718A]">Effective period</dt><dd>{detail.effectiveFrom} – {detail.effectiveTo ?? "Ongoing"}</dd></div>
+                  <div><dt className="text-[#73718A]">Applicability</dt><dd>{detail.scope === "AllEmployees" ? "All employees" : detail.scope === "Departments" ? detail.departments.map((item) => item.name).join(", ") : `${detail.employees.length} selected employees`}</dd></div>
+                  <div><dt className="text-[#73718A]">Created</dt><dd>{dateTime(detail.createdAt)} · {detail.createdBy.name}</dd></div>
+                  <div><dt className="text-[#73718A]">Last updated</dt><dd>{dateTime(detail.updatedAt)} · {detail.updatedBy?.name ?? "Not modified"}</dd></div>
+                </dl>
+              </section>
+              <section>
+                <h3 className="font-semibold">Rules</h3>
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  <div><dt className="text-[#73718A]">Schedule</dt><dd>{scheduleSummary(detail)}</dd></div>
+                  <div><dt className="text-[#73718A]">Break</dt><dd>{detail.breakStart && detail.breakEnd ? `${detail.breakStart}–${detail.breakEnd} · ${detail.breakPaid ? "paid" : "unpaid"}` : "No fixed break"}</dd></div>
+                  <div><dt className="text-[#73718A]">Grace period</dt><dd>{detail.gracePeriodMinutes} minutes</dd></div>
+                  <div><dt className="text-[#73718A]">Missing time in</dt><dd>{detail.missingTimeInRule}</dd></div>
+                  <div><dt className="text-[#73718A]">Missing time out</dt><dd>{detail.missingTimeOutRule}</dd></div>
+                  <div><dt className="text-[#73718A]">Early out</dt><dd>{detail.earlyOutRule}</dd></div>
+                  <div><dt className="text-[#73718A]">Undertime</dt><dd>{detail.undertimeRule}</dd></div>
+                  <div><dt className="text-[#73718A]">Absence</dt><dd>{detail.absenceRule}</dd></div>
+                  <div><dt className="text-[#73718A]">Corrections</dt><dd>{detail.correctionsRequireApproval ? "Approval required" : "Approval not required"}</dd></div>
+                  <div><dt className="text-[#73718A]">Overtime</dt><dd>{detail.overtimeEnabled ? `${detail.overtimePriorApproval ? "Prior approval required" : "Prior approval not required"} · min ${detail.overtimeMinimumMinutes ?? "—"} / rounding ${detail.overtimeRoundingMinutes ?? "—"} / max ${detail.overtimeMaximumMinutes ?? "—"} minutes` : "Disabled"}</dd></div>
+                </dl>
+              </section>
+              <section>
+                <h3 className="font-semibold">Assigned employees ({detail.assignedEmployees.length})</h3>
+                {detail.assignedEmployees.length ? (
+                  <div className="mt-3 max-h-64 space-y-2 overflow-y-auto">
+                    {detail.assignedEmployees.map((employee) => (
+                      <div key={employee.id} className="flex items-center gap-3 rounded-lg bg-[#F7F6FF] p-3">
+                        <Avatar name={employee.name} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold">{employee.name}</p>
+                          <p className="text-xs text-[#73718A]">{employee.employeeNumber} · {employee.email}</p>
+                        </div>
+                        <span className="text-xs text-[#73718A]">{employee.department?.name ?? employee.assignmentSource}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : <p className="mt-2 text-sm text-[#73718A]">No employees are currently affected.</p>}
+              </section>
+              <section>
+                <h3 className="font-semibold">History</h3>
+                {detail.history.length ? (
+                  <ol className="mt-3 space-y-2">
+                    {detail.history.map((event) => (
+                      <li key={event.id} className="rounded-lg bg-[#F7F6FF] p-3 text-sm">
+                        <p className="font-medium">{event.summary}</p>
+                        <p className="mt-1 text-xs text-[#73718A]">{event.actor?.name ?? "System"} · {dateTime(event.createdAt)}</p>
+                      </li>
+                    ))}
+                  </ol>
+                ) : <p className="mt-2 text-sm text-[#73718A]">No policy history recorded.</p>}
+              </section>
+              {transitionError ? <p role="alert" className="text-sm text-red-700">{transitionError}</p> : null}
+              <div className="flex flex-wrap justify-end gap-2 border-t border-[#EDEAF6] pt-4">
+                <button className={secondary} onClick={() => setDialog(null)}>Close</button>
+                {canManage && detail.status !== "Archived" ? (
+                  <>
+                    <button
+                      className={secondary}
+                      disabled={transitionBusy}
+                      onClick={() => {
+                        setForm(null);
+                        setDialog({ kind: "edit", id: detail.id });
+                      }}
+                    >
+                      Edit policy
+                    </button>
+                    <button
+                      className={secondary}
+                      disabled={transitionBusy}
+                      onClick={() => void transitionPolicy(detail, detail.status === "Active" ? "Paused" : "Active")}
+                    >
+                      <LuCirclePause aria-hidden="true" /> {detail.status === "Active" ? "Pause" : "Resume"}
+                    </button>
+                    <button
+                      className={secondary}
+                      disabled={transitionBusy}
+                      onClick={() => void transitionPolicy(detail, "Archived")}
+                    >
+                      <LuArchive aria-hidden="true" /> Archive
+                    </button>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+        </Modal>
+      ) : null}
+
+      {(dialog?.kind === "new" || dialog?.kind === "edit") && (
+        <Modal
+          title={dialog.kind === "new" ? "Create attendance policy" : "Edit attendance policy"}
+          subtitle="Configure the policy fields supported by this system."
+          onClose={() => {
+            setDialog(null);
+            setForm(null);
+            setInitialForm(null);
+          }}
+          wide
+          dirty={
+            !!form &&
+            !!initialForm &&
+            JSON.stringify(form) !== JSON.stringify(initialForm)
+          }
+        >
+          {optionsError ? <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{optionsError}</p> : null}
+          {!formHasFields ? (
+            <p className="py-8 text-center text-sm text-[#73718A]">{detailBusy ? "Loading policy…" : "Loading applicable departments and employees…"}</p>
+          ) : (
+            <form onSubmit={savePolicy} className="space-y-6">
+              <section>
+                <h3 className="mb-3 font-bold">General information</h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Policy name"><input className={input} value={form.name} maxLength={160} required onChange={(event) => updateForm("name", event.currentTarget.value)} /></Field>
+                  <Field label="Policy code"><input className={input} value={form.code} maxLength={40} required onChange={(event) => updateForm("code", event.currentTarget.value.toUpperCase())} /></Field>
+                  <Field label="Description"><input className={input} value={form.description ?? ""} maxLength={1000} onChange={(event) => updateForm("description", event.currentTarget.value || null)} /></Field>
+                  {dialog.kind === "new" ? (
+                    <Field label="Initial status">
+                      <select className={input} value={form.status} onChange={(event) => updateForm("status", event.currentTarget.value as PolicyStatus)}>
+                        <option value="Active">Active</option>
+                        <option value="Paused">Paused</option>
+                      </select>
+                    </Field>
+                  ) : (
+                    <Field label="Current status"><input className={input} value={form.status} readOnly /></Field>
+                  )}
+                  <Field label="Effective start date"><input className={input} type="date" value={form.effectiveFrom} required onChange={(event) => updateForm("effectiveFrom", event.currentTarget.value)} /></Field>
+                  <Field label="Effective end date (optional)"><input className={input} type="date" value={form.effectiveTo ?? ""} onChange={(event) => updateForm("effectiveTo", event.currentTarget.value || null)} /></Field>
+                </div>
+              </section>
+              <section>
+                <h3 className="mb-3 font-bold">Employee applicability</h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Scope">
+                    <select
+                      className={input}
+                      value={form.scope}
+                      onChange={(event) => {
+                        const scope = event.currentTarget.value as PolicyScope;
+                        setForm((current) => current ? {
+                          ...current,
+                          scope,
+                          departmentIds: [],
+                          employeeIds: [],
+                        } : current);
+                      }}
+                    >
+                      <option value="AllEmployees">All employees</option>
+                      <option value="Departments">Specific departments</option>
+                      <option value="Employees">Specific employees</option>
+                    </select>
+                  </Field>
+                  <Field label="Precedence (lower number wins)">
+                    <input className={input} type="number" min={1} max={100000} value={form.precedence} onChange={(event) => updateForm("precedence", Number(event.currentTarget.value))} />
+                  </Field>
+                </div>
+                {form.scope === "Departments" ? (
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {options.departments.map((department) => (
+                      <label key={department.id} className="flex items-center gap-2 rounded-lg bg-[#F7F6FF] p-3 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={form.departmentIds.includes(department.id)}
+                          onChange={(event) => updateForm(
+                            "departmentIds",
+                            event.currentTarget.checked
+                              ? [...form.departmentIds, department.id]
+                              : form.departmentIds.filter((id) => id !== department.id),
+                          )}
+                        />
+                        {department.name}
+                      </label>
+                    ))}
+                  </div>
+                ) : null}
+                {form.scope === "Employees" ? (
+                  <div className="mt-3 max-h-60 space-y-3 overflow-y-auto">
+                    {[...groupedEmployees.entries()].map(([department, employees]) => (
+                      <fieldset key={department} className="rounded-xl border border-[#EDEAF6] p-3">
+                        <legend className="px-1 text-sm font-semibold">{department}</legend>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {employees.map((employee) => (
+                            <label key={employee.id} className="flex items-start gap-2 rounded-lg bg-[#F7F6FF] p-3 text-sm">
+                              <input
+                                type="checkbox"
+                                className="mt-1"
+                                checked={form.employeeIds.includes(employee.id)}
+                                onChange={(event) => updateForm(
+                                  "employeeIds",
+                                  event.currentTarget.checked
+                                    ? [...form.employeeIds, employee.id]
+                                    : form.employeeIds.filter((id) => id !== employee.id),
+                                )}
+                              />
+                              <span><span className="block font-medium">{employee.name}</span><span className="text-xs text-[#73718A]">{employee.employeeNumber} · {employee.email}</span></span>
+                            </label>
+                          ))}
+                        </div>
+                      </fieldset>
+                    ))}
+                  </div>
+                ) : null}
+                <p className="mt-2 text-xs text-[#73718A]">
+                  Policies are not merged. The employee-specific policy takes precedence over a department policy, which takes precedence over the all-employees policy.
+                </p>
+              </section>
+              <section>
+                <h3 className="mb-3 font-bold">Work schedule</h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Schedule type">
+                    <select
+                      className={input}
+                      value={form.scheduleType}
+                      onChange={(event) => {
+                        const scheduleType = event.currentTarget.value as ScheduleType;
+                        setForm((current) => current ? {
+                          ...current,
+                          scheduleType,
+                          ...(scheduleType === "Flexible" ? {
+                            shiftStart: null,
+                            shiftEnd: null,
+                            breakStart: null,
+                            breakEnd: null,
+                            breakPaid: false,
+                          } : {
+                            shiftStart: "09:00",
+                            shiftEnd: "18:00",
+                          }),
+                        } : current);
+                      }}
+                    >
+                      <option value="Fixed">Fixed</option>
+                      <option value="Flexible">Flexible</option>
+                    </select>
+                  </Field>
+                  <Field label="Time zone">
+                    <input className={input} value={form.timeZone} maxLength={64} required onChange={(event) => updateForm("timeZone", event.currentTarget.value)} />
+                  </Field>
+                </div>
+                <div className="my-3 flex flex-wrap gap-4">
+                  {workDays.map((day) => (
+                    <label key={day} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={form.workDays.includes(day)}
+                        onChange={(event) => updateForm(
+                          "workDays",
+                          event.currentTarget.checked
+                            ? [...form.workDays, day]
+                            : form.workDays.filter((item) => item !== day),
+                        )}
+                      />
+                      {day}
+                    </label>
+                  ))}
+                </div>
+                {form.scheduleType === "Fixed" ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label="Shift start"><input className={input} type="time" required value={form.shiftStart ?? ""} onChange={(event) => updateForm("shiftStart", event.currentTarget.value || null)} /></Field>
+                    <Field label="Shift end"><input className={input} type="time" required value={form.shiftEnd ?? ""} onChange={(event) => updateForm("shiftEnd", event.currentTarget.value || null)} /></Field>
+                    <Field label="Break start (optional)"><input className={input} type="time" value={form.breakStart ?? ""} onChange={(event) => updateForm("breakStart", event.currentTarget.value || null)} /></Field>
+                    <Field label="Break end (optional)"><input className={input} type="time" value={form.breakEnd ?? ""} onChange={(event) => updateForm("breakEnd", event.currentTarget.value || null)} /></Field>
+                  </div>
+                ) : <p className="text-sm text-[#73718A]">Flexible schedule: no fixed shift or break times are stored.</p>}
+                <label className="mt-3 flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={form.breakPaid} disabled={!form.breakStart || !form.breakEnd} onChange={(event) => updateForm("breakPaid", event.currentTarget.checked)} />
+                  Break is paid
+                </label>
+              </section>
+              <section>
+                <h3 className="mb-3 font-bold">Attendance rules</h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Late grace period (minutes)"><input className={input} type="number" min={0} max={1440} value={form.gracePeriodMinutes} onChange={(event) => updateForm("gracePeriodMinutes", Number(event.currentTarget.value))} /></Field>
+                  <Field label="Missing time-in rule"><input className={input} maxLength={120} value={form.missingTimeInRule} onChange={(event) => updateForm("missingTimeInRule", event.currentTarget.value)} /></Field>
+                  <Field label="Missing time-out rule"><input className={input} maxLength={120} value={form.missingTimeOutRule} onChange={(event) => updateForm("missingTimeOutRule", event.currentTarget.value)} /></Field>
+                  <Field label="Early-out rule"><input className={input} maxLength={120} value={form.earlyOutRule} onChange={(event) => updateForm("earlyOutRule", event.currentTarget.value)} /></Field>
+                  <Field label="Undertime rule"><input className={input} maxLength={120} value={form.undertimeRule} onChange={(event) => updateForm("undertimeRule", event.currentTarget.value)} /></Field>
+                  <Field label="Absence rule"><input className={input} maxLength={120} value={form.absenceRule} onChange={(event) => updateForm("absenceRule", event.currentTarget.value)} /></Field>
+                </div>
+                <label className="mt-3 flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={form.correctionsRequireApproval} onChange={(event) => updateForm("correctionsRequireApproval", event.currentTarget.checked)} />
+                  Attendance corrections require approval
+                </label>
+                <p className="mt-2 text-xs text-[#73718A]">Grace periods affect attendance classification only and do not determine paid time.</p>
+              </section>
+              <section>
+                <h3 className="mb-3 font-bold">Overtime rules</h3>
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={form.overtimeEnabled}
+                    onChange={(event) => {
+                      const enabled = event.currentTarget.checked;
+                      setForm((current) => current ? {
+                        ...current,
+                        overtimeEnabled: enabled,
+                        overtimePriorApproval: enabled,
+                        ...(enabled ? {} : {
+                          overtimeMinimumMinutes: null,
+                          overtimeRoundingMinutes: null,
+                          overtimeMaximumMinutes: null,
+                        }),
+                      } : current);
+                    }}
+                  />
+                  Overtime requests enabled
+                </label>
+                {form.overtimeEnabled ? (
+                  <>
+                    <label className="mt-3 flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={form.overtimePriorApproval} onChange={(event) => updateForm("overtimePriorApproval", event.currentTarget.checked)} />
+                      Prior approval required
+                    </label>
+                    <div className="mt-3 grid gap-4 sm:grid-cols-3">
+                      <Field label="Minimum request (minutes)"><input className={input} type="number" min={1} max={1440} value={form.overtimeMinimumMinutes ?? ""} onChange={(event) => updateForm("overtimeMinimumMinutes", event.currentTarget.value ? Number(event.currentTarget.value) : null)} /></Field>
+                      <Field label="Rounding increment (minutes)"><input className={input} type="number" min={1} max={1440} value={form.overtimeRoundingMinutes ?? ""} onChange={(event) => updateForm("overtimeRoundingMinutes", event.currentTarget.value ? Number(event.currentTarget.value) : null)} /></Field>
+                      <Field label="Maximum request (minutes)"><input className={input} type="number" min={1} max={1440} value={form.overtimeMaximumMinutes ?? ""} onChange={(event) => updateForm("overtimeMaximumMinutes", event.currentTarget.value ? Number(event.currentTarget.value) : null)} /></Field>
+                    </div>
+                  </>
+                ) : null}
+                <p className="mt-2 text-xs text-[#73718A]">These settings do not calculate legally applicable overtime pay.</p>
+              </section>
+              {formError ? <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{formError}</p> : null}
+              <div className="flex justify-end gap-3 border-t border-[#EDEAF6] pt-4">
+                <button type="button" className={secondary} onClick={() => setDialog(null)}>Cancel</button>
+                <button className={primary} disabled={formBusy}>
+                  {formBusy ? "Saving…" : "Save policy"}
+                </button>
+              </div>
+            </form>
+          )}
+        </Modal>
+      )}
+    </section>
+  );
+}

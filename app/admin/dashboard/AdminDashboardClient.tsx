@@ -146,6 +146,7 @@ function AccountCounts({ snapshot }: { snapshot: DashboardSnapshot }) {
   const counts = [
     ["Admin accounts", snapshot.accountCounts.byRole.admin],
     ["HR accounts", snapshot.accountCounts.byRole.hr],
+    ["Team Lead accounts", snapshot.accountCounts.byRole.tl],
     ["Employee accounts", snapshot.accountCounts.byRole.employee],
     ["Active accounts", snapshot.accountCounts.byStatus.Active],
     ["Invited accounts", snapshot.accountCounts.byStatus.Invited],

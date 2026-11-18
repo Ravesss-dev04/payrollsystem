@@ -10,6 +10,7 @@ export async function writeDomainAuditEvent(
     entityType: string;
     entityId: string;
     summary: string;
+    details?: Prisma.InputJsonValue;
   },
 ): Promise<void> {
   await transaction.domainAuditEvent.create({
@@ -20,6 +21,7 @@ export async function writeDomainAuditEvent(
       entityType: input.entityType,
       entityId: input.entityId,
       summary: input.summary,
+      details: input.details,
     },
     select: { id: true },
   });

@@ -3,7 +3,7 @@
 **Status:** Ownership and target definitions approved; organization sources implemented, workforce/payroll sources pending
 **Assessment date:** 2026-11-15
 
-**Approved runtime scope:** Exactly `admin`, `hr`, and `employee` are supported. Team Leader assignment and endorsement scenarios are deferred and are not part of the current role or workflow model.
+**Approved runtime scope:** `admin`, `hr`, `tl`, and `employee` are recognized. TL has no grants; Team Leader assignment and endorsement scenarios remain deferred and are not part of the active workflow model.
 
 ## Authoritative record ownership
 

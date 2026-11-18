@@ -1,9 +1,9 @@
 # Acceptance and Security Test Plan
 
-**Status:** Authentication and Admin dashboard foundation tests are implemented; operational-domain acceptance remains planned or blocked
-**Assessment date:** 2026-11-15
+**Status:** Authentication, Admin dashboard, and selected policy foundation tests are implemented; end-to-end domain acceptance remains incomplete
+**Assessment date:** 2026-11-18
 
-**Approved role scope:** The implementation accepts exactly `admin`, `hr`, and `employee`. Team Leader scenarios in this legacy target plan are deferred; no fourth role or Team Leader workflow may be introduced by the approved dashboard/domain plans.
+**Approved role scope:** The implementation accepts exactly `admin`, `hr`, `tl`, and `employee`. TL currently has no permission grants; team-scoped workflows remain deferred.
 
 ## Verification standard
 
@@ -11,17 +11,17 @@ A requirement is **VERIFIED** only when server behavior, data scope, workflow st
 
 ## Current test evidence
 
-- Current full `bun test`: **93 passed, 0 failed, 300 assertions across 30 files**.
+- Current full `bun test`: **155 passed, 0 failed, 525 assertions across 41 files**.
 - Tests cover authentication policy, role denial, login schemas, session checks/revocation, MFA primitives, rate limits, CSRF/origin, MySQL adapter configuration, test-account policy, request-time Admin layout, dashboard snapshot query/route contracts, test-account exclusion, snapshot response validation, visible polling lifecycle, single-panel dashboard layout, and unavailable states.
-- No operational domain model/API exists, therefore no payroll, attendance, scheduling, leave, overtime, workflow transition, report export, or domain audit behavior can be accepted yet.
-- Current dashboard-foundation verification: focused dashboard tests pass; scoped ESLint, `bun x tsc --noEmit`, `bun x next typegen`, and a production build with ephemeral process-local security configuration pass. The build reports `/admin/dashboard` as partially prerendered and `/admin/company` is absent from the route manifest.
+- Attendance-policy persistence, APIs, schema validation, and resolution logic exist, with focused schema/resolution tests. Punch events, attendance corrections, leave, overtime, payroll workflows, and report exports remain unimplemented; service/API integration and live database acceptance remain unverified.
+- TypeScript, full ESLint (one pre-existing warning), Prisma validation, and production build pass. The build used a process-local HTTPS `APP_ORIGIN` override and includes the user/invitation/attendance-policy routes.
 - Browser verification reached `/admin/dashboard` but the server redirected to `/login` because no authenticated Admin session was available. No credentials were used or created; panel-specific responsive, keyboard, refresh, empty, and error states were therefore not visually checked in a browser.
 
 ## Stage 2 — role and authorization acceptance
 
 ### Role and account
 
-- Assert the schema, runtime validator, login principal, session revalidation, UI role map, and tests accept exactly `admin`, `hr`, `employee`.
+- Assert the schema, runtime validator, login principal, session revalidation, UI role map, and tests accept exactly `admin`, `hr`, `tl`, `employee`.
 - Deny unknown, malformed, missing, case-variant, stale, and unsupported roles at login and every protected request.
 - Verify inactive/suspended/offboarded users cannot create or retain sessions; role/status changes are revalidated and revoke or invalidate existing sessions.
 - Verify role input is rejected from profile, user, login, and request payloads unless using the separate authorized role-administration workflow.
@@ -31,7 +31,7 @@ A requirement is **VERIFIED** only when server behavior, data scope, workflow st
 - Table-test each role/action pair in `02-RBAC-AND-PERMISSION-MATRIX.md`.
 - Directly request protected pages and APIs as each role; navigation visibility must not change the result.
 - Test employee own-record IDOR with a different employee ID; assert the database query is identity-scoped.
-- Do not add a Team Leader role, team assignment scope, Team Leader page, or Team Leader API in this approved phase.
+- Assert TL has no grants and direct page/API requests fail closed until team assignment scope is implemented.
 - Verify HR can perform only HR-owned actions and cannot approve payroll or change roles/company policy.
 - Verify Admin governance access does not imply employee-record mutation; exercise explicit employee self-service overlay for Admin/HR accounts with linked employee records.
 - Test query predicates and response schemas for salary, token, MFA, audit before/after, and unrelated employee fields.

@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { Prisma, SecurityEventType } from "../../generated/prisma/client";
 import { prisma } from "../db";
 import {
@@ -21,6 +22,7 @@ import {
   type SessionStore,
 } from "./session-store";
 import type { SessionPrincipal } from "./session-policy";
+import { isPermission } from "./authorization";
 import { createOpaqueToken, hashOpaqueToken } from "./tokens";
 
 const SESSION_SELECT = {
@@ -82,7 +84,7 @@ const sessionStore: SessionStore = {
         !user ||
         user.status !== "Active" ||
         session.sessionVersion !== user.sessionVersion ||
-        !["admin", "hr", "employee"].includes(user.role)
+        !["admin", "hr", "tl", "employee"].includes(user.role)
       ) {
         await transaction.session.updateMany({
           where: { id: sessionId, revokedAt: null },
@@ -113,12 +115,43 @@ const sessionStore: SessionStore = {
 };
 
 export async function getCurrentSession(): Promise<SessionPrincipal | null> {
+  await connection();
   const config = loadSecurityConfig();
   const cookieStore = await cookies();
   const cookieName = config.secureCookies
     ? SESSION_COOKIE_NAME
     : DEVELOPMENT_SESSION_COOKIE_NAME;
-  return resolveSession(cookieStore.get(cookieName)?.value ?? null, sessionStore);
+  const session = await resolveSession(
+    cookieStore.get(cookieName)?.value ?? null,
+    sessionStore,
+  );
+  if (!session) return null;
+
+  const [rolePermissions, userDenials] = await Promise.all([
+    prisma.rolePermission.findMany({
+      where: { role: session.role },
+      select: { permission: true },
+    }),
+    prisma.userPermissionDenial.findMany({
+      where: { userId: session.userId },
+      select: { permission: true },
+    }),
+  ]);
+  return {
+    ...session,
+    grantedPermissions: rolePermissions.map(({ permission }) => {
+      if (!isPermission(permission)) {
+        throw new Error("Stored authorization permissions are invalid");
+      }
+      return permission;
+    }),
+    deniedPermissions: userDenials.map(({ permission }) => {
+      if (!isPermission(permission)) {
+        throw new Error("Stored authorization permissions are invalid");
+      }
+      return permission;
+    }),
+  };
 }
 
 export async function createSessionForUser(
@@ -156,7 +189,7 @@ export async function createSessionInTransaction(
       sessionVersion: expectedSessionVersion,
       OR: [
         { role: "employee" },
-        { role: { in: ["admin", "hr"] }, mfaEnabled: true },
+        { role: { in: ["admin", "hr", "tl"] }, mfaEnabled: true },
       ],
     },
     data: { lastLoginAt: now },

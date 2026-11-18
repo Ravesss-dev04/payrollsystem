@@ -84,7 +84,9 @@ export async function POST(request: Request): Promise<Response> {
     challenge.attempts < 5 &&
     challenge.user.status === "Active" &&
     isRole(challenge.user.role) &&
-    (challenge.user.role === "admin" || challenge.user.role === "hr");
+    (challenge.user.role === "admin" ||
+      challenge.user.role === "hr" ||
+      challenge.user.role === "tl");
 
   if (!validChallenge) {
     if (challenge) {
@@ -163,7 +165,7 @@ export async function POST(request: Request): Promise<Response> {
           where: {
             id: challenge.userId,
             status: "Active",
-            role: { in: ["admin", "hr"] },
+            role: { in: ["admin", "hr", "tl"] },
             mfaEnabled: false,
             sessionVersion,
             pendingMfaSecretEncrypted:
@@ -217,6 +219,7 @@ export async function POST(request: Request): Promise<Response> {
   return jsonResponse({
     authenticated: true,
     recoveryCodes: isSetup ? recoveryCodes : undefined,
+    user: { role: challenge.user.role },
   });
 }
 

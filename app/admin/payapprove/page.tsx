@@ -1,7 +1,9 @@
-import { PayrollList } from "../components/PayrollBatchDetails";
+import { notFound } from "next/navigation";
 import { requirePagePermission } from "../../lib/auth/page-guard.server";
+import { PayrollApprovalClient } from "./PayrollApprovalClient";
 
 export default async function Page() {
-  await requirePagePermission("payroll:approve");
-  return <PayrollList />;
+  const session = await requirePagePermission("payroll:read");
+  if (session.role !== "admin") notFound();
+  return <PayrollApprovalClient />;
 }

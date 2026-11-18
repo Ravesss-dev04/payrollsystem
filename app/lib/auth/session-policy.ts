@@ -1,6 +1,7 @@
 import {
   isAccountEnabled,
   isRole,
+  type Permission,
   type Role,
 } from "./authorization";
 
@@ -34,6 +35,8 @@ export interface SessionPrincipal {
   lastActivityAt: Date;
   idleExpiresAt: Date;
   absoluteExpiresAt: Date;
+  grantedPermissions?: readonly Permission[];
+  deniedPermissions?: readonly Permission[];
 }
 
 export function evaluateSession(
