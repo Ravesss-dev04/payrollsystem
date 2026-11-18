@@ -12,7 +12,9 @@ export default async function LoginPage() {
         ? "/account"
         : session.role === "tl"
           ? "/access-pending"
-          : "/admin/dashboard",
+          : session.role === "hr"
+            ? "/hr/dashboard"
+            : "/admin/dashboard",
     );
   }
   return <LoginClient />;

@@ -11,6 +11,8 @@ export default async function Home() {
       ? "/account"
       : session.role === "tl"
         ? "/access-pending"
-        : "/admin/dashboard",
+        : session.role === "hr"
+          ? "/hr/dashboard"
+          : "/admin/dashboard",
   );
 }
