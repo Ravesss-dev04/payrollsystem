@@ -26,9 +26,7 @@ export function loadSecurityConfig(
     origin.pathname !== "/" ||
     origin.search ||
     origin.hash ||
-    (nodeEnvironment === "production" && origin.protocol !== "https:") ||
-    (nodeEnvironment !== "production" &&
-      origin.protocol !== "https:" &&
+    (origin.protocol !== "https:" &&
       !["localhost", "127.0.0.1", "[::1]"].includes(origin.hostname))
   ) {
     throw new Error("APP_ORIGIN is not permitted");

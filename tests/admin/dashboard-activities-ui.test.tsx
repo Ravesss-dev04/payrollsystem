@@ -106,7 +106,7 @@ describe("admin dashboard activity states", () => {
           refreshing: false,
           snapshot: {
             accountCounts: {
-              byRole: { admin: 2, hr: 3, employee: 8 },
+              byRole: { admin: 2, hr: 3, tl: 0, employee: 8 },
               byStatus: {
                 Active: 10,
                 Invited: 1,
@@ -127,6 +127,7 @@ describe("admin dashboard activity states", () => {
     expect(markup).toContain(">2<");
     expect(markup).toContain("HR accounts");
     expect(markup).toContain(">3<");
+    expect(markup).toContain("Team Lead accounts");
     expect(markup).toContain("Employee accounts");
     expect(markup).toContain(">8<");
     expect(markup).toContain("Active accounts");

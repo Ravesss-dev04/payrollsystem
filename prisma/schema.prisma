@@ -7,255 +7,10 @@ datasource db {
   provider = "mysql"
 }
 
-model User {
-  id                        String                   @id @default(cuid())
-  email                     String                   @unique @db.VarChar(320)
-  name                      String                   @db.VarChar(160)
-  passwordHash              String?                  @db.VarChar(255)
-  role                      UserRole
-  status                    AccountStatus
-  mfaSecretEncrypted        String?                  @db.Text
-  pendingMfaSecretEncrypted String?                  @db.Text
-  mfaEnabled                Boolean                  @default(false)
-  sessionVersion            Int                      @default(0)
-  lastLoginAt               DateTime?
-  isTestAccount             Boolean                  @default(false)
-  createdAt                 DateTime                 @default(now())
-  updatedAt                 DateTime                 @updatedAt
-  domainAuditEvents         DomainAuditEvent[]       @relation("DomainAuditActor")
-  employeeRecord            Employee?
-  createdEmploymentPolicies EmploymentStatusPolicy[] @relation("EmploymentPolicyCreator")
-  mfaChallenges             MfaChallenge[]
-  recoveryCodes             MfaRecoveryCode[]
-  passwordResetTokens       PasswordResetToken[]
-  targetedSecurityEvents    SecurityAuditEvent[]     @relation("SecurityEventTarget")
-  securityEvents            SecurityAuditEvent[]     @relation("SecurityEventActor")
-  sessions                  Session[]
-
-  @@index([status, role])
-}
-
-model Session {
-  id                String    @id @default(cuid())
-  tokenHash         String    @unique @db.Char(64)
-  csrfTokenHash     String    @db.Char(64)
-  userId            String
-  sessionVersion    Int
-  createdAt         DateTime  @default(now())
-  lastActivityAt    DateTime  @default(now())
-  idleExpiresAt     DateTime
-  absoluteExpiresAt DateTime
-  revokedAt         DateTime?
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, revokedAt])
-  @@index([idleExpiresAt])
-  @@index([absoluteExpiresAt])
-}
-
-model MfaChallenge {
-  id         String              @id @default(cuid())
-  tokenHash  String              @unique @db.Char(64)
-  userId     String
-  purpose    MfaChallengePurpose
-  attempts   Int                 @default(0)
-  createdAt  DateTime            @default(now())
-  expiresAt  DateTime
-  consumedAt DateTime?
-  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, expiresAt])
-}
-
-model MfaRecoveryCode {
-  id        String    @id @default(cuid())
-  userId    String
-  codeHash  String    @unique @db.Char(64)
-  createdAt DateTime  @default(now())
-  usedAt    DateTime?
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, usedAt])
-}
-
-model PasswordResetToken {
-  id         String    @id @default(cuid())
-  tokenHash  String    @unique @db.Char(64)
-  userId     String
-  createdAt  DateTime  @default(now())
-  expiresAt  DateTime
-  consumedAt DateTime?
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, expiresAt])
-}
-
-model AuthRateLimitBucket {
-  id           String    @id @db.VarChar(160)
-  count        Int       @default(0)
-  createdAt    DateTime  @default(now())
-  expiresAt    DateTime
-  blockedUntil DateTime?
-
-  @@index([expiresAt])
-}
-
-model SecurityAuditEvent {
-  id           String            @id @default(cuid())
-  eventType    SecurityEventType
-  userId       String?
-  targetUserId String?
-  resourceId   String?           @db.VarChar(160)
-  sourceIp     String?           @db.VarChar(64)
-  userAgent    String?           @db.VarChar(512)
-  requestId    String?           @db.VarChar(128)
-  succeeded    Boolean
-  createdAt    DateTime          @default(now())
-  targetUser   User?             @relation("SecurityEventTarget", fields: [targetUserId], references: [id])
-  user         User?             @relation("SecurityEventActor", fields: [userId], references: [id])
-
-  @@index([userId, createdAt])
-  @@index([targetUserId, createdAt])
-  @@index([eventType, createdAt])
-}
-
-model OrganizationSettings {
-  id                 String                   @id @default("primary") @db.VarChar(32)
-  name               String                   @db.VarChar(160)
-  timeZone           String                   @db.VarChar(64)
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime                 @updatedAt
-  branches           Branch[]
-  departments        Department[]
-  employmentPolicies EmploymentStatusPolicy[]
-}
-
-model Branch {
-  id             String               @id @default(cuid())
-  organizationId String               @db.VarChar(32)
-  name           String               @db.VarChar(120)
-  active         Boolean              @default(true)
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  organization   OrganizationSettings @relation(fields: [organizationId], references: [id])
-
-  @@unique([organizationId, name])
-  @@index([organizationId, active, name])
-}
-
-model Department {
-  id                  String               @id @default(cuid())
-  organizationId      String               @db.VarChar(32)
-  name                String               @db.VarChar(120)
-  active              Boolean              @default(true)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  organization        OrganizationSettings @relation(fields: [organizationId], references: [id])
-  employeeAssignments EmployeeAssignment[]
-  teams               Team[]
-
-  @@unique([organizationId, name])
-  @@index([organizationId, active, name])
-}
-
-model Team {
-  id           String     @id @default(cuid())
-  departmentId String
-  name         String     @db.VarChar(120)
-  active       Boolean    @default(true)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  department   Department @relation(fields: [departmentId], references: [id])
-
-  @@unique([departmentId, name])
-  @@index([departmentId, active, name])
-}
-
-model EmploymentStatusPolicy {
-  id              String                       @id @default(cuid())
-  organizationId  String                       @db.VarChar(32)
-  version         Int
-  effectiveFrom   DateTime                     @db.Date
-  createdByUserId String
-  createdAt       DateTime                     @default(now())
-  definitions     EmploymentStatusDefinition[]
-  createdBy       User                         @relation("EmploymentPolicyCreator", fields: [createdByUserId], references: [id])
-  organization    OrganizationSettings         @relation(fields: [organizationId], references: [id])
-
-  @@unique([organizationId, version])
-  @@unique([organizationId, effectiveFrom])
-  @@index([organizationId, effectiveFrom, version])
-  @@index([createdByUserId], map: "EmploymentStatusPolicy_createdByUserId_fkey")
-}
-
-model EmploymentStatusDefinition {
-  id                  String                 @id @default(cuid())
-  policyId            String
-  code                String                 @db.VarChar(40)
-  label               String                 @db.VarChar(100)
-  active              Boolean                @default(true)
-  headcountEligible   Boolean
-  createdAt           DateTime               @default(now())
-  employeeAssignments EmployeeAssignment[]
-  policy              EmploymentStatusPolicy @relation(fields: [policyId], references: [id])
-
-  @@unique([policyId, code])
-  @@index([policyId, active, code])
-  @@index([policyId, headcountEligible, active])
-}
-
-model Employee {
-  id             String               @id @default(cuid())
-  employeeNumber String               @unique @db.VarChar(64)
-  firstName      String               @db.VarChar(80)
-  lastName       String               @db.VarChar(80)
-  workEmail      String               @unique @db.VarChar(320)
-  userId         String?              @unique
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  user           User?                @relation(fields: [userId], references: [id])
-  assignments    EmployeeAssignment[]
-
-  @@index([lastName, firstName])
-}
-
-model EmployeeAssignment {
-  id                 String                     @id @default(cuid())
-  employeeId         String
-  statusDefinitionId String
-  departmentId       String
-  effectiveFrom      DateTime                   @db.Date
-  effectiveTo        DateTime?                  @db.Date
-  createdAt          DateTime                   @default(now())
-  department         Department                 @relation(fields: [departmentId], references: [id])
-  employee           Employee                   @relation(fields: [employeeId], references: [id])
-  statusDefinition   EmploymentStatusDefinition @relation(fields: [statusDefinitionId], references: [id])
-
-  @@unique([employeeId, effectiveFrom])
-  @@index([employeeId, effectiveTo, effectiveFrom])
-  @@index([departmentId, effectiveFrom, effectiveTo])
-  @@index([statusDefinitionId, effectiveFrom, effectiveTo])
-}
-
-model DomainAuditEvent {
-  id          String   @id @default(cuid())
-  actorUserId String?
-  actorRole   UserRole
-  action      String   @db.VarChar(100)
-  entityType  String   @db.VarChar(80)
-  entityId    String
-  summary     String   @db.VarChar(255)
-  createdAt   DateTime @default(now())
-  actor       User?    @relation("DomainAuditActor", fields: [actorUserId], references: [id])
-
-  @@index([createdAt])
-  @@index([entityType, entityId, createdAt])
-  @@index([actorUserId, createdAt])
-}
-
 enum UserRole {
   admin
   hr
+  tl
   employee
 }
 
@@ -285,4 +40,763 @@ enum SecurityEventType {
   AccountStatusChanged
   RoleChanged
   AccessDenied
+}
+
+enum InvitationStatus {
+  Pending
+  Sent
+  Failed
+  Accepted
+  Revoked
+  Expired
+}
+
+enum AttendancePolicyStatus {
+  Active
+  Paused
+  Archived
+}
+
+enum AttendancePolicyScope {
+  AllEmployees
+  Departments
+  Employees
+}
+
+enum AttendanceScheduleType {
+  Fixed
+  Flexible
+}
+
+enum PayrollBatchVersionStatus {
+  Draft
+  HRVerified
+  PendingAdminApproval
+  Approved
+  Rejected
+  Returned
+  Processing
+  Processed
+}
+
+enum PayrollExceptionSeverity {
+  Critical
+  High
+  Warning
+  Info
+}
+
+enum PayrollDecisionType {
+  Approved
+  Rejected
+  Returned
+}
+
+enum PayrollDeductionCategorySetStatus {
+  Draft
+  Active
+  Superseded
+}
+
+enum PayrollConfigurationStatus {
+  Draft
+  PendingApproval
+  Approved
+  Active
+  Superseded
+  Rejected
+  Retired
+}
+
+enum PayrollDisbursementStatus {
+  PendingDisbursement
+  Processing
+  PartiallyPaid
+  Paid
+  PaymentFailed
+}
+
+model User {
+  id                                 String                       @id @default(cuid())
+  email                              String                       @unique @db.VarChar(320)
+  name                               String                       @db.VarChar(160)
+  phoneNumber                        String?                      @db.VarChar(32)
+  profileImageKey                    String?                      @db.VarChar(512)
+  profileImageContentType            String?                      @db.VarChar(64)
+  passwordHash                       String?                      @db.VarChar(255)
+  role                               UserRole
+  status                             AccountStatus
+  mfaSecretEncrypted                 String?                      @db.Text
+  pendingMfaSecretEncrypted          String?                      @db.Text
+  mfaEnabled                         Boolean                      @default(false)
+  sessionVersion                     Int                          @default(0)
+  lastLoginAt                        DateTime?                    @db.DateTime(3)
+  isTestAccount                      Boolean                      @default(false)
+  createdAt                          DateTime                     @default(now()) @db.DateTime(3)
+  updatedAt                          DateTime                     @updatedAt @db.DateTime(3)
+  sessions                           Session[]
+  mfaChallenges                      MfaChallenge[]
+  recoveryCodes                      MfaRecoveryCode[]
+  passwordResetTokens                PasswordResetToken[]
+  securityEvents                     SecurityAuditEvent[]         @relation("SecurityEventActor")
+  targetedSecurityEvents             SecurityAuditEvent[]         @relation("SecurityEventTarget")
+  domainAuditEvents                  DomainAuditEvent[]           @relation("DomainAuditActor")
+  createdEmploymentPolicies          EmploymentStatusPolicy[]     @relation("EmploymentPolicyCreator")
+  employeeRecord                     Employee?
+  createdRolePermissions             RolePermission[]             @relation("RolePermissionUpdater")
+  permissionDenials                  UserPermissionDenial[]       @relation("UserPermissionTarget")
+  createdPermissionDenials           UserPermissionDenial[]       @relation("UserPermissionDenialCreator")
+  createdInvitations                 UserInvitation[]             @relation("InvitationCreator")
+  invitations                        UserInvitation[]             @relation("InvitationTarget")
+  createdAttendancePolicies          AttendancePolicy[]           @relation("AttendancePolicyCreator")
+  updatedAttendancePolicies          AttendancePolicy[]           @relation("AttendancePolicyUpdater")
+  createdPolicyDepartmentAssignments AttendancePolicyDepartment[] @relation("PolicyDepartmentAssignmentCreator")
+  createdPolicyEmployeeAssignments   AttendancePolicyEmployee[]   @relation("PolicyEmployeeAssignmentCreator")
+  createdPayrollRuleSets             PayrollRuleSet[]              @relation("PayrollRuleSetCreator")
+  createdDeductionCategorySets       PayrollDeductionCategorySet[] @relation("DeductionCategorySetCreator")
+  approvedDeductionCategorySets      PayrollDeductionCategorySet[] @relation("DeductionCategorySetApprover")
+  createdPayrollBatches               PayrollBatch[]                 @relation("PayrollBatchCreator")
+  preparedPayrollVersions             PayrollBatchVersion[]          @relation("PayrollVersionPreparer")
+  submittedPayrollVersions            PayrollBatchVersion[]          @relation("PayrollVersionSubmitter")
+  payrollDecisions                    PayrollDecision[]              @relation("PayrollDecisionActor")
+  createdConfigVersions               PayrollConfigurationVersion[] @relation("ConfigVersionCreator")
+  submittedConfigVersions             PayrollConfigurationVersion[] @relation("ConfigVersionSubmitter")
+  approvedConfigVersions              PayrollConfigurationVersion[] @relation("ConfigVersionApprover")
+  rejectedConfigVersions              PayrollConfigurationVersion[] @relation("ConfigVersionRejecter")
+  timelineEvents                      PayrollBatchTimelineEvent[]   @relation("BatchTimelineActor")
+  disbursedPayrollRecords             PayrollDisbursementRecord[]   @relation("DisbursementActor")
+  activeInvitation                   UserInvitation?              @relation("ActiveInvitationUser")
+
+  @@index([status, role])
+}
+
+model RolePermission {
+  role            UserRole
+  permission      String   @db.VarChar(80)
+  updatedByUserId String?  @db.VarChar(191)
+  updatedAt       DateTime @updatedAt @db.DateTime(3)
+  updatedBy       User?    @relation("RolePermissionUpdater", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([role, permission])
+  @@index([updatedByUserId])
+}
+
+model UserPermissionDenial {
+  userId          String   @db.VarChar(191)
+  permission      String   @db.VarChar(80)
+  createdByUserId String   @db.VarChar(191)
+  createdAt       DateTime @default(now()) @db.DateTime(3)
+  user            User     @relation("UserPermissionTarget", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy       User     @relation("UserPermissionDenialCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@id([userId, permission])
+  @@index([createdByUserId, createdAt])
+}
+
+model Session {
+  id                String    @id @default(cuid())
+  tokenHash         String    @unique @db.Char(64)
+  csrfTokenHash     String    @db.Char(64)
+  userId            String
+  sessionVersion    Int
+  createdAt         DateTime  @default(now()) @db.DateTime(3)
+  lastActivityAt    DateTime  @default(now()) @db.DateTime(3)
+  idleExpiresAt     DateTime  @db.DateTime(3)
+  absoluteExpiresAt DateTime  @db.DateTime(3)
+  revokedAt         DateTime? @db.DateTime(3)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([idleExpiresAt])
+  @@index([absoluteExpiresAt])
+}
+
+model MfaChallenge {
+  id         String              @id @default(cuid())
+  tokenHash  String              @unique @db.Char(64)
+  userId     String
+  purpose    MfaChallengePurpose
+  attempts   Int                 @default(0)
+  createdAt  DateTime            @default(now()) @db.DateTime(3)
+  expiresAt  DateTime            @db.DateTime(3)
+  consumedAt DateTime?           @db.DateTime(3)
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model MfaRecoveryCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String    @unique @db.Char(64)
+  createdAt DateTime  @default(now()) @db.DateTime(3)
+  usedAt    DateTime? @db.DateTime(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique @db.Char(64)
+  userId     String
+  createdAt  DateTime  @default(now()) @db.DateTime(3)
+  expiresAt  DateTime  @db.DateTime(3)
+  consumedAt DateTime? @db.DateTime(3)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model AuthRateLimitBucket {
+  id           String    @id @db.VarChar(160)
+  count        Int       @default(0)
+  createdAt    DateTime  @default(now()) @db.DateTime(3)
+  expiresAt    DateTime  @db.DateTime(3)
+  blockedUntil DateTime? @db.DateTime(3)
+
+  @@index([expiresAt])
+}
+
+model SecurityAuditEvent {
+  id           String            @id @default(cuid())
+  eventType    SecurityEventType
+  userId       String?
+  targetUserId String?
+  resourceId   String?           @db.VarChar(160)
+  sourceIp     String?           @db.VarChar(64)
+  userAgent    String?           @db.VarChar(512)
+  requestId    String?           @db.VarChar(128)
+  succeeded    Boolean
+  createdAt    DateTime          @default(now()) @db.DateTime(3)
+  user         User?             @relation("SecurityEventActor", fields: [userId], references: [id], onDelete: SetNull)
+  targetUser   User?             @relation("SecurityEventTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model OrganizationSettings {
+  id                 String                   @id @default("primary") @db.VarChar(32)
+  name               String                   @db.VarChar(160)
+  timeZone           String                   @db.VarChar(64)
+  createdAt          DateTime                 @default(now()) @db.DateTime(3)
+  updatedAt          DateTime                 @updatedAt @db.DateTime(3)
+  branches           Branch[]
+  departments        Department[]
+  employmentPolicies EmploymentStatusPolicy[]
+}
+
+model Branch {
+  id             String               @id @default(cuid())
+  organizationId String               @db.VarChar(32)
+  name           String               @db.VarChar(120)
+  active         Boolean              @default(true)
+  createdAt      DateTime             @default(now()) @db.DateTime(3)
+  updatedAt      DateTime             @updatedAt @db.DateTime(3)
+  organization   OrganizationSettings @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, name])
+  @@index([organizationId, active, name])
+}
+
+model Department {
+  id                          String                       @id @default(cuid())
+  organizationId              String                       @db.VarChar(32)
+  name                        String                       @db.VarChar(120)
+  active                      Boolean                      @default(true)
+  createdAt                   DateTime                     @default(now()) @db.DateTime(3)
+  updatedAt                   DateTime                     @updatedAt @db.DateTime(3)
+  organization                OrganizationSettings         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  teams                       Team[]
+  employeeAssignments         EmployeeAssignment[]
+  attendancePolicyAssignments AttendancePolicyDepartment[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, active, name])
+}
+
+model Team {
+  id           String     @id @default(cuid())
+  departmentId String     @db.VarChar(191)
+  name         String     @db.VarChar(120)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @db.DateTime(3)
+  updatedAt    DateTime   @updatedAt @db.DateTime(3)
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@unique([departmentId, name])
+  @@index([departmentId, active, name])
+}
+
+model EmploymentStatusPolicy {
+  id              String                       @id @default(cuid())
+  organizationId  String                       @db.VarChar(32)
+  version         Int
+  effectiveFrom   DateTime                     @db.Date
+  createdByUserId String                       @db.VarChar(191)
+  createdAt       DateTime                     @default(now()) @db.DateTime(3)
+  organization    OrganizationSettings         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  createdBy       User                         @relation("EmploymentPolicyCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  definitions     EmploymentStatusDefinition[]
+
+  @@unique([organizationId, version])
+  @@unique([organizationId, effectiveFrom])
+  @@index([organizationId, effectiveFrom, version])
+}
+
+model EmploymentStatusDefinition {
+  id                  String                 @id @default(cuid())
+  policyId            String
+  code                String                 @db.VarChar(40)
+  label               String                 @db.VarChar(100)
+  active              Boolean                @default(true)
+  headcountEligible   Boolean
+  createdAt           DateTime               @default(now()) @db.DateTime(3)
+  policy              EmploymentStatusPolicy @relation(fields: [policyId], references: [id], onDelete: Restrict)
+  employeeAssignments EmployeeAssignment[]
+
+  @@unique([policyId, code])
+  @@index([policyId, active, code])
+  @@index([policyId, headcountEligible, active])
+}
+
+model Employee {
+  id                          String                     @id @default(cuid())
+  employeeNumber              String                     @unique @db.VarChar(64)
+  firstName                   String                     @db.VarChar(80)
+  lastName                    String                     @db.VarChar(80)
+  workEmail                   String                     @unique @db.VarChar(320)
+  userId                      String?                    @unique @db.VarChar(191)
+  createdAt                   DateTime                   @default(now()) @db.DateTime(3)
+  updatedAt                   DateTime                   @updatedAt @db.DateTime(3)
+  user                        User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  assignments                 EmployeeAssignment[]
+  attendancePolicyAssignments AttendancePolicyEmployee[]
+  invitations                 UserInvitation[]
+  payrollResults              PayrollEmployeeResult[]
+
+  @@index([lastName, firstName])
+}
+
+model EmployeeAssignment {
+  id                 String                     @id @default(cuid())
+  employeeId         String
+  statusDefinitionId String
+  departmentId       String
+  effectiveFrom      DateTime                   @db.Date
+  effectiveTo        DateTime?                  @db.Date
+  createdAt          DateTime                   @default(now()) @db.DateTime(3)
+  employee           Employee                   @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  statusDefinition   EmploymentStatusDefinition @relation(fields: [statusDefinitionId], references: [id], onDelete: Restrict)
+  department         Department                 @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, effectiveFrom])
+  @@index([employeeId, effectiveTo, effectiveFrom])
+  @@index([departmentId, effectiveFrom, effectiveTo])
+  @@index([statusDefinitionId, effectiveFrom, effectiveTo])
+}
+
+model DomainAuditEvent {
+  id          String   @id @default(cuid())
+  actorUserId String?  @db.VarChar(191)
+  actorRole   UserRole
+  action      String   @db.VarChar(100)
+  entityType  String   @db.VarChar(80)
+  entityId    String   @db.VarChar(191)
+  summary     String   @db.VarChar(255)
+  details     Json?
+  createdAt   DateTime @default(now()) @db.DateTime(3)
+  actor       User?    @relation("DomainAuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([actorUserId, createdAt])
+}
+
+model PayrollRuleSet {
+  id              String   @id @default(cuid())
+  version         Int      @unique
+  effectiveFrom   DateTime @db.Date
+  configuration   Json
+  createdByUserId String   @db.VarChar(191)
+  createdAt       DateTime @default(now()) @db.DateTime(3)
+  createdBy       User     @relation("PayrollRuleSetCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([effectiveFrom, version])
+  @@index([createdByUserId, createdAt])
+}
+
+model PayrollDeductionCategorySet {
+  id              String                            @id @default(cuid())
+  version         Int                               @unique
+  status          PayrollDeductionCategorySetStatus @default(Draft)
+  categories      Json
+  createdByUserId String?                           @db.VarChar(191)
+  approvedByUserId String?                          @db.VarChar(191)
+  approvedAt      DateTime?                         @db.DateTime(3)
+  createdAt       DateTime                          @default(now()) @db.DateTime(3)
+  createdBy       User?                             @relation("DeductionCategorySetCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  approvedBy      User?                             @relation("DeductionCategorySetApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  payrollVersions PayrollBatchVersion[]
+
+  @@index([status, version])
+  @@index([createdByUserId, createdAt])
+}
+
+model PayrollBatch {
+  id              String   @id @default(cuid())
+  batchNumber     String   @unique @db.VarChar(64)
+  createdByUserId String   @db.VarChar(191)
+  createdAt       DateTime @default(now()) @db.DateTime(3)
+  updatedAt       DateTime @updatedAt @db.DateTime(3)
+  createdBy       User     @relation("PayrollBatchCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  versions        PayrollBatchVersion[]
+
+  @@index([createdByUserId, createdAt])
+}
+
+model PayrollBatchVersion {
+  id                    String                    @id @default(cuid())
+  batchId               String                    @db.VarChar(191)
+  version               Int
+  status                PayrollBatchVersionStatus @default(Draft)
+  periodStart           DateTime                  @db.Date
+  periodEnd             DateTime                  @db.Date
+  cutoffReference       String                    @db.VarChar(160)
+  currencyCode          String                    @db.Char(3)
+  sourceReference       String                    @db.VarChar(512)
+  sourceCalculatedAt    DateTime?                 @db.DateTime(3)
+  preparedByUserId      String                    @db.VarChar(191)
+  preparedByNameSnapshot String?                  @db.VarChar(191)
+  submittedByUserId     String?                   @db.VarChar(191)
+  submittedByNameSnapshot String?                 @db.VarChar(191)
+  submittedAt           DateTime?                 @db.DateTime(3)
+  organizationNameSnapshot String?                 @db.VarChar(160)
+  timeZoneSnapshot      String?                   @db.VarChar(64)
+  deductionCategorySetVersion Int?
+  calculationEngineVersion    String?                   @db.VarChar(32)
+  earningsConfigVersion       Int?
+  deductionConfigVersion      Int?
+  benefitsConfigVersion       Int?
+  statutoryRuleVersion        Int?
+  employeeCount         Int
+  grossPayable          Decimal                   @db.Decimal(19, 4)
+  totalDeductions       Decimal                   @db.Decimal(19, 4)
+  netPayable            Decimal                   @db.Decimal(19, 4)
+  employerContributions Decimal?                  @db.Decimal(19, 4)
+  laborCost             Decimal?                  @db.Decimal(19, 4)
+  overtimeCost          Decimal?                  @db.Decimal(19, 4)
+  createdAt             DateTime                  @default(now()) @db.DateTime(3)
+  batch                 PayrollBatch              @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  preparedBy            User                      @relation("PayrollVersionPreparer", fields: [preparedByUserId], references: [id], onDelete: Restrict)
+  submittedBy           User?                     @relation("PayrollVersionSubmitter", fields: [submittedByUserId], references: [id], onDelete: Restrict)
+  employees             PayrollEmployeeResult[]
+  exceptions            PayrollValidationException[]
+  decisions             PayrollDecision[]
+  deductionCategorySet  PayrollDeductionCategorySet? @relation(fields: [deductionCategorySetVersion], references: [version], onDelete: Restrict)
+  disbursementRecord    PayrollDisbursementRecord?
+
+  @@unique([batchId, version])
+  @@index([status, submittedAt])
+  @@index([periodStart, periodEnd])
+  @@index([preparedByUserId, createdAt])
+}
+
+model PayrollEmployeeResult {
+  id                     String                  @id @default(cuid())
+  payrollVersionId       String                  @db.VarChar(191)
+  employeeId             String?                 @db.VarChar(191)
+  employeeReference      String                  @db.VarChar(191)
+  employeeNumber         String                  @db.VarChar(64)
+  employeeName           String                  @db.VarChar(160)
+  department             String                  @db.VarChar(120)
+  position               String?                 @db.VarChar(120)
+  compensationBasis      String                  @db.VarChar(32)
+  applicableRate         Decimal                 @db.Decimal(19, 4)
+  daysWorked             Decimal?                @db.Decimal(9, 4)
+  regularHours           Decimal?                @db.Decimal(9, 4)
+  overtimeHours          Decimal?                @db.Decimal(9, 4)
+  grossPay               Decimal                 @db.Decimal(19, 4)
+  totalDeductions        Decimal                 @db.Decimal(19, 4)
+  netPay                 Decimal                 @db.Decimal(19, 4)
+  sourceReference        String                  @db.VarChar(512)
+  payrollVersion         PayrollBatchVersion     @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  employee               Employee?               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  earnings               PayrollEarningLine[]
+  deductions             PayrollDeductionLine[]
+  attendance             PayrollAttendanceRecord[]
+  adjustments            PayrollAdjustmentEvidence[]
+  exceptions             PayrollValidationException[]
+
+  @@unique([payrollVersionId, employeeId])
+  @@unique([payrollVersionId, employeeReference])
+  @@unique([payrollVersionId, employeeNumber])
+  @@index([employeeId, payrollVersionId])
+}
+
+model PayrollEarningLine {
+  id                    String               @id @default(cuid())
+  employeeResultId      String               @db.VarChar(191)
+  category              String               @db.VarChar(40)
+  label                 String               @db.VarChar(120)
+  amount                Decimal              @db.Decimal(19, 4)
+  sourceReference       String               @db.VarChar(512)
+  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+
+  @@index([employeeResultId, category])
+}
+
+model PayrollDeductionLine {
+  id                    String               @id @default(cuid())
+  employeeResultId      String               @db.VarChar(191)
+  category              String               @db.VarChar(40)
+  label                 String               @db.VarChar(120)
+  amount                Decimal              @db.Decimal(19, 4)
+  sourceReference       String               @db.VarChar(512)
+  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+
+  @@index([employeeResultId, category])
+}
+
+model PayrollAttendanceRecord {
+  id                    String               @id @default(cuid())
+  employeeResultId      String               @db.VarChar(191)
+  sourceReference       String               @db.VarChar(512)
+  workDate              DateTime             @db.Date
+  timeIn                DateTime?            @db.DateTime(3)
+  timeOut               DateTime?            @db.DateTime(3)
+  totalHours            Decimal?             @db.Decimal(9, 4)
+  regularHours          Decimal?             @db.Decimal(9, 4)
+  overtimeHours         Decimal?             @db.Decimal(9, 4)
+  nightDifferentialHours Decimal?             @db.Decimal(9, 4)
+  classification        String?              @db.VarChar(80)
+  approvalStatus        String?              @db.VarChar(40)
+  exceptionDetails      String?              @db.VarChar(1000)
+  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeResultId, sourceReference], map: "PayrollAttendance_result_source_key")
+  @@index([employeeResultId, workDate])
+}
+
+model PayrollAdjustmentEvidence {
+  id                    String               @id @default(cuid())
+  employeeResultId      String               @db.VarChar(191)
+  adjustmentReference   String               @db.VarChar(191)
+  sourceReference       String               @db.VarChar(512)
+  adjustmentType        String               @db.VarChar(80)
+  amount                Decimal              @db.Decimal(19, 4)
+  reason                String               @db.VarChar(1000)
+  requestedBy           String               @db.VarChar(160)
+  approvedBy            String?              @db.VarChar(160)
+  approvedAt            DateTime?            @db.DateTime(3)
+  status                String               @db.VarChar(40)
+  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeResultId, adjustmentReference], map: "PayrollAdjustment_result_ref_key")
+  @@index([employeeResultId, status])
+}
+
+model PayrollValidationException {
+  id               String                  @id @default(cuid())
+  payrollVersionId String                  @db.VarChar(191)
+  employeeResultId String?                 @db.VarChar(191)
+  fingerprint      String                  @db.Char(64)
+  category         String                  @db.VarChar(80)
+  severity         PayrollExceptionSeverity
+  title            String                  @db.VarChar(160)
+  description      String                  @db.VarChar(2000)
+  field            String?                 @db.VarChar(120)
+  actualValue      String?                 @db.VarChar(1000)
+  expectedValue    String?                 @db.VarChar(1000)
+  sourceReference  String?                 @db.VarChar(512)
+  detectedAt       DateTime                @default(now()) @db.DateTime(3)
+  resolvedAt       DateTime?               @db.DateTime(3)
+  resolutionDetails String?                @db.VarChar(1000)
+  payrollVersion   PayrollBatchVersion     @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  employeeResult   PayrollEmployeeResult?  @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+
+  @@unique([payrollVersionId, fingerprint])
+  @@index([payrollVersionId, resolvedAt, severity, detectedAt], map: "PayrollException_version_state_idx")
+  @@index([employeeResultId, detectedAt])
+}
+
+model PayrollDecision {
+  id               String                 @id @default(cuid())
+  payrollVersionId String                 @unique @db.VarChar(191)
+  actorUserId      String                 @db.VarChar(191)
+  decision         PayrollDecisionType
+  reason           String?                @db.VarChar(1000)
+  createdAt        DateTime               @default(now()) @db.DateTime(3)
+  payrollVersion   PayrollBatchVersion    @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  actor            User                   @relation("PayrollDecisionActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([actorUserId, createdAt])
+}
+
+model PayrollConfigurationVersion {
+  id                    String                      @id @default(cuid())
+  version               Int                         @unique
+  category              String                      @db.VarChar(64)
+  status                PayrollConfigurationStatus  @default(Draft)
+  configuration         Json
+  applicability         Json
+  effectiveFrom         DateTime                    @db.Date
+  effectiveTo           DateTime?                   @db.Date
+  changeReason          String                      @db.VarChar(1000)
+  supportingReference   String?                     @db.VarChar(512)
+  simulationImpact      Json?
+  createdByUserId       String                      @db.VarChar(191)
+  submittedByUserId     String?                     @db.VarChar(191)
+  submittedAt           DateTime?                   @db.DateTime(3)
+  approvedByUserId      String?                     @db.VarChar(191)
+  approvedAt            DateTime?                   @db.DateTime(3)
+  rejectedByUserId      String?                     @db.VarChar(191)
+  rejectedAt            DateTime?                   @db.DateTime(3)
+  rejectionReason       String?                     @db.VarChar(1000)
+  createdAt             DateTime                    @default(now()) @db.DateTime(3)
+  updatedAt             DateTime                    @updatedAt @db.DateTime(3)
+  createdBy             User                        @relation("ConfigVersionCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  submittedBy           User?                       @relation("ConfigVersionSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+  approvedBy            User?                       @relation("ConfigVersionApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  rejectedBy            User?                       @relation("ConfigVersionRejecter", fields: [rejectedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, category, version])
+  @@index([effectiveFrom, effectiveTo])
+  @@index([createdByUserId, createdAt])
+}
+
+model PayrollBatchTimelineEvent {
+  id                     String                     @id @default(cuid())
+  batchId                String                     @db.VarChar(191)
+  version                Int
+  eventType              String                     @db.VarChar(80)
+  description            String                     @db.VarChar(1000)
+  actorUserId            String?                    @db.VarChar(191)
+  actorRole              String?                    @db.VarChar(40)
+  actorName              String?                    @db.VarChar(160)
+  relatedRecordReference String?                    @db.VarChar(191)
+  metadata               Json?
+  createdAt              DateTime                   @default(now()) @db.DateTime(3)
+  actor                  User?                      @relation("BatchTimelineActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([batchId, version, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model PayrollDisbursementRecord {
+  id                    String                      @id @default(cuid())
+  payrollVersionId      String                      @unique @db.VarChar(191)
+  disbursementReference String                      @unique @db.VarChar(191)
+  status                PayrollDisbursementStatus   @default(PendingDisbursement)
+  disbursedByUserId     String?                     @db.VarChar(191)
+  disbursedAt           DateTime?                   @db.DateTime(3)
+  paymentMethod         String?                     @db.VarChar(64)
+  notes                 String?                     @db.VarChar(1000)
+  failureReason         String?                     @db.VarChar(1000)
+  metadata              Json?
+  createdAt             DateTime                    @default(now()) @db.DateTime(3)
+  updatedAt             DateTime                    @updatedAt @db.DateTime(3)
+  payrollVersion        PayrollBatchVersion         @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  disbursedBy           User?                       @relation("DisbursementActor", fields: [disbursedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+model UserInvitation {
+  id              String           @id @default(cuid())
+  userId          String           @db.VarChar(191)
+  employeeId      String           @db.VarChar(191)
+  role            UserRole
+  tokenHash       String           @unique @db.Char(64)
+  activeUserId    String?          @unique @db.VarChar(191)
+  status          InvitationStatus @default(Pending)
+  activeUser      User?            @relation("ActiveInvitationUser", fields: [activeUserId], references: [id], onDelete: Restrict)
+  message         String?          @db.VarChar(1000)
+  expiresAt       DateTime         @db.DateTime(3)
+  sentAt          DateTime?        @db.DateTime(3)
+  acceptedAt      DateTime?        @db.DateTime(3)
+  revokedAt       DateTime?        @db.DateTime(3)
+  createdByUserId String           @db.VarChar(191)
+  createdAt       DateTime         @default(now()) @db.DateTime(3)
+  updatedAt       DateTime         @updatedAt @db.DateTime(3)
+  user            User             @relation("InvitationTarget", fields: [userId], references: [id], onDelete: Restrict)
+  employee        Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  createdBy       User             @relation("InvitationCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, status, expiresAt])
+  @@index([createdByUserId, createdAt])
+}
+
+model AttendancePolicy {
+  id                         String                       @id @default(cuid())
+  code                       String                       @unique @db.VarChar(40)
+  name                       String                       @unique @db.VarChar(160)
+  description                String?                      @db.VarChar(1000)
+  status                     AttendancePolicyStatus       @default(Active)
+  scope                      AttendancePolicyScope
+  precedence                 Int                          @default(100)
+  effectiveFrom              DateTime                     @db.Date
+  effectiveTo                DateTime?                    @db.Date
+  scheduleType               AttendanceScheduleType
+  timeZone                   String                       @db.VarChar(64)
+  workDays                   Json
+  shiftStart                 String?                      @db.VarChar(5)
+  shiftEnd                   String?                      @db.VarChar(5)
+  breakStart                 String?                      @db.VarChar(5)
+  breakEnd                   String?                      @db.VarChar(5)
+  breakPaid                  Boolean                      @default(false)
+  gracePeriodMinutes         Int                          @default(0)
+  missingTimeInRule          String                       @db.VarChar(120)
+  missingTimeOutRule         String                       @db.VarChar(120)
+  earlyOutRule               String                       @db.VarChar(120)
+  undertimeRule              String                       @db.VarChar(120)
+  absenceRule                String                       @db.VarChar(120)
+  correctionsRequireApproval Boolean                      @default(true)
+  overtimeEnabled            Boolean                      @default(false)
+  overtimePriorApproval      Boolean                      @default(true)
+  overtimeMinimumMinutes     Int?
+  overtimeRoundingMinutes    Int?
+  overtimeMaximumMinutes     Int?
+  createdByUserId            String                       @db.VarChar(191)
+  updatedByUserId            String?                      @db.VarChar(191)
+  createdAt                  DateTime                     @default(now()) @db.DateTime(3)
+  updatedAt                  DateTime                     @updatedAt @db.DateTime(3)
+  createdBy                  User                         @relation("AttendancePolicyCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy                  User?                        @relation("AttendancePolicyUpdater", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+  departmentAssignments      AttendancePolicyDepartment[]
+  employeeAssignments        AttendancePolicyEmployee[]
+
+  @@index([status, effectiveFrom, effectiveTo])
+  @@index([scope, precedence, status])
+  @@index([createdByUserId, createdAt])
+}
+
+model AttendancePolicyDepartment {
+  policyId         String
+  departmentId     String           @db.VarChar(191)
+  assignedByUserId String           @db.VarChar(191)
+  createdAt        DateTime         @default(now()) @db.DateTime(3)
+  policy           AttendancePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  department       Department       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  assignedBy       User             @relation("PolicyDepartmentAssignmentCreator", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  @@id([policyId, departmentId])
+  @@index([departmentId, policyId])
+  @@index([assignedByUserId, createdAt])
+}
+
+model AttendancePolicyEmployee {
+  policyId         String
+  employeeId       String           @db.VarChar(191)
+  assignedByUserId String           @db.VarChar(191)
+  createdAt        DateTime         @default(now()) @db.DateTime(3)
+  policy           AttendancePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  employee         Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  assignedBy       User             @relation("PolicyEmployeeAssignmentCreator", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  @@id([policyId, employeeId])
+  @@index([employeeId, policyId])
+  @@index([assignedByUserId, createdAt])
 }

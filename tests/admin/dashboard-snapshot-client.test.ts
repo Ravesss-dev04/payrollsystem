@@ -2,7 +2,7 @@ import { describe, expect, it, mock } from "bun:test";
 
 const validSnapshot = {
   accountCounts: {
-    byRole: { admin: 1, hr: 2, employee: 3 },
+    byRole: { admin: 1, hr: 2, tl: 0, employee: 3 },
     byStatus: { Active: 6, Invited: 0, Suspended: 0, Inactive: 0 },
   },
   activities: [],

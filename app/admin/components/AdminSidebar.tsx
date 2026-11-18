@@ -8,11 +8,13 @@ import {
   LuClipboardCheck,
   LuWallet,
   LuSettings,
+  LuCalculator,
 } from "react-icons/lu";
 
 const roleLabels: Record<Role, string> = {
   admin: "Administrator",
   hr: "Human Resources",
+  tl: "Team Lead",
   employee: "Employee",
 };
 
@@ -28,6 +30,13 @@ const items = [
     href: "/admin/payapprove",
     icon: LuClipboardCheck,
     available: true,
+  },
+  {
+    label: "Payroll Rules",
+    href: "/admin/payapprove/rules",
+    icon: LuCalculator,
+    available: true,
+    adminOnly: true,
   },
   { label: "Compensation", href: "/admin/compensation", icon: LuWallet, available: true },
   {
@@ -73,34 +82,41 @@ export default function AdminSidebar({
           MAIN NAVIGATION
         </p>
         <ul className="space-y-1">
-          {items.map(({ label, href, icon: Icon, available }) => {
-            const active =
-              !!href && (pathname === href || pathname.startsWith(href + "/"));
-            const classes = `flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm ${active ? "bg-[#7C3AED] text-white" : "text-[#aaa4bb]"}`;
-            return (
-              <li key={label}>
-                {available && href ? (
-                  <Link
-                    href={href}
-                    onClick={onNavigate}
-                    aria-current={active ? "page" : undefined}
-                    className={`${classes} hover:bg-[#7041ce] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
-                  >
-                    <Icon size={19} aria-hidden="true" />
-                    <span>{label}</span>
-                  </Link>
-                ) : (
-                  <span
-                    className={classes}
-                    aria-label={`${label}, unavailable`}
-                  >
-                    <Icon size={19} aria-hidden="true" />
-                    <span className="flex-1">{label}</span>
-                  </span>
-                )}
-              </li>
-            );
-          })}
+          {items
+            .filter(
+              (item) =>
+                !("adminOnly" in item) ||
+                !item.adminOnly ||
+                user.role === "admin",
+            )
+            .map(({ label, href, icon: Icon, available }) => {
+              const active =
+                !!href && (pathname === href || pathname.startsWith(href + "/"));
+              const classes = `flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm ${active ? "bg-[#7C3AED] text-white" : "text-[#aaa4bb]"}`;
+              return (
+                <li key={label}>
+                  {available && href ? (
+                    <Link
+                      href={href}
+                      onClick={onNavigate}
+                      aria-current={active ? "page" : undefined}
+                      className={`${classes} hover:bg-[#7041ce] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
+                    >
+                      <Icon size={19} aria-hidden="true" />
+                      <span>{label}</span>
+                    </Link>
+                  ) : (
+                    <span
+                      className={classes}
+                      aria-label={`${label}, unavailable`}
+                    >
+                      <Icon size={19} aria-hidden="true" />
+                      <span className="flex-1">{label}</span>
+                    </span>
+                  )}
+                </li>
+              );
+            })}
         </ul>
       </nav>
       <div className="m-3 flex shrink-0 items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">

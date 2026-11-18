@@ -9,6 +9,7 @@ import type { Role } from "../../lib/auth/authorization";
 const roleLabels: Record<Role, string> = {
   admin: "Administrator",
   hr: "Human Resources",
+  tl: "Team Lead",
   employee: "Employee",
 };
 
@@ -107,7 +108,7 @@ export default function AdminProfileMenu({
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-controls="admin-profile"
-        aria-label="Admin profile menu"
+        aria-label="Account profile menu"
         className="flex items-center gap-2 rounded-lg p-1 text-left hover:bg-purple-50 focus-visible:outline-2 focus-visible:outline-[#7C3AED]"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EDE9FE] text-xs font-bold text-[#6D28D9]">
