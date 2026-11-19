@@ -39,7 +39,7 @@ const sets: Record<string, { date: string; rate: number }[]> = {
     { date: "Jan 28", rate: 96.4 },
   ],
 };
-export default function AttendanceTrend() {
+export default function AttendanceTrend({ hasData = true }: { hasData?: boolean }) {
   const [period, setPeriod] = useState("Last 30 Days");
   return (
     <section className="rounded-2xl border border-[#eeeaf8] bg-white p-4 shadow-[0_3px_8px_rgba(62,32,120,.08)]">
@@ -64,6 +64,7 @@ export default function AttendanceTrend() {
         </select>
       </div>
       <div className="mt-4 h-[165px] w-full">
+        {!hasData ? <div className="grid h-full place-items-center rounded-xl bg-[#faf9ff] text-center text-xs text-[#73718a]">No attendance trend data for this demo range.</div> :
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={sets[period]}
@@ -124,7 +125,7 @@ export default function AttendanceTrend() {
               }}
             />
           </AreaChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer>}
       </div>
     </section>
   );

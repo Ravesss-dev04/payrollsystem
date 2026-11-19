@@ -1,0 +1,2 @@
+import { LuLayers } from 'react-icons/lu';
+export default function NetPayCards({value}: {value:string}) { return <div className="flex h-full items-center gap-4 rounded-2xl border border-[#edeaf6] bg-white p-4 shadow-sm"><span className="rounded-full bg-pink-100 p-3 text-pink-600"><LuLayers size={23}/></span><div className="min-w-0"><p className="text-xs font-semibold">Net Pay</p><p className="mt-1 text-xl font-bold tabular-nums">{value}</p><p className="mt-1 text-xs text-slate-500">Selected batch</p></div></div> }

@@ -84,6 +84,10 @@
 
 ## Required next decisions before Stage 3 calculations
 
+### 2026-11-19 Employee Details update
+
+An HR-only Employee Details page and guarded single-employee GET endpoint are implemented. The profile shows persisted identity, work email, current status, and department. Four primary tabs render; schedule, assets, attendance, leave, and unsupported profile fields explicitly show unavailable states rather than fixture values. Existing edit and lifecycle services are reused. There were no database or migration changes. Verification: 146 tests passed across 38 files, TypeScript passed, scoped ESLint passed, and the production build passed. Live database integration, authenticated visual review, and responsive viewport checks remain unverified.
+
 1. Authoritative payroll engine, pay periods/cutoffs, earning-date attribution, rounding and recalculation.
 2. Overnight shift work-date/rest-day/holiday/absence handling and crossing-cutoff allocation.
 3. Employee-account linking, HR scope, and status definitions for headcount and offboarding.
