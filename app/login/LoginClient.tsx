@@ -29,6 +29,13 @@ type LoginResponse = {
   user?: { role: string };
 };
 
+function landingPath(role: string | undefined): string {
+  if (role === "employee") return "/account";
+  if (role === "tl") return "/access-pending";
+  if (role === "hr") return "/hr/dashboard";
+  return "/admin/dashboard";
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [step, setStep] = useState<"login" | "mfa" | "recovery">("login");
@@ -99,9 +106,7 @@ export default function LoginPage() {
         }
         setStep("mfa");
       } else if (result.authenticated) {
-        router.push(
-          result.user?.role === "hr" ? "/hr/dashboard" : result.user?.role === "employee" ? "/account" : "/admin/dashboard",
-        );
+        router.push(landingPath(result.user?.role));
       } else {
         setError("Sign-in could not be completed.");
       }
@@ -126,6 +131,7 @@ export default function LoginPage() {
       const result = (await response.json()) as {
         authenticated?: boolean;
         recoveryCodes?: string[];
+        user?: { role: string };
       };
       if (!response.ok || !result.authenticated) {
         setError("Verification failed. Check the code or try again.");
@@ -133,7 +139,7 @@ export default function LoginPage() {
         setRecoveryCodes(result.recoveryCodes);
         setStep("recovery");
       } else {
-        router.push("/");
+        router.push(landingPath(result.user?.role));
       }
     } catch {
       setError("Verification is temporarily unavailable.");

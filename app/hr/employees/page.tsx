@@ -1,7 +1,9 @@
+import { connection } from "next/server";
 import { getEmployeeWorkspace } from "../../lib/employees/service";
 import { EmployeesClient } from "./EmployeesClient";
 
 export default async function EmployeesPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
+  await connection();
   const workspace = await getEmployeeWorkspace();
   const { edit } = await searchParams;
 

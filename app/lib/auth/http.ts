@@ -9,7 +9,10 @@ export class HttpInputError extends Error {
   }
 }
 
-export async function readJsonBody(request: Request): Promise<unknown> {
+export async function readJsonBody(
+  request: Request,
+  maxBytes = MAX_API_BODY_BYTES,
+): Promise<unknown> {
   const contentType = request.headers.get("content-type");
   if (!contentType?.toLowerCase().startsWith("application/json")) {
     throw new HttpInputError(415, "unsupported_media_type");
@@ -20,7 +23,7 @@ export async function readJsonBody(request: Request): Promise<unknown> {
     if (!/^\d+$/.test(contentLength)) {
       throw new HttpInputError(400, "invalid_request");
     }
-    if (Number(contentLength) > MAX_API_BODY_BYTES) {
+    if (Number(contentLength) > maxBytes) {
       throw new HttpInputError(413, "payload_too_large");
     }
   }
@@ -37,7 +40,7 @@ export async function readJsonBody(request: Request): Promise<unknown> {
       const { done, value } = await reader.read();
       if (done) break;
       total += value.byteLength;
-      if (total > MAX_API_BODY_BYTES) {
+      if (total > maxBytes) {
         await reader.cancel();
         throw new HttpInputError(413, "payload_too_large");
       }

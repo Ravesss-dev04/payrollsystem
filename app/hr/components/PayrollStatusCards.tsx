@@ -2,15 +2,19 @@ import { LuChevronRight, LuInfo } from "react-icons/lu";
 export default function PayrollStatusCards({
   counts,
   onContinue,
+  showContinue = true,
+  embedded = false,
 }: {
   counts: number[];
   onContinue: () => void;
+  showContinue?: boolean;
+  embedded?: boolean;
 }) {
   const total = counts.reduce((a, b) => a + b, 0);
   const colors = ["#6D28D9", "#C4B5FD", "#B7B7D1"];
   const names = ["Processed", "In Progress", "Pending"];
   return (
-    <section className="rounded-2xl border border-[#edeaf6] bg-white p-5 shadow-sm">
+    <section className={embedded ? "" : "rounded-2xl border border-[#edeaf6] bg-white p-5 shadow-sm"}>
       <h2 className="flex items-center gap-1 text-lg font-bold">
         Payroll Status{" "}
         <span
@@ -62,7 +66,7 @@ export default function PayrollStatusCards({
             <strong className="text-3xl">
               {total ? Math.round((counts[0] / total) * 100) : 0}%
             </strong>
-            <span className="text-xs font-semibold">In Progress</span>
+            <span className="text-xs font-semibold">Processed</span>
           </div>
         </div>
         <div className="min-w-[220px] flex-1 space-y-3">
@@ -80,12 +84,12 @@ export default function PayrollStatusCards({
               </strong>
             </div>
           ))}
-          <button
+          {showContinue && <button
             onClick={onContinue}
             className="flex w-full items-center justify-center rounded-lg border border-violet-500 px-3 py-2 text-sm font-bold text-violet-700 hover:bg-violet-50"
           >
             Continue Processing <LuChevronRight />
-          </button>
+          </button>}
         </div>
       </div>
     </section>

@@ -56,7 +56,7 @@ export async function POST(request: Request): Promise<Response> {
     challenge.attempts >= 5 ||
     challenge.user.status !== "Active" ||
     !isRole(challenge.user.role) ||
-    !["admin", "hr"].includes(challenge.user.role) ||
+    !["admin", "hr", "tl"].includes(challenge.user.role) ||
     challenge.user.mfaEnabled
   ) {
     await writeSecurityEvent({
@@ -81,7 +81,7 @@ export async function POST(request: Request): Promise<Response> {
       where: {
         id: challenge.user.id,
         status: "Active",
-        role: { in: ["admin", "hr"] },
+        role: { in: ["admin", "hr", "tl"] },
         mfaEnabled: false,
         pendingMfaSecretEncrypted: null,
       },

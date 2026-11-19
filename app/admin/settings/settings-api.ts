@@ -1,6 +1,8 @@
 "use client";
 
 import { z } from "zod";
+import { parseCsrfCookie } from "../../lib/auth/csrf";
+export { parseCsrfCookie } from "../../lib/auth/csrf";
 
 const unitSchema = z.object({
   id: z.string().min(1),
@@ -47,21 +49,6 @@ export type SettingsEmploymentStatus = z.infer<
   typeof employmentStatusResponseSchema
 >["definitions"][number];
 
-export function parseCsrfCookie(cookieHeader: string): string | null {
-  const values = cookieHeader
-    .split(";")
-    .map((part) => part.trim())
-    .filter(
-      (part) =>
-        part.startsWith("__Host-payroll-csrf=") ||
-        part.startsWith("payroll-csrf="),
-    )
-    .map((part) => part.slice(part.indexOf("=") + 1));
-  return values.length === 1 && /^[A-Za-z0-9_-]{43}$/.test(values[0])
-    ? values[0]
-    : null;
-}
-
 function messageForApiError(code: unknown): string {
   if (code === "forbidden") {
     return "You do not have permission to change these settings.";
@@ -71,6 +58,9 @@ function messageForApiError(code: unknown): string {
   }
   if (code === "conflict") {
     return "The change conflicts with existing settings. Check for duplicate names or policy dates.";
+  }
+  if (code === "version_conflict") {
+    return "Another rules draft was saved at the same time. Reload the latest version and try again.";
   }
   if (code === "department_has_active_teams") {
     return "Deactivate this department's teams before deactivating the department.";

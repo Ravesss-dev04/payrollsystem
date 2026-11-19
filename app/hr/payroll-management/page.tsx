@@ -1,5 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { type Batch, referenceBatches, loadDemoDrafts, saveDemoDrafts, money, date, periodLabel } from "./batch-data";
 import {
   LuDatabase,
   LuPlus,
@@ -18,89 +20,6 @@ import PendingAdjustmentCards from "../components/PendingAdjustmentCards";
 import PayrollStatusCards from "../components/PayrollStatusCards";
 import PayrollBreakdownCards from "../components/PayrollBreakdownCards";
 
-type Batch = {
-  id: string;
-  start: string;
-  end: string;
-  period: string;
-  count: number;
-  earnings: number;
-  deductions: number;
-  progress: [number, number, number];
-  status: "Draft" | "In Progress" | "Completed" | "Pending Approval";
-  prepared: string;
-  adjustments: number;
-};
-const initial: Batch[] = [
-  {
-    id: "PB-0128",
-    start: "2025-01-01",
-    end: "2025-01-31",
-    period: "Jan 2025",
-    count: 1248,
-    earnings: 456278000,
-    deductions: 73822000,
-    progress: [1098, 138, 12],
-    status: "In Progress",
-    prepared: "Emma Carter",
-    adjustments: 12,
-  },
-
-  {
-    id: "PB-0127",
-    start: "2024-12-01",
-    end: "2024-12-31",
-    period: "Dec 2024",
-    count: 1233,
-    earnings: 376241000,
-    deductions: 0,
-    progress: [1233, 0, 0],
-    status: "Completed",
-    prepared: "James Miller",
-    adjustments: 0,
-  },
-
-  {
-    id: "PB-0126",
-    start: "2024-11-01",
-    end: "2024-11-30",
-    period: "Nov 2024",
-    count: 1220,
-    earnings: 370198500,
-    deductions: 0,
-    progress: [1220, 0, 0],
-    status: "Completed",
-    prepared: "Emma Carter",
-    adjustments: 0,
-  },
-
-  {
-    id: "PB-0125",
-    start: "2024-10-01",
-    end: "2024-10-31",
-    period: "Oct 2024",
-    count: 1214,
-    earnings: 368942000,
-    deductions: 0,
-    progress: [1214, 0, 0],
-    status: "Completed",
-    prepared: "James Miller",
-    adjustments: 0,
-  },
-
-];
-const money = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
-    n / 100,
-  );
-
-const date = (s: string) =>
-  new Date(`${s}T00:00:00Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
   
 const input =
   "h-10 rounded-lg border border-[#ded8ed] bg-white px-3 text-sm outline-violet-500";
@@ -108,8 +27,10 @@ const btn =
   "inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#ded8ed] bg-white px-4 text-sm font-semibold hover:bg-violet-50";
 
 export default function PayrollPage() {
-  const [batches, setBatches] = useState(initial);
-  const [selected, setSelected] = useState(initial[0].id);
+  const router = useRouter();
+  const [batches, setBatches] = useState(referenceBatches);
+  const [selected, setSelected] = useState(referenceBatches[0].id);
+  const [hydrated, setHydrated] = useState(false);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("All Statuses");
   const [period, setPeriod] = useState("Last 6 Months");
@@ -125,6 +46,26 @@ export default function PayrollPage() {
   const [dirty, setDirty] = useState(false);
   const [discard, setDiscard] = useState(false);
   const batch = batches.find((b) => b.id === selected) ?? batches[0];
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setBatches([...loadDemoDrafts(), ...referenceBatches]);
+      try {
+        const filters = JSON.parse(sessionStorage.getItem("payroll-management-filters") ?? "{}");
+        if (typeof filters.query === "string") setQuery(filters.query);
+        if (typeof filters.status === "string") setStatus(filters.status);
+        if (typeof filters.period === "string") setPeriod(filters.period);
+      } catch { /* Ignore invalid browser state. */ }
+      setHydrated(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  useEffect(() => {
+    if (hydrated) sessionStorage.setItem("payroll-management-filters", JSON.stringify({ query, status, period }));
+  }, [query, status, period, hydrated]);
+  const navigate = (b: Batch, edit = false) => {
+    setSelected(b.id);
+    router.push(`/hr/payroll-management/${encodeURIComponent(b.id)}${edit ? "?edit=1" : ""}`);
+  };
   const filtered = useMemo(
     () =>
       batches.filter((b) => {
@@ -154,6 +95,9 @@ export default function PayrollPage() {
     if (b) setSelected(b.id);
     setError("");
     setMenu("");
+    if (m === "details" && b) { navigate(b); return; }
+    if (m === "details") { navigate(batch); return; }
+    if (m === "edit" && b) { navigate(b, true); return; }
     setModal(m);
   };
   const close = () => {
@@ -182,11 +126,7 @@ export default function PayrollPage() {
       id,
       start,
       end,
-      period: new Date(start + "T00:00:00Z").toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      }),
+      period: periodLabel(start),
       count: 0,
       earnings: 0,
       deductions: 0,
@@ -196,10 +136,11 @@ export default function PayrollPage() {
       adjustments: 0,
     };
     setBatches([b, ...batches]);
+    saveDemoDrafts([b, ...batches]);
     setSelected(id);
     setDirty(false);
     setModal("");
-    setToast("Demo payroll batch created locally.");
+    setToast("Demo payroll batch created in this browser only.");
     setStart("");
     setEnd("");
     setNotes("");
@@ -218,7 +159,7 @@ export default function PayrollPage() {
                 Process payroll, manage batches, adjustments, and payroll
                 history.
               </p>
-
+   
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -276,6 +217,7 @@ export default function PayrollPage() {
           <PayrollStatusCards
             counts={batch.progress}
             onContinue={() => open("processing")}
+            showContinue={batch.status === "In Progress"}
           />
           <PayrollBreakdownCards
             period={batch.period}
@@ -348,7 +290,7 @@ export default function PayrollPage() {
                     "Prepared By",
                     "Actions",
                   ].map((x) => (
-                    <th key={x} className="px-4 py-3 font-semibold">
+                    <th key={x} className={`px-4 py-3 font-semibold ${x === "Actions" ? "text-center" : ""}`}>
                       {x || (
                         <input
                           aria-label="Select all visible batches"
@@ -411,35 +353,23 @@ export default function PayrollPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-4">{b.prepared}</td>
-                    <td className="whitespace-nowrap px-4">
+                    <td className="whitespace-nowrap px-4 text-center">
                       <button
                         aria-label={`View ${b.id}`}
+                        title="View Payroll Batch"
                         onClick={() => open("details", b)}
-                        className="rounded p-2 hover:bg-violet-100"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-violet-600"
                       >
-                        <LuEye />
+                        <LuEye size={18} />
                       </button>
                       <button
                         aria-label={`Edit ${b.id}`}
                         disabled={b.status !== "Draft"}
+                        title={b.status === "Draft" ? "Edit Payroll Batch" : "Only draft reference batches can be edited"}
                         onClick={() => open("edit", b)}
-                        className="rounded p-2 hover:bg-violet-100 disabled:opacity-30"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-violet-600 disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        <LuPencil />
-                      </button>
-                      <button
-                        aria-label={`More actions for ${b.id}`}
-                        onClick={() =>
-                          open(
-                            b.status === "In Progress"
-                              ? "processing"
-                              : "details",
-                            b,
-                          )
-                        }
-                        className="rounded p-2 hover:bg-violet-100"
-                      >
-                        <LuEllipsisVertical />
+                        <LuPencil size={18} />
                       </button>
                     </td>
                   </tr>
@@ -495,9 +425,7 @@ export default function PayrollPage() {
                       ? "Import Payroll Adjustments"
                       : modal === "processing"
                         ? `Payroll Processing — ${batch.id}`
-                        : modal === "edit"
-                          ? "Edit Draft Batch"
-                          : "Payroll Batch Details"}
+                        : "Payroll Processing"}
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
                   {modal === "create"
@@ -510,7 +438,7 @@ export default function PayrollPage() {
               </button>
             </div>
             <div className="space-y-4 overflow-y-auto p-5 text-sm">
-              {modal === "create" || modal === "edit" ? (
+              {modal === "create" ? (
                 <>
                   <label className="block">
                     Payroll type
@@ -591,65 +519,7 @@ export default function PayrollPage() {
                     </div>
                   )}
                 </>
-              ) : (
-                <>
-                  <div className="grid grid-cols-2 gap-3 rounded-lg bg-violet-50 p-4">
-                    <p>
-                      Batch
-                      <br />
-                      <strong>{batch.id}</strong>
-                    </p>
-                    <p>
-                      Status
-                      <br />
-                      <strong>{batch.status}</strong>
-                    </p>
-                    <p>
-                      Cut-off
-                      <br />
-                      <strong>
-                        {date(batch.start)} – {date(batch.end)}
-                      </strong>
-                    </p>
-                    <p>
-                      Prepared by
-                      <br />
-                      <strong>{batch.prepared}</strong>
-                    </p>
-                    <p>
-                      Included employees
-                      <br />
-                      <strong>{batch.count.toLocaleString()}</strong>
-                    </p>
-                    <p>
-                      Net payable
-                      <br />
-                      <strong>
-                        {money(batch.earnings - batch.deductions)}
-                      </strong>
-                    </p>
-                  </div>
-                  <h3 className="font-bold">
-                    {modal === "processing"
-                      ? "Validation and processing progress"
-                      : "Employee Breakdown"}
-                  </h3>
-                  <p>
-                    {modal === "processing"
-                      ? `${batch.progress[0]} processed, ${batch.progress[1]} in progress, ${batch.progress[2]} pending. Review is available locally; processing and approval are not simulated.`
-                      : "Employee-level payroll breakdown is not available in this demo."}
-                  </p>
-                  <h3 className="font-bold">Adjustments and exceptions</h3>
-                  <p>
-                    {batch.adjustments} pending adjustments. Individual records
-                    and validation details are not available in this snapshot.
-                  </p>
-                  <h3 className="font-bold">History</h3>
-                  <p>
-                    No audit events are available in this reference snapshot.
-                  </p>
-                </>
-              )}
+              ) : null}
             </div>
             <div className="flex justify-end gap-2 border-t p-4">
               <button onClick={close} className={btn}>
@@ -663,14 +533,7 @@ export default function PayrollPage() {
                   Create demo draft
                 </button>
               )}
-              {modal === "details" && batch.status === "In Progress" && (
-                <button
-                  onClick={() => setModal("processing")}
-                  className={`${btn} border-violet-700 bg-violet-700 text-white`}
-                >
-                  Continue Processing
-                </button>
-              )}
+
             </div>
           </div>
         </div>

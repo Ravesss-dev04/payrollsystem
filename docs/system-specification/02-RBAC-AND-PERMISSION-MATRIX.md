@@ -3,7 +3,7 @@
 **Status:** Approved target; runtime implementation is partial
 **Assessment date:** 2026-11-15
 
-**Approved runtime scope:** Exactly `admin`, `hr`, and `employee` are supported. The Team Leader column is legacy/deferred and does not authorize a fourth role or workflow in this phase.
+**Approved runtime scope:** Exactly `admin`, `hr`, `tl`, and `employee` are recognized. TL currently has no permission grants; the Team Leader column below is a future target matrix, not active access.
 
 ## Authorization contract
 
@@ -32,7 +32,7 @@ Names below describe the approved target contract and may be adapted to the repo
 | Assets, requests, communications | `asset.read.assigned_team`, `asset.manage.hr`, `asset.assignment.request.own`, `announcement.read.authorized`, `announcement.publish.hr`, `announcement.publish.team`, `concern.submit.own`, `request.endorse.assigned_team` |
 | Analytics, audit, exports | `dashboard.read.admin`, `reports.read.hr`, `reports.read.assigned_team`, `reports.read.own`, `audit.read.authorized`, `report.export.authorized` |
 
-Grant permissions per role explicitly. A permission to read an aggregate does not imply permission to read its employee-level rows. Salary and compensation fields must not enter Team Leader or general workforce responses.
+Grant permissions per role explicitly. A permission to read an aggregate does not imply permission to read its employee-level rows. The current TL grant set is empty until team assignment scope and authorization rules are implemented. Salary and compensation fields must not enter Team Leader or general workforce responses.
 
 ## Role/action matrix
 
@@ -69,10 +69,10 @@ The “As separately authorized” compensation initiation/administration permis
 
 | Current code | Verified behavior | Gap to target |
 |---|---|---|
-| `app/lib/auth/authorization.ts` | Runtime recognizes `admin`, `hr`, `employee`; explicit coarse permission sets; malformed role denied. Employee permission helper can compare `resourceOwnerId` and actor ID. | No `team_leader`; no team/branch query scopes; coarse actions combine distinct workflows; self-service is tied to `role === "employee"` rather than a separate entitlement. |
+| `app/lib/auth/authorization.ts` | Runtime recognizes `admin`, `hr`, `tl`, `employee`; current role grants are explicit and TL has none; malformed role denied. | No team/branch query scopes; coarse actions combine distinct workflows; self-service is tied to `role === "employee"` rather than a separate entitlement. |
 | `app/lib/auth/page-guard.server.ts` | Protected pages require current session and permission; denied page requests are audited and return not-found. | Page helper does not accept a resource scope; per-record checks must be implemented in domain services. |
 | `app/lib/auth/api-guard.server.ts` | API guard checks same origin, session, CSRF for unsafe requests, optional permission, and records denials. | Only auth/logout route currently uses the guard; no domain APIs/scoped query policies exist. |
-| `prisma/schema.prisma` | MySQL enum has three roles; `User.status` is an explicit account status. | Role migration and explicit employee/team assignment model absent. |
+| `prisma/schema.prisma` | MySQL enum has four roles; `User.status` is an explicit account status. | Additive role/permission and domain migration is generated but not applied; team assignment model absent. |
 | Admin page guards | Admin, Company, Users & Roles, and Payroll pages use coarse permission checks. | Navigation is not role-filtered; server checks remain the actual boundary. |
 
 ## Required tests before enabling linked-employee self-service

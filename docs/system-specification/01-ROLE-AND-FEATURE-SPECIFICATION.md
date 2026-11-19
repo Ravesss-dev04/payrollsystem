@@ -1,10 +1,10 @@
 # Role and Feature Specification
 
 **Status:** Approved target; implementation is partial
-**Authority:** Current system requirements in `docs/system-specification/`, subject to the explicitly stated three-role runtime scope.
+**Authority:** Current system requirements in `docs/system-specification/`, subject to the four-role runtime scope.
 **Assessment date:** 2026-11-15
 
-**Approved runtime scope:** Exactly `admin`, `hr`, and `employee` are supported. Team Leader content below is legacy target material and is deferred; it does not authorize a fourth role, route, or workflow.
+**Approved runtime scope:** Exactly `admin`, `hr`, `tl`, and `employee` are recognized. `tl` currently has no permission grants or team-scoped routes; Team Leader workflows remain deferred.
 
 ## Status vocabulary
 
@@ -24,17 +24,17 @@ One integrated workforce and payroll system for an offshore call-center company.
 | Web application | Next.js App Router 16.4.6, React 19.3.0, TypeScript, Tailwind CSS 4. |
 | Data access | Prisma 7.10 with `@prisma/adapter-mariadb`; the app reads `DATABASE_URL` and uses the MariaDB driver. |
 | Database | The configured URL uses the MySQL scheme; read-only `information_schema` inspection found `User`, `Session`, `MfaChallenge`, `MfaRecoveryCode`, `PasswordResetToken`, `AuthRateLimitBucket`, and `SecurityAuditEvent` only. Credentials and URL were not emitted. |
-| Schema deployment | `prisma/schema.prisma` is MySQL; no `prisma/migrations/` files or deployment migration workflow were found. |
+| Schema deployment | `prisma/schema.prisma` is MySQL; additive migrations exist but the users/roles/attendance migration has not been applied. |
 | Authentication | Database-backed users and opaque server-side sessions; password verification, role/status validation, rate limiting, MFA challenge/enrollment, CSRF, session expiry/revocation, and security-event recording are implemented. |
-| Current role enum | `admin`, `hr`, `employee`. `team_leader` is not present in the Prisma enum, database, or runtime role list. |
-| Business records | Organization settings, branches, departments, teams, employment-status policy versions, and domain-audit records now have Prisma models. Employee, schedule, attendance, leave, overtime, compensation, payroll, approval, asset, announcement, and compliance models remain absent. |
-| APIs | Authentication endpoints and Admin Settings APIs for organization structure and employment-status policy exist. Employee and other operational domain APIs remain absent. |
-| UI | Admin Settings forms now manage organization settings, structure, and status policy. The dashboard retains unavailable states for operational metrics; HR workspace and operational data-entry screens remain unimplemented. |
-| Audit | `SecurityAuditEvent` records authentication/security events. `DomainAuditEvent` and its transactional append helper now cover organization-policy changes; domain activity feed integration remains pending. |
+| Current role enum | `admin`, `hr`, `tl`, and `employee`; TL has no role grants by default. |
+| Business records | Organization, employee lifecycle, user/role permissions, invitations, attendance policies, assignments, and audit records have Prisma models. Other payroll and operational models remain absent. |
+| APIs | Authentication, user/role/invitation, employee lifecycle, and attendance-policy APIs exist. SMTP and Cloudflare R2 are configured externally; profile images remain private behind authenticated routes. |
+| UI | Admin user/role management and attendance policies use persisted APIs; HR can access attendance policies without the user/role tabs. |
+| Audit | Security and domain audit events cover authentication, account/role/invitation, employee, and attendance-policy operations. |
 
 ## Authorized role model
 
-Exactly three runtime role values are approved: `admin`, `hr`, and `employee`. Unknown, malformed, missing, or unsupported values are denied. A role is not a permission shortcut; all actions also require a valid data scope and workflow state. Team Leader scenarios in this legacy specification are deferred.
+Exactly four runtime role values are approved: `admin`, `hr`, `tl`, and `employee`. Unknown, malformed, missing, or unsupported values are denied. A role is not a permission shortcut; all actions also require a valid data scope and workflow state. TL is recognized but currently receives no grants; team supervision workflows remain deferred.
 
 ### Admin — company governance and financial authorization
 
@@ -114,7 +114,7 @@ Admin, HR, and Team Leader accounts may also belong to an employee. This is a se
 
 | Feature | Approved owner | Current implementation |
 |---|---|---|
-| Authentication, MFA, sessions, security events | System | Verified for account/session lifecycle; current role enum has three values. |
+| Authentication, MFA, sessions, security events | System | Verified for account/session lifecycle; current role enum has four values, with TL grantless. |
 | Company structure and attendance policies | Admin | Prototype UI only; no persisted domain tables/API. |
 | Employment and employee lifecycle | HR | Missing. |
 | Official schedules and attendance | HR | Missing. |

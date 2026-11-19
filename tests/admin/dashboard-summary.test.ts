@@ -147,7 +147,7 @@ describe("Admin dashboard snapshot service", () => {
       _count: { _all: true },
     });
     expect(snapshot.accountCounts).toEqual({
-      byRole: { admin: 2, hr: 3, employee: 0 },
+      byRole: { admin: 2, hr: 3, tl: 0, employee: 0 },
       byStatus: { Active: 4, Invited: 0, Suspended: 1, Inactive: 0 },
     });
     expect(snapshot.activities[0]).toEqual({
@@ -171,6 +171,7 @@ describe("Admin dashboard snapshot service", () => {
     expect((await getSnapshot()).accountCounts.byRole).toEqual({
       admin: 0,
       hr: 0,
+      tl: 0,
       employee: 0,
     });
 

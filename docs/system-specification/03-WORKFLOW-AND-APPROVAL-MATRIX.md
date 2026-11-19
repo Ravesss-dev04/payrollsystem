@@ -3,7 +3,7 @@
 **Status:** Approved responsibility paths; workflows and states are not implemented
 **Assessment date:** 2026-11-15
 
-**Approved runtime scope:** Only `admin`, `hr`, and `employee` roles are supported. Team Leader review/endorsement steps below are deferred legacy targets, not authorization to add a fourth role or workflow.
+**Approved runtime scope:** `admin`, `hr`, `tl`, and `employee` are recognized. TL currently has no permission grants; Team Leader review/endorsement steps below remain future workflows, not active authorization.
 
 ## State and audit rules
 

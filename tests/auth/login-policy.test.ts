@@ -80,9 +80,10 @@ describe("login policy", () => {
     ).toBeNull();
   });
 
-  it("requires MFA for HR and administrators only", () => {
+  it("requires MFA for every non-employee role, including TL", () => {
     expect(requiresMfa("admin")).toBe(true);
     expect(requiresMfa("hr")).toBe(true);
+    expect(requiresMfa("tl")).toBe(true);
     expect(requiresMfa("employee")).toBe(false);
     expect(requiresMfa("owner")).toBe(true);
   });
