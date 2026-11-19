@@ -1,0 +1,4 @@
+import { LuLaptop } from "react-icons/lu";
+export function AssetsDevicesTab() {
+  return <div className="space-y-4"><div className="flex items-center gap-3"><LuLaptop className="text-[#7C3AED]" size={24} /><h2 className="text-lg font-bold">Assets & Devices</h2></div><p className="text-sm text-[#73718A]">The current floor plan contains illustrative records and cannot identify this employee’s desk.</p><div className="grid gap-4 lg:grid-cols-2">{["Assigned Assets", "Workstation Details", "Asset Assignment History"].map(title => <section key={title} className="min-h-36 rounded-2xl border border-[#E7DFF5] bg-white p-6 shadow-sm"><h3 className="font-semibold">{title}</h3><p className="mt-4 text-sm text-[#73718A]">Unavailable until employee inventory and workstation assignments are implemented.</p></section>)}</div></div>;
+}

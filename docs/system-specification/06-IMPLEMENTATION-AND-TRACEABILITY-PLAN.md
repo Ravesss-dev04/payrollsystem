@@ -101,6 +101,10 @@ Status values use the required vocabulary: **NOT STARTED**, **IN PROGRESS**, **I
 
 ## Change-control gates
 
+### 2026-11-19 employee detail slice
+
+`EMP-001` now has an HR-only detail route at `/hr/employees/[employeeId]` and a guarded `GET /api/hr/employees/[employeeId]`. Both use the existing employee primary key and current assignment; the detail query requires the assignment department to belong to the configured organization. The directory View action links to the route, while Edit returns to the existing employee form. Profile identity, email, status, and department come from the employee service. Four tabs are present; schedule, attendance, assets, workstation, leave, and derived metrics remain **BLOCKED** because authoritative sources and policies are absent. No schema migration or official workflow was added. Focused employee tests and full suite (146/146), TypeScript, scoped ESLint, and a production build passed. Authenticated browser, live MySQL, and responsive visual verification remain unperformed.
+
 - No production business model or policy is inferred from sample UI.
 - Review every MySQL migration against the live schema and preserve current authentication/security records. No reset or destructive migration.
 - Resolve each blocker in `04-DATA-OWNERSHIP-AND-METRIC-DEFINITIONS.md` before implementing calculations.

@@ -5,6 +5,7 @@ import {
   employeeAssignments,
   employeeCreate,
   employeeFindMany,
+  employeeFindFirst,
   organizationUnitMocks,
   resetOrganizationDatabase,
   setEmployeeAccount,
@@ -106,6 +107,30 @@ function makeRequest(
 }
 
 describe("HR employee API", () => {
+  it("loads only the requested employee after authorization and validates identifiers", async () => {
+    reset();
+    const { GET } = await loadRoute("employee");
+    authorizationFailure = new TestApiAuthorizationError(403, "forbidden");
+    const denied = await GET(makeRequest("/api/hr/employees/employee-1", "GET"), { params: Promise.resolve({ employeeId: "employee-1" }) });
+    expect(denied.status).toBe(403);
+    expect(employeeFindFirst).not.toHaveBeenCalled();
+
+    authorizationFailure = null;
+    employeeFindFirst.mockImplementationOnce(async () => ({
+      id: "employee-1", employeeNumber: "EMP-104", firstName: "Ada", lastName: "Lovelace", workEmail: "ada@example.test",
+      userId: null, createdAt: new Date("2026-01-01T00:00:00.000Z"), updatedAt: new Date("2026-01-01T00:00:00.000Z"),
+      assignments: [{ effectiveFrom: new Date("2026-02-01T00:00:00.000Z"), statusDefinition: { code: "ACTIVE", label: "Active" }, department: { id: "department-1", name: "People" } }],
+    }));
+    const response = await GET(makeRequest("/api/hr/employees/employee-1", "GET"), { params: Promise.resolve({ employeeId: "employee-1" }) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ employee: { id: "employee-1", employeeNumber: "EMP-104", firstName: "Ada", lastName: "Lovelace", workEmail: "ada@example.test", employmentStatus: { code: "ACTIVE", label: "Active" }, department: { id: "department-1", name: "People" }, effectiveFrom: "2026-02-01" } });
+    expect(employeeFindFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ id: "employee-1", assignments: { some: { effectiveTo: null, department: { organizationId: "primary" } } } }) }));
+
+    const invalid = await GET(makeRequest("/api/hr/employees/bad.id", "GET"), { params: Promise.resolve({ employeeId: "bad.id" }) });
+    expect(invalid.status).toBe(400);
+    const missing = await GET(makeRequest("/api/hr/employees/missing", "GET"), { params: Promise.resolve({ employeeId: "missing" }) });
+    expect(missing.status).toBe(404);
+  });
   it("checks HR employee permission before querying employee records", async () => {
     reset();
     authorizationFailure = new TestApiAuthorizationError(403, "forbidden");

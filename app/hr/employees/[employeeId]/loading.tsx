@@ -1,0 +1,3 @@
+export default function LoadingEmployeeDetails() {
+  return <main aria-busy="true" aria-label="Loading employee details" className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-7"><div className="mx-auto max-w-[1500px] animate-pulse space-y-6"><div className="h-5 w-52 rounded bg-violet-100" /><div className="flex items-center gap-5"><div className="h-28 w-28 rounded-full bg-violet-100" /><div className="space-y-3"><div className="h-8 w-64 rounded bg-violet-100" /><div className="h-4 w-80 max-w-full rounded bg-violet-100" /></div></div><div className="h-16 rounded-xl bg-white" /><div className="grid gap-6 lg:grid-cols-[45%_1fr]"><div className="h-96 rounded-xl bg-white" /><div className="h-96 rounded-xl bg-white" /></div></div></main>;
+}

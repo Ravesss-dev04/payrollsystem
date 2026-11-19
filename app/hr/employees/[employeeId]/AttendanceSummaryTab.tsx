@@ -1,0 +1,4 @@
+import { LuCalendarCheck } from "react-icons/lu";
+export function AttendanceSummaryTab() {
+  return <div className="space-y-4"><div className="flex items-center gap-3"><LuCalendarCheck className="text-[#7C3AED]" size={24} /><h2 className="text-lg font-bold">Attendance Summary</h2></div><p className="text-sm text-[#73718A]">The Attendance Management screen uses illustrative data. Official employee attendance records are not available yet.</p><div className="grid gap-4 lg:grid-cols-2">{["Attendance Metrics", "Weekly Attendance Timeline", "Weekly Summary", "Time Logs", "Flags & Exceptions", "Correction Requests"].map(title => <section key={title} className="min-h-36 rounded-2xl border border-[#E7DFF5] bg-white p-6 shadow-sm"><h3 className="font-semibold">{title}</h3><p className="mt-4 text-sm text-[#73718A]">Unavailable until official attendance records and correction workflows are implemented.</p></section>)}</div></div>;
+}
