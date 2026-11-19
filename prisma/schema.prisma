@@ -116,56 +116,111 @@ enum PayrollDisbursementStatus {
   PaymentFailed
 }
 
+enum CompensationBasis {
+  Monthly
+  Daily
+  Hourly
+}
+
+enum CompensationRecordStatus {
+  Active
+  Inactive
+  Draft
+  Paused
+  Retired
+}
+
+enum AllowanceRecurrence {
+  Weekly
+  Biweekly
+  Semimonthly
+  Monthly
+  Bimonthly
+  Quarterly
+  Annually
+  OneTime
+  EveryPayrollPeriod
+}
+
+enum AllowanceEligibility {
+  AllEmployees
+  SpecificDepartment
+  SpecificPosition
+  SpecificEmploymentCategory
+  SpecificPayGrade
+  SpecificBranch
+  SelectedEmployees
+}
+
 model User {
-  id                                 String                       @id @default(cuid())
-  email                              String                       @unique @db.VarChar(320)
-  name                               String                       @db.VarChar(160)
-  phoneNumber                        String?                      @db.VarChar(32)
-  profileImageKey                    String?                      @db.VarChar(512)
-  profileImageContentType            String?                      @db.VarChar(64)
-  passwordHash                       String?                      @db.VarChar(255)
+  id                                 String                        @id @default(cuid())
+  email                              String                        @unique @db.VarChar(320)
+  name                               String                        @db.VarChar(160)
+  phoneNumber                        String?                       @db.VarChar(32)
+  profileImageKey                    String?                       @db.VarChar(512)
+  profileImageContentType            String?                       @db.VarChar(64)
+  passwordHash                       String?                       @db.VarChar(255)
   role                               UserRole
   status                             AccountStatus
-  mfaSecretEncrypted                 String?                      @db.Text
-  pendingMfaSecretEncrypted          String?                      @db.Text
-  mfaEnabled                         Boolean                      @default(false)
-  sessionVersion                     Int                          @default(0)
-  lastLoginAt                        DateTime?                    @db.DateTime(3)
-  isTestAccount                      Boolean                      @default(false)
-  createdAt                          DateTime                     @default(now()) @db.DateTime(3)
-  updatedAt                          DateTime                     @updatedAt @db.DateTime(3)
+  mfaSecretEncrypted                 String?                       @db.Text
+  pendingMfaSecretEncrypted          String?                       @db.Text
+  mfaEnabled                         Boolean                       @default(false)
+  sessionVersion                     Int                           @default(0)
+  lastLoginAt                        DateTime?                     @db.DateTime(3)
+  isTestAccount                      Boolean                       @default(false)
+  createdAt                          DateTime                      @default(now()) @db.DateTime(3)
+  updatedAt                          DateTime                      @updatedAt @db.DateTime(3)
   sessions                           Session[]
   mfaChallenges                      MfaChallenge[]
   recoveryCodes                      MfaRecoveryCode[]
   passwordResetTokens                PasswordResetToken[]
-  securityEvents                     SecurityAuditEvent[]         @relation("SecurityEventActor")
-  targetedSecurityEvents             SecurityAuditEvent[]         @relation("SecurityEventTarget")
-  domainAuditEvents                  DomainAuditEvent[]           @relation("DomainAuditActor")
-  createdEmploymentPolicies          EmploymentStatusPolicy[]     @relation("EmploymentPolicyCreator")
+  securityEvents                     SecurityAuditEvent[]          @relation("SecurityEventActor")
+  targetedSecurityEvents             SecurityAuditEvent[]          @relation("SecurityEventTarget")
+  domainAuditEvents                  DomainAuditEvent[]            @relation("DomainAuditActor")
+  createdEmploymentPolicies          EmploymentStatusPolicy[]      @relation("EmploymentPolicyCreator")
   employeeRecord                     Employee?
-  createdRolePermissions             RolePermission[]             @relation("RolePermissionUpdater")
-  permissionDenials                  UserPermissionDenial[]       @relation("UserPermissionTarget")
-  createdPermissionDenials           UserPermissionDenial[]       @relation("UserPermissionDenialCreator")
-  createdInvitations                 UserInvitation[]             @relation("InvitationCreator")
-  invitations                        UserInvitation[]             @relation("InvitationTarget")
-  createdAttendancePolicies          AttendancePolicy[]           @relation("AttendancePolicyCreator")
-  updatedAttendancePolicies          AttendancePolicy[]           @relation("AttendancePolicyUpdater")
-  createdPolicyDepartmentAssignments AttendancePolicyDepartment[] @relation("PolicyDepartmentAssignmentCreator")
-  createdPolicyEmployeeAssignments   AttendancePolicyEmployee[]   @relation("PolicyEmployeeAssignmentCreator")
+  createdRolePermissions             RolePermission[]              @relation("RolePermissionUpdater")
+  permissionDenials                  UserPermissionDenial[]        @relation("UserPermissionTarget")
+  createdPermissionDenials           UserPermissionDenial[]        @relation("UserPermissionDenialCreator")
+  createdInvitations                 UserInvitation[]              @relation("InvitationCreator")
+  invitations                        UserInvitation[]              @relation("InvitationTarget")
+  createdAttendancePolicies          AttendancePolicy[]            @relation("AttendancePolicyCreator")
+  updatedAttendancePolicies          AttendancePolicy[]            @relation("AttendancePolicyUpdater")
+  createdPolicyDepartmentAssignments AttendancePolicyDepartment[]  @relation("PolicyDepartmentAssignmentCreator")
+  createdPolicyEmployeeAssignments   AttendancePolicyEmployee[]    @relation("PolicyEmployeeAssignmentCreator")
   createdPayrollRuleSets             PayrollRuleSet[]              @relation("PayrollRuleSetCreator")
   createdDeductionCategorySets       PayrollDeductionCategorySet[] @relation("DeductionCategorySetCreator")
   approvedDeductionCategorySets      PayrollDeductionCategorySet[] @relation("DeductionCategorySetApprover")
-  createdPayrollBatches               PayrollBatch[]                 @relation("PayrollBatchCreator")
-  preparedPayrollVersions             PayrollBatchVersion[]          @relation("PayrollVersionPreparer")
-  submittedPayrollVersions            PayrollBatchVersion[]          @relation("PayrollVersionSubmitter")
-  payrollDecisions                    PayrollDecision[]              @relation("PayrollDecisionActor")
-  createdConfigVersions               PayrollConfigurationVersion[] @relation("ConfigVersionCreator")
-  submittedConfigVersions             PayrollConfigurationVersion[] @relation("ConfigVersionSubmitter")
-  approvedConfigVersions              PayrollConfigurationVersion[] @relation("ConfigVersionApprover")
-  rejectedConfigVersions              PayrollConfigurationVersion[] @relation("ConfigVersionRejecter")
-  timelineEvents                      PayrollBatchTimelineEvent[]   @relation("BatchTimelineActor")
-  disbursedPayrollRecords             PayrollDisbursementRecord[]   @relation("DisbursementActor")
-  activeInvitation                   UserInvitation?              @relation("ActiveInvitationUser")
+  createdPayrollBatches              PayrollBatch[]                @relation("PayrollBatchCreator")
+  preparedPayrollVersions            PayrollBatchVersion[]         @relation("PayrollVersionPreparer")
+  submittedPayrollVersions           PayrollBatchVersion[]         @relation("PayrollVersionSubmitter")
+  payrollDecisions                   PayrollDecision[]             @relation("PayrollDecisionActor")
+  createdConfigVersions              PayrollConfigurationVersion[] @relation("ConfigVersionCreator")
+  submittedConfigVersions            PayrollConfigurationVersion[] @relation("ConfigVersionSubmitter")
+  approvedConfigVersions             PayrollConfigurationVersion[] @relation("ConfigVersionApprover")
+  rejectedConfigVersions             PayrollConfigurationVersion[] @relation("ConfigVersionRejecter")
+  timelineEvents                     PayrollBatchTimelineEvent[]   @relation("BatchTimelineActor")
+  disbursedPayrollRecords            PayrollDisbursementRecord[]   @relation("DisbursementActor")
+  activeInvitation                   UserInvitation?               @relation("ActiveInvitationUser")
+  teamLedEmployees                   Employee[]                    @relation("EmployeeTeamLead")
+  createdPayGrades                   PayGrade[]                    @relation("PayGradeCreator")
+  updatedPayGrades                   PayGrade[]                    @relation("PayGradeUpdater")
+  createdAllowancePolicies           AllowancePolicy[]             @relation("AllowanceCreator")
+  updatedAllowancePolicies           AllowancePolicy[]             @relation("AllowanceUpdater")
+  pausedAllowancePolicies            AllowancePolicy[]             @relation("AllowancePauser")
+  createdBonusPrograms               BonusProgram[]                @relation("BonusProgramCreator")
+  updatedBonusPrograms               BonusProgram[]                @relation("BonusProgramUpdater")
+  createdBonusAwards                 BonusAward[]                  @relation("BonusAwardCreator")
+  approvedBonusAwards                BonusAward[]                  @relation("BonusAwardApprover")
+  requestedSalaryAdjustments         SalaryAdjustment[]            @relation("SalaryAdjustmentRequester")
+  submittedSalaryAdjustments         SalaryAdjustment[]            @relation("SalaryAdjustmentSubmitter")
+  reviewedSalaryAdjustments          SalaryAdjustment[]            @relation("SalaryAdjustmentReviewer")
+  approvedSalaryAdjustments          SalaryAdjustment[]            @relation("SalaryAdjustmentApprover")
+  implementedSalaryAdjustments       SalaryAdjustment[]            @relation("SalaryAdjustmentImplementer")
+  salaryAdjustmentEvents             SalaryAdjustmentEvent[]       @relation("SalaryAdjustmentEventActor")
+  assignedEmployeePayGrades          EmployeePayGrade[]            @relation("EmployeePayGradeAssigner")
+  assignedEmployeeAllowances         EmployeeAllowance[]           @relation("EmployeeAllowanceAssigner")
+  allowanceHistoryChanges            AllowancePolicyHistory[]      @relation("AllowanceHistoryChanger")
 
   @@index([status, role])
 }
@@ -369,6 +424,7 @@ model Employee {
   lastName                    String                     @db.VarChar(80)
   workEmail                   String                     @unique @db.VarChar(320)
   userId                      String?                    @unique @db.VarChar(191)
+  teamLeadId                  String?                    @db.VarChar(191)
   createdAt                   DateTime                   @default(now()) @db.DateTime(3)
   updatedAt                   DateTime                   @updatedAt @db.DateTime(3)
   user                        User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -376,8 +432,219 @@ model Employee {
   attendancePolicyAssignments AttendancePolicyEmployee[]
   invitations                 UserInvitation[]
   payrollResults              PayrollEmployeeResult[]
+  teamLead                    User?                      @relation("EmployeeTeamLead", fields: [teamLeadId], references: [id], onDelete: SetNull)
+  payGradeAssignments         EmployeePayGrade[]
+  allowanceAssignments        EmployeeAllowance[]
+  bonusAwards                 BonusAward[]
+  salaryAdjustments           SalaryAdjustment[]
 
   @@index([lastName, firstName])
+  @@index([teamLeadId])
+}
+
+model PayGrade {
+  id              String                   @id @default(cuid())
+  code            String                   @unique @db.VarChar(40)
+  name            String                   @db.VarChar(120)
+  description     String?                  @db.VarChar(500)
+  position        String?                  @db.VarChar(120)
+  basis           CompensationBasis
+  minBasePay      Decimal                  @db.Decimal(19, 4)
+  maxBasePay      Decimal                  @db.Decimal(19, 4)
+  effectiveFrom   DateTime                 @db.Date
+  effectiveTo     DateTime?                @db.Date
+  status          CompensationRecordStatus @default(Active)
+  notes           String?                  @db.VarChar(500)
+  createdByUserId String                   @db.VarChar(191)
+  updatedByUserId String?                  @db.VarChar(191)
+  createdAt       DateTime                 @default(now()) @db.DateTime(3)
+  updatedAt       DateTime                 @updatedAt @db.DateTime(3)
+  createdBy       User                     @relation("PayGradeCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy       User?                    @relation("PayGradeUpdater", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+  employeeGrades  EmployeePayGrade[]
+
+  @@index([status, effectiveFrom, effectiveTo])
+  @@index([basis, minBasePay, maxBasePay])
+}
+
+model EmployeePayGrade {
+  id               String    @id @default(cuid())
+  employeeId       String    @db.VarChar(191)
+  payGradeId       String    @db.VarChar(191)
+  effectiveFrom    DateTime  @db.Date
+  effectiveTo      DateTime? @db.Date
+  assignedByUserId String    @db.VarChar(191)
+  createdAt        DateTime  @default(now()) @db.DateTime(3)
+  employee         Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  payGrade         PayGrade  @relation(fields: [payGradeId], references: [id], onDelete: Restrict)
+  assignedBy       User      @relation("EmployeePayGradeAssigner", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, effectiveFrom])
+  @@index([payGradeId, effectiveTo, effectiveFrom])
+}
+
+model AllowancePolicy {
+  id                         String                   @id @default(cuid())
+  code                       String                   @unique @db.VarChar(40)
+  name                       String                   @db.VarChar(120)
+  description                String?                  @db.VarChar(500)
+  amount                     Decimal                  @db.Decimal(19, 4)
+  recurrence                 AllowanceRecurrence
+  eligibility                AllowanceEligibility
+  selectedData               Json?
+  applicableBranches         String?                  @db.VarChar(1000)
+  effectiveFrom              DateTime                 @db.Date
+  effectiveTo                DateTime?                @db.Date
+  status                     CompensationRecordStatus @default(Active)
+  taxTreatment               String                   @db.VarChar(32)
+  contributionTreatment      String?                  @db.VarChar(100)
+  thirteenthMonthTreatment   String?                  @db.VarChar(100)
+  payrollCalculationCategory String?                  @db.VarChar(100)
+  taxStatutoryReference      String?                  @db.VarChar(255)
+  notes                      String?                  @db.VarChar(500)
+  pausedAt                   DateTime?                @db.DateTime(3)
+  pausedByUserId             String?                  @db.VarChar(191)
+  createdByUserId            String                   @db.VarChar(191)
+  updatedByUserId            String?                  @db.VarChar(191)
+  createdAt                  DateTime                 @default(now()) @db.DateTime(3)
+  updatedAt                  DateTime                 @updatedAt @db.DateTime(3)
+  createdBy                  User                     @relation("AllowanceCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy                  User?                    @relation("AllowanceUpdater", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+  pausedBy                   User?                    @relation("AllowancePauser", fields: [pausedByUserId], references: [id], onDelete: SetNull)
+  employeeAllowances         EmployeeAllowance[]
+  history                    AllowancePolicyHistory[]
+
+  @@index([status, effectiveFrom, effectiveTo])
+  @@index([eligibility, recurrence])
+}
+
+model EmployeeAllowance {
+  id                String          @id @default(cuid())
+  employeeId        String          @db.VarChar(191)
+  allowancePolicyId String          @db.VarChar(191)
+  effectiveFrom     DateTime        @db.Date
+  effectiveTo       DateTime?       @db.Date
+  assignedByUserId  String          @db.VarChar(191)
+  createdAt         DateTime        @default(now()) @db.DateTime(3)
+  employee          Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  allowancePolicy   AllowancePolicy @relation(fields: [allowancePolicyId], references: [id], onDelete: Restrict)
+  assignedBy        User            @relation("EmployeeAllowanceAssigner", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, allowancePolicyId, effectiveFrom])
+  @@index([allowancePolicyId, effectiveTo, effectiveFrom])
+}
+
+model AllowancePolicyHistory {
+  id                String          @id @default(cuid())
+  allowancePolicyId String          @db.VarChar(191)
+  changeType        String          @db.VarChar(40)
+  previousValue     Json
+  newValue          Json
+  changedByUserId   String          @db.VarChar(191)
+  reason            String?         @db.VarChar(1000)
+  createdAt         DateTime        @default(now()) @db.DateTime(3)
+  allowancePolicy   AllowancePolicy @relation(fields: [allowancePolicyId], references: [id], onDelete: Restrict)
+  changedBy         User            @relation("AllowanceHistoryChanger", fields: [changedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([allowancePolicyId, createdAt])
+}
+
+model BonusProgram {
+  id               String                   @id @default(cuid())
+  name             String                   @unique @db.VarChar(120)
+  description      String?                  @db.VarChar(500)
+  type             String                   @db.VarChar(40)
+  calculationBasis String                   @db.VarChar(200)
+  value            Decimal                  @db.Decimal(19, 4)
+  valueType        String                   @db.VarChar(20)
+  eligibility      String                   @db.VarChar(64)
+  frequency        String                   @db.VarChar(32)
+  effectiveFrom    DateTime                 @db.Date
+  effectiveTo      DateTime?                @db.Date
+  approvalRequired String                   @db.VarChar(40)
+  status           CompensationRecordStatus @default(Draft)
+  createdByUserId  String                   @db.VarChar(191)
+  updatedByUserId  String?                  @db.VarChar(191)
+  createdAt        DateTime                 @default(now()) @db.DateTime(3)
+  updatedAt        DateTime                 @updatedAt @db.DateTime(3)
+  createdBy        User                     @relation("BonusProgramCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy        User?                    @relation("BonusProgramUpdater", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+  awards           BonusAward[]
+
+  @@index([status, effectiveFrom, effectiveTo])
+}
+
+model BonusAward {
+  id               String       @id @default(cuid())
+  employeeId       String       @db.VarChar(191)
+  bonusProgramId   String       @db.VarChar(191)
+  awardAmount      Decimal      @db.Decimal(19, 4)
+  awardPeriodStart DateTime     @db.Date
+  awardPeriodEnd   DateTime     @db.Date
+  qualifyingMetric String?      @db.VarChar(255)
+  status           String       @db.VarChar(40)
+  rejectionReason  String?      @db.VarChar(1000)
+  createdByUserId  String       @db.VarChar(191)
+  approvedByUserId String?      @db.VarChar(191)
+  approvedAt       DateTime?    @db.DateTime(3)
+  createdAt        DateTime     @default(now()) @db.DateTime(3)
+  employee         Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  bonusProgram     BonusProgram @relation(fields: [bonusProgramId], references: [id], onDelete: Restrict)
+  createdBy        User         @relation("BonusAwardCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  approvedBy       User?        @relation("BonusAwardApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([employeeId, awardPeriodStart, awardPeriodEnd])
+  @@index([status, createdAt])
+}
+
+model SalaryAdjustment {
+  id                          String                  @id @default(cuid())
+  employeeId                  String                  @db.VarChar(191)
+  proposedBasePay             Decimal                 @db.Decimal(19, 4)
+  basis                       CompensationBasis
+  effectiveFrom               DateTime                @db.Date
+  reason                      String                  @db.VarChar(1000)
+  category                    String                  @db.VarChar(64)
+  supportingDocumentReference String?                 @db.VarChar(512)
+  changePercentage            Decimal?                @db.Decimal(9, 4)
+  status                      String                  @db.VarChar(40)
+  rejectionReason             String?                 @db.VarChar(1000)
+  requestedByUserId           String                  @db.VarChar(191)
+  submittedByUserId           String?                 @db.VarChar(191)
+  reviewedByUserId            String?                 @db.VarChar(191)
+  approvedByUserId            String?                 @db.VarChar(191)
+  implementedByUserId         String?                 @db.VarChar(191)
+  requestedAt                 DateTime                @default(now()) @db.DateTime(3)
+  submittedAt                 DateTime?               @db.DateTime(3)
+  reviewedAt                  DateTime?               @db.DateTime(3)
+  approvedAt                  DateTime?               @db.DateTime(3)
+  implementedAt               DateTime?               @db.DateTime(3)
+  createdAt                   DateTime                @default(now()) @db.DateTime(3)
+  updatedAt                   DateTime                @updatedAt @db.DateTime(3)
+  employee                    Employee                @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  requestedBy                 User                    @relation("SalaryAdjustmentRequester", fields: [requestedByUserId], references: [id], onDelete: Restrict)
+  submittedBy                 User?                   @relation("SalaryAdjustmentSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+  reviewedBy                  User?                   @relation("SalaryAdjustmentReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  approvedBy                  User?                   @relation("SalaryAdjustmentApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  implementedBy               User?                   @relation("SalaryAdjustmentImplementer", fields: [implementedByUserId], references: [id], onDelete: SetNull)
+  events                      SalaryAdjustmentEvent[]
+
+  @@unique([employeeId, effectiveFrom, category])
+  @@index([status, requestedAt])
+}
+
+model SalaryAdjustmentEvent {
+  id                 String           @id @default(cuid())
+  salaryAdjustmentId String           @db.VarChar(191)
+  action             String           @db.VarChar(80)
+  actorUserId        String           @db.VarChar(191)
+  actorRole          UserRole
+  notes              String?          @db.VarChar(1000)
+  createdAt          DateTime         @default(now()) @db.DateTime(3)
+  salaryAdjustment   SalaryAdjustment @relation(fields: [salaryAdjustmentId], references: [id], onDelete: Cascade)
+  actor              User             @relation("SalaryAdjustmentEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([salaryAdjustmentId, createdAt])
 }
 
 model EmployeeAssignment {
@@ -429,74 +696,74 @@ model PayrollRuleSet {
 }
 
 model PayrollDeductionCategorySet {
-  id              String                            @id @default(cuid())
-  version         Int                               @unique
-  status          PayrollDeductionCategorySetStatus @default(Draft)
-  categories      Json
-  createdByUserId String?                           @db.VarChar(191)
-  approvedByUserId String?                          @db.VarChar(191)
-  approvedAt      DateTime?                         @db.DateTime(3)
-  createdAt       DateTime                          @default(now()) @db.DateTime(3)
-  createdBy       User?                             @relation("DeductionCategorySetCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
-  approvedBy      User?                             @relation("DeductionCategorySetApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
-  payrollVersions PayrollBatchVersion[]
+  id               String                            @id @default(cuid())
+  version          Int                               @unique
+  status           PayrollDeductionCategorySetStatus @default(Draft)
+  categories       Json
+  createdByUserId  String?                           @db.VarChar(191)
+  approvedByUserId String?                           @db.VarChar(191)
+  approvedAt       DateTime?                         @db.DateTime(3)
+  createdAt        DateTime                          @default(now()) @db.DateTime(3)
+  createdBy        User?                             @relation("DeductionCategorySetCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  approvedBy       User?                             @relation("DeductionCategorySetApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  payrollVersions  PayrollBatchVersion[]
 
   @@index([status, version])
   @@index([createdByUserId, createdAt])
 }
 
 model PayrollBatch {
-  id              String   @id @default(cuid())
-  batchNumber     String   @unique @db.VarChar(64)
-  createdByUserId String   @db.VarChar(191)
-  createdAt       DateTime @default(now()) @db.DateTime(3)
-  updatedAt       DateTime @updatedAt @db.DateTime(3)
-  createdBy       User     @relation("PayrollBatchCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  id              String                @id @default(cuid())
+  batchNumber     String                @unique @db.VarChar(64)
+  createdByUserId String                @db.VarChar(191)
+  createdAt       DateTime              @default(now()) @db.DateTime(3)
+  updatedAt       DateTime              @updatedAt @db.DateTime(3)
+  createdBy       User                  @relation("PayrollBatchCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   versions        PayrollBatchVersion[]
 
   @@index([createdByUserId, createdAt])
 }
 
 model PayrollBatchVersion {
-  id                    String                    @id @default(cuid())
-  batchId               String                    @db.VarChar(191)
-  version               Int
-  status                PayrollBatchVersionStatus @default(Draft)
-  periodStart           DateTime                  @db.Date
-  periodEnd             DateTime                  @db.Date
-  cutoffReference       String                    @db.VarChar(160)
-  currencyCode          String                    @db.Char(3)
-  sourceReference       String                    @db.VarChar(512)
-  sourceCalculatedAt    DateTime?                 @db.DateTime(3)
-  preparedByUserId      String                    @db.VarChar(191)
-  preparedByNameSnapshot String?                  @db.VarChar(191)
-  submittedByUserId     String?                   @db.VarChar(191)
-  submittedByNameSnapshot String?                 @db.VarChar(191)
-  submittedAt           DateTime?                 @db.DateTime(3)
-  organizationNameSnapshot String?                 @db.VarChar(160)
-  timeZoneSnapshot      String?                   @db.VarChar(64)
+  id                          String                       @id @default(cuid())
+  batchId                     String                       @db.VarChar(191)
+  version                     Int
+  status                      PayrollBatchVersionStatus    @default(Draft)
+  periodStart                 DateTime                     @db.Date
+  periodEnd                   DateTime                     @db.Date
+  cutoffReference             String                       @db.VarChar(160)
+  currencyCode                String                       @db.Char(3)
+  sourceReference             String                       @db.VarChar(512)
+  sourceCalculatedAt          DateTime?                    @db.DateTime(3)
+  preparedByUserId            String                       @db.VarChar(191)
+  preparedByNameSnapshot      String?                      @db.VarChar(191)
+  submittedByUserId           String?                      @db.VarChar(191)
+  submittedByNameSnapshot     String?                      @db.VarChar(191)
+  submittedAt                 DateTime?                    @db.DateTime(3)
+  organizationNameSnapshot    String?                      @db.VarChar(160)
+  timeZoneSnapshot            String?                      @db.VarChar(64)
   deductionCategorySetVersion Int?
-  calculationEngineVersion    String?                   @db.VarChar(32)
+  calculationEngineVersion    String?                      @db.VarChar(32)
   earningsConfigVersion       Int?
   deductionConfigVersion      Int?
   benefitsConfigVersion       Int?
   statutoryRuleVersion        Int?
-  employeeCount         Int
-  grossPayable          Decimal                   @db.Decimal(19, 4)
-  totalDeductions       Decimal                   @db.Decimal(19, 4)
-  netPayable            Decimal                   @db.Decimal(19, 4)
-  employerContributions Decimal?                  @db.Decimal(19, 4)
-  laborCost             Decimal?                  @db.Decimal(19, 4)
-  overtimeCost          Decimal?                  @db.Decimal(19, 4)
-  createdAt             DateTime                  @default(now()) @db.DateTime(3)
-  batch                 PayrollBatch              @relation(fields: [batchId], references: [id], onDelete: Restrict)
-  preparedBy            User                      @relation("PayrollVersionPreparer", fields: [preparedByUserId], references: [id], onDelete: Restrict)
-  submittedBy           User?                     @relation("PayrollVersionSubmitter", fields: [submittedByUserId], references: [id], onDelete: Restrict)
-  employees             PayrollEmployeeResult[]
-  exceptions            PayrollValidationException[]
-  decisions             PayrollDecision[]
-  deductionCategorySet  PayrollDeductionCategorySet? @relation(fields: [deductionCategorySetVersion], references: [version], onDelete: Restrict)
-  disbursementRecord    PayrollDisbursementRecord?
+  employeeCount               Int
+  grossPayable                Decimal                      @db.Decimal(19, 4)
+  totalDeductions             Decimal                      @db.Decimal(19, 4)
+  netPayable                  Decimal                      @db.Decimal(19, 4)
+  employerContributions       Decimal?                     @db.Decimal(19, 4)
+  laborCost                   Decimal?                     @db.Decimal(19, 4)
+  overtimeCost                Decimal?                     @db.Decimal(19, 4)
+  createdAt                   DateTime                     @default(now()) @db.DateTime(3)
+  batch                       PayrollBatch                 @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  preparedBy                  User                         @relation("PayrollVersionPreparer", fields: [preparedByUserId], references: [id], onDelete: Restrict)
+  submittedBy                 User?                        @relation("PayrollVersionSubmitter", fields: [submittedByUserId], references: [id], onDelete: Restrict)
+  employees                   PayrollEmployeeResult[]
+  exceptions                  PayrollValidationException[]
+  decisions                   PayrollDecision[]
+  deductionCategorySet        PayrollDeductionCategorySet? @relation(fields: [deductionCategorySetVersion], references: [version], onDelete: Restrict)
+  disbursementRecord          PayrollDisbursementRecord?
 
   @@unique([batchId, version])
   @@index([status, submittedAt])
@@ -505,30 +772,30 @@ model PayrollBatchVersion {
 }
 
 model PayrollEmployeeResult {
-  id                     String                  @id @default(cuid())
-  payrollVersionId       String                  @db.VarChar(191)
-  employeeId             String?                 @db.VarChar(191)
-  employeeReference      String                  @db.VarChar(191)
-  employeeNumber         String                  @db.VarChar(64)
-  employeeName           String                  @db.VarChar(160)
-  department             String                  @db.VarChar(120)
-  position               String?                 @db.VarChar(120)
-  compensationBasis      String                  @db.VarChar(32)
-  applicableRate         Decimal                 @db.Decimal(19, 4)
-  daysWorked             Decimal?                @db.Decimal(9, 4)
-  regularHours           Decimal?                @db.Decimal(9, 4)
-  overtimeHours          Decimal?                @db.Decimal(9, 4)
-  grossPay               Decimal                 @db.Decimal(19, 4)
-  totalDeductions        Decimal                 @db.Decimal(19, 4)
-  netPay                 Decimal                 @db.Decimal(19, 4)
-  sourceReference        String                  @db.VarChar(512)
-  payrollVersion         PayrollBatchVersion     @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
-  employee               Employee?               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-  earnings               PayrollEarningLine[]
-  deductions             PayrollDeductionLine[]
-  attendance             PayrollAttendanceRecord[]
-  adjustments            PayrollAdjustmentEvidence[]
-  exceptions             PayrollValidationException[]
+  id                String                       @id @default(cuid())
+  payrollVersionId  String                       @db.VarChar(191)
+  employeeId        String?                      @db.VarChar(191)
+  employeeReference String                       @db.VarChar(191)
+  employeeNumber    String                       @db.VarChar(64)
+  employeeName      String                       @db.VarChar(160)
+  department        String                       @db.VarChar(120)
+  position          String?                      @db.VarChar(120)
+  compensationBasis String                       @db.VarChar(32)
+  applicableRate    Decimal                      @db.Decimal(19, 4)
+  daysWorked        Decimal?                     @db.Decimal(9, 4)
+  regularHours      Decimal?                     @db.Decimal(9, 4)
+  overtimeHours     Decimal?                     @db.Decimal(9, 4)
+  grossPay          Decimal                      @db.Decimal(19, 4)
+  totalDeductions   Decimal                      @db.Decimal(19, 4)
+  netPay            Decimal                      @db.Decimal(19, 4)
+  sourceReference   String                       @db.VarChar(512)
+  payrollVersion    PayrollBatchVersion          @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  employee          Employee?                    @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  earnings          PayrollEarningLine[]
+  deductions        PayrollDeductionLine[]
+  attendance        PayrollAttendanceRecord[]
+  adjustments       PayrollAdjustmentEvidence[]
+  exceptions        PayrollValidationException[]
 
   @@unique([payrollVersionId, employeeId])
   @@unique([payrollVersionId, employeeReference])
@@ -537,85 +804,85 @@ model PayrollEmployeeResult {
 }
 
 model PayrollEarningLine {
-  id                    String               @id @default(cuid())
-  employeeResultId      String               @db.VarChar(191)
-  category              String               @db.VarChar(40)
-  label                 String               @db.VarChar(120)
-  amount                Decimal              @db.Decimal(19, 4)
-  sourceReference       String               @db.VarChar(512)
-  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+  id               String                @id @default(cuid())
+  employeeResultId String                @db.VarChar(191)
+  category         String                @db.VarChar(40)
+  label            String                @db.VarChar(120)
+  amount           Decimal               @db.Decimal(19, 4)
+  sourceReference  String                @db.VarChar(512)
+  employeeResult   PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
 
   @@index([employeeResultId, category])
 }
 
 model PayrollDeductionLine {
-  id                    String               @id @default(cuid())
-  employeeResultId      String               @db.VarChar(191)
-  category              String               @db.VarChar(40)
-  label                 String               @db.VarChar(120)
-  amount                Decimal              @db.Decimal(19, 4)
-  sourceReference       String               @db.VarChar(512)
-  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+  id               String                @id @default(cuid())
+  employeeResultId String                @db.VarChar(191)
+  category         String                @db.VarChar(40)
+  label            String                @db.VarChar(120)
+  amount           Decimal               @db.Decimal(19, 4)
+  sourceReference  String                @db.VarChar(512)
+  employeeResult   PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
 
   @@index([employeeResultId, category])
 }
 
 model PayrollAttendanceRecord {
-  id                    String               @id @default(cuid())
-  employeeResultId      String               @db.VarChar(191)
-  sourceReference       String               @db.VarChar(512)
-  workDate              DateTime             @db.Date
-  timeIn                DateTime?            @db.DateTime(3)
-  timeOut               DateTime?            @db.DateTime(3)
-  totalHours            Decimal?             @db.Decimal(9, 4)
-  regularHours          Decimal?             @db.Decimal(9, 4)
-  overtimeHours         Decimal?             @db.Decimal(9, 4)
-  nightDifferentialHours Decimal?             @db.Decimal(9, 4)
-  classification        String?              @db.VarChar(80)
-  approvalStatus        String?              @db.VarChar(40)
-  exceptionDetails      String?              @db.VarChar(1000)
-  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+  id                     String                @id @default(cuid())
+  employeeResultId       String                @db.VarChar(191)
+  sourceReference        String                @db.VarChar(512)
+  workDate               DateTime              @db.Date
+  timeIn                 DateTime?             @db.DateTime(3)
+  timeOut                DateTime?             @db.DateTime(3)
+  totalHours             Decimal?              @db.Decimal(9, 4)
+  regularHours           Decimal?              @db.Decimal(9, 4)
+  overtimeHours          Decimal?              @db.Decimal(9, 4)
+  nightDifferentialHours Decimal?              @db.Decimal(9, 4)
+  classification         String?               @db.VarChar(80)
+  approvalStatus         String?               @db.VarChar(40)
+  exceptionDetails       String?               @db.VarChar(1000)
+  employeeResult         PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
 
   @@unique([employeeResultId, sourceReference], map: "PayrollAttendance_result_source_key")
   @@index([employeeResultId, workDate])
 }
 
 model PayrollAdjustmentEvidence {
-  id                    String               @id @default(cuid())
-  employeeResultId      String               @db.VarChar(191)
-  adjustmentReference   String               @db.VarChar(191)
-  sourceReference       String               @db.VarChar(512)
-  adjustmentType        String               @db.VarChar(80)
-  amount                Decimal              @db.Decimal(19, 4)
-  reason                String               @db.VarChar(1000)
-  requestedBy           String               @db.VarChar(160)
-  approvedBy            String?              @db.VarChar(160)
-  approvedAt            DateTime?            @db.DateTime(3)
-  status                String               @db.VarChar(40)
-  employeeResult        PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+  id                  String                @id @default(cuid())
+  employeeResultId    String                @db.VarChar(191)
+  adjustmentReference String                @db.VarChar(191)
+  sourceReference     String                @db.VarChar(512)
+  adjustmentType      String                @db.VarChar(80)
+  amount              Decimal               @db.Decimal(19, 4)
+  reason              String                @db.VarChar(1000)
+  requestedBy         String                @db.VarChar(160)
+  approvedBy          String?               @db.VarChar(160)
+  approvedAt          DateTime?             @db.DateTime(3)
+  status              String                @db.VarChar(40)
+  employeeResult      PayrollEmployeeResult @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
 
   @@unique([employeeResultId, adjustmentReference], map: "PayrollAdjustment_result_ref_key")
   @@index([employeeResultId, status])
 }
 
 model PayrollValidationException {
-  id               String                  @id @default(cuid())
-  payrollVersionId String                  @db.VarChar(191)
-  employeeResultId String?                 @db.VarChar(191)
-  fingerprint      String                  @db.Char(64)
-  category         String                  @db.VarChar(80)
-  severity         PayrollExceptionSeverity
-  title            String                  @db.VarChar(160)
-  description      String                  @db.VarChar(2000)
-  field            String?                 @db.VarChar(120)
-  actualValue      String?                 @db.VarChar(1000)
-  expectedValue    String?                 @db.VarChar(1000)
-  sourceReference  String?                 @db.VarChar(512)
-  detectedAt       DateTime                @default(now()) @db.DateTime(3)
-  resolvedAt       DateTime?               @db.DateTime(3)
-  resolutionDetails String?                @db.VarChar(1000)
-  payrollVersion   PayrollBatchVersion     @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
-  employeeResult   PayrollEmployeeResult?  @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
+  id                String                   @id @default(cuid())
+  payrollVersionId  String                   @db.VarChar(191)
+  employeeResultId  String?                  @db.VarChar(191)
+  fingerprint       String                   @db.Char(64)
+  category          String                   @db.VarChar(80)
+  severity          PayrollExceptionSeverity
+  title             String                   @db.VarChar(160)
+  description       String                   @db.VarChar(2000)
+  field             String?                  @db.VarChar(120)
+  actualValue       String?                  @db.VarChar(1000)
+  expectedValue     String?                  @db.VarChar(1000)
+  sourceReference   String?                  @db.VarChar(512)
+  detectedAt        DateTime                 @default(now()) @db.DateTime(3)
+  resolvedAt        DateTime?                @db.DateTime(3)
+  resolutionDetails String?                  @db.VarChar(1000)
+  payrollVersion    PayrollBatchVersion      @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  employeeResult    PayrollEmployeeResult?   @relation(fields: [employeeResultId], references: [id], onDelete: Restrict)
 
   @@unique([payrollVersionId, fingerprint])
   @@index([payrollVersionId, resolvedAt, severity, detectedAt], map: "PayrollException_version_state_idx")
@@ -623,44 +890,44 @@ model PayrollValidationException {
 }
 
 model PayrollDecision {
-  id               String                 @id @default(cuid())
-  payrollVersionId String                 @unique @db.VarChar(191)
-  actorUserId      String                 @db.VarChar(191)
+  id               String              @id @default(cuid())
+  payrollVersionId String              @unique @db.VarChar(191)
+  actorUserId      String              @db.VarChar(191)
   decision         PayrollDecisionType
-  reason           String?                @db.VarChar(1000)
-  createdAt        DateTime               @default(now()) @db.DateTime(3)
-  payrollVersion   PayrollBatchVersion    @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
-  actor            User                   @relation("PayrollDecisionActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  reason           String?             @db.VarChar(1000)
+  createdAt        DateTime            @default(now()) @db.DateTime(3)
+  payrollVersion   PayrollBatchVersion @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  actor            User                @relation("PayrollDecisionActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([actorUserId, createdAt])
 }
 
 model PayrollConfigurationVersion {
-  id                    String                      @id @default(cuid())
-  version               Int                         @unique
-  category              String                      @db.VarChar(64)
-  status                PayrollConfigurationStatus  @default(Draft)
-  configuration         Json
-  applicability         Json
-  effectiveFrom         DateTime                    @db.Date
-  effectiveTo           DateTime?                   @db.Date
-  changeReason          String                      @db.VarChar(1000)
-  supportingReference   String?                     @db.VarChar(512)
-  simulationImpact      Json?
-  createdByUserId       String                      @db.VarChar(191)
-  submittedByUserId     String?                     @db.VarChar(191)
-  submittedAt           DateTime?                   @db.DateTime(3)
-  approvedByUserId      String?                     @db.VarChar(191)
-  approvedAt            DateTime?                   @db.DateTime(3)
-  rejectedByUserId      String?                     @db.VarChar(191)
-  rejectedAt            DateTime?                   @db.DateTime(3)
-  rejectionReason       String?                     @db.VarChar(1000)
-  createdAt             DateTime                    @default(now()) @db.DateTime(3)
-  updatedAt             DateTime                    @updatedAt @db.DateTime(3)
-  createdBy             User                        @relation("ConfigVersionCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
-  submittedBy           User?                       @relation("ConfigVersionSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
-  approvedBy            User?                       @relation("ConfigVersionApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
-  rejectedBy            User?                       @relation("ConfigVersionRejecter", fields: [rejectedByUserId], references: [id], onDelete: SetNull)
+  id                  String                     @id @default(cuid())
+  version             Int                        @unique
+  category            String                     @db.VarChar(64)
+  status              PayrollConfigurationStatus @default(Draft)
+  configuration       Json
+  applicability       Json
+  effectiveFrom       DateTime                   @db.Date
+  effectiveTo         DateTime?                  @db.Date
+  changeReason        String                     @db.VarChar(1000)
+  supportingReference String?                    @db.VarChar(512)
+  simulationImpact    Json?
+  createdByUserId     String                     @db.VarChar(191)
+  submittedByUserId   String?                    @db.VarChar(191)
+  submittedAt         DateTime?                  @db.DateTime(3)
+  approvedByUserId    String?                    @db.VarChar(191)
+  approvedAt          DateTime?                  @db.DateTime(3)
+  rejectedByUserId    String?                    @db.VarChar(191)
+  rejectedAt          DateTime?                  @db.DateTime(3)
+  rejectionReason     String?                    @db.VarChar(1000)
+  createdAt           DateTime                   @default(now()) @db.DateTime(3)
+  updatedAt           DateTime                   @updatedAt @db.DateTime(3)
+  createdBy           User                       @relation("ConfigVersionCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  submittedBy         User?                      @relation("ConfigVersionSubmitter", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+  approvedBy          User?                      @relation("ConfigVersionApprover", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  rejectedBy          User?                      @relation("ConfigVersionRejecter", fields: [rejectedByUserId], references: [id], onDelete: SetNull)
 
   @@index([status, category, version])
   @@index([effectiveFrom, effectiveTo])
@@ -668,38 +935,38 @@ model PayrollConfigurationVersion {
 }
 
 model PayrollBatchTimelineEvent {
-  id                     String                     @id @default(cuid())
-  batchId                String                     @db.VarChar(191)
+  id                     String   @id @default(cuid())
+  batchId                String   @db.VarChar(191)
   version                Int
-  eventType              String                     @db.VarChar(80)
-  description            String                     @db.VarChar(1000)
-  actorUserId            String?                    @db.VarChar(191)
-  actorRole              String?                    @db.VarChar(40)
-  actorName              String?                    @db.VarChar(160)
-  relatedRecordReference String?                    @db.VarChar(191)
+  eventType              String   @db.VarChar(80)
+  description            String   @db.VarChar(1000)
+  actorUserId            String?  @db.VarChar(191)
+  actorRole              String?  @db.VarChar(40)
+  actorName              String?  @db.VarChar(160)
+  relatedRecordReference String?  @db.VarChar(191)
   metadata               Json?
-  createdAt              DateTime                   @default(now()) @db.DateTime(3)
-  actor                  User?                      @relation("BatchTimelineActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  createdAt              DateTime @default(now()) @db.DateTime(3)
+  actor                  User?    @relation("BatchTimelineActor", fields: [actorUserId], references: [id], onDelete: SetNull)
 
   @@index([batchId, version, createdAt])
   @@index([eventType, createdAt])
 }
 
 model PayrollDisbursementRecord {
-  id                    String                      @id @default(cuid())
-  payrollVersionId      String                      @unique @db.VarChar(191)
-  disbursementReference String                      @unique @db.VarChar(191)
-  status                PayrollDisbursementStatus   @default(PendingDisbursement)
-  disbursedByUserId     String?                     @db.VarChar(191)
-  disbursedAt           DateTime?                   @db.DateTime(3)
-  paymentMethod         String?                     @db.VarChar(64)
-  notes                 String?                     @db.VarChar(1000)
-  failureReason         String?                     @db.VarChar(1000)
+  id                    String                    @id @default(cuid())
+  payrollVersionId      String                    @unique @db.VarChar(191)
+  disbursementReference String                    @unique @db.VarChar(191)
+  status                PayrollDisbursementStatus @default(PendingDisbursement)
+  disbursedByUserId     String?                   @db.VarChar(191)
+  disbursedAt           DateTime?                 @db.DateTime(3)
+  paymentMethod         String?                   @db.VarChar(64)
+  notes                 String?                   @db.VarChar(1000)
+  failureReason         String?                   @db.VarChar(1000)
   metadata              Json?
-  createdAt             DateTime                    @default(now()) @db.DateTime(3)
-  updatedAt             DateTime                    @updatedAt @db.DateTime(3)
-  payrollVersion        PayrollBatchVersion         @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
-  disbursedBy           User?                       @relation("DisbursementActor", fields: [disbursedByUserId], references: [id], onDelete: SetNull)
+  createdAt             DateTime                  @default(now()) @db.DateTime(3)
+  updatedAt             DateTime                  @updatedAt @db.DateTime(3)
+  payrollVersion        PayrollBatchVersion       @relation(fields: [payrollVersionId], references: [id], onDelete: Restrict)
+  disbursedBy           User?                     @relation("DisbursementActor", fields: [disbursedByUserId], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
 }

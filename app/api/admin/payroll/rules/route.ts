@@ -1,60 +1,51 @@
-import { z } from "zod";
-import {
-  ApiAuthorizationError,
-  apiAuthorizationErrorResponse,
-  requireApiPermission,
-} from "../../../../lib/auth/api-guard.server";
-import {
-  HttpInputError,
-  jsonResponse,
-  readJsonBody,
-} from "../../../../lib/auth/http";
-import {
-  createPayrollRuleSetDraft,
-  getLatestPayrollRuleSet,
-  PayrollRuleSetServiceError,
-} from "../../../../lib/payroll/rules-service.server";
-import { payrollRuleSetDraftInputSchema } from "../../../../lib/payroll/rules";
-import type { SessionPrincipal } from "../../../../lib/auth/session-policy";
+import { NextRequest, NextResponse } from "next/server";
+import { requireApiPermission } from "@/app/lib/auth/api-guard.server";
+import { savePayrollRule } from "@/app/lib/payroll/rule-service.server";
+import { prisma } from "@/app/lib/db";
 
-function errorResponse(error: unknown): Response {
-  if (error instanceof ApiAuthorizationError) {
-    return apiAuthorizationErrorResponse(error);
+/**
+ * GET /api/admin/payroll/rules
+ * Fetch the latest active payroll rules
+ */
+export async function GET(request: NextRequest) {
+  try {
+    await requireApiPermission(request, "compensation:policy:manage");
+
+    // Get latest ruleset
+    const latestVersion = await prisma.payrollRuleSet.findFirst({
+      orderBy: { version: "desc" },
+      select: { configuration: true },
+    });
+
+    const rules = latestVersion ? (latestVersion.configuration as any).rules || [] : [];
+    return NextResponse.json({ rules });
+  } catch (error) {
+    console.error("[payroll/rules GET]", error);
+    return NextResponse.json({ error: "Failed to fetch rules" }, { status: 500 });
   }
-  if (error instanceof HttpInputError) {
-    return jsonResponse({ error: error.code }, error.status);
-  }
-  if (error instanceof z.ZodError) {
-    return jsonResponse({ error: "invalid_request" }, 400);
-  }
-  if (error instanceof PayrollRuleSetServiceError) {
-    return jsonResponse({ error: error.code }, error.status);
-  }
-  throw error;
 }
 
-export async function GET(request: Request): Promise<Response> {
+/**
+ * POST /api/admin/payroll/rules
+ * Create a new payroll rule
+ */
+export async function POST(request: NextRequest) {
   try {
-    const actor = await requireApiPermission(request, "payroll:approve");
-    if (new URL(request.url).search) {
-      return jsonResponse({ error: "invalid_request" }, 400);
+    const actor = await requireApiPermission(request, "compensation:policy:manage");
+
+    const body = await request.json();
+    const rule = await savePayrollRule(body, actor.userId);
+
+    return NextResponse.json({ rule }, { status: 201 });
+  } catch (error) {
+    console.error("[payroll/rules POST]", error);
+
+    if (error instanceof Error) {
+      if (error.message.startsWith("Validation failed")) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
     }
-    return jsonResponse({ ruleSet: await getLatestPayrollRuleSet(actor) });
-  } catch (error) {
-    return errorResponse(error);
-  }
-}
 
-export async function POST(request: Request): Promise<Response> {
-  let actor: SessionPrincipal;
-  try {
-    actor = await requireApiPermission(request, "payroll:approve");
-    const input = payrollRuleSetDraftInputSchema.parse(
-      await readJsonBody(request),
-    );
-    const ruleSet = await createPayrollRuleSetDraft(actor, input);
-    return jsonResponse({ ruleSet }, 201);
-  } catch (error) {
-    return errorResponse(error);
+    return NextResponse.json({ error: "Failed to save rule" }, { status: 500 });
   }
 }

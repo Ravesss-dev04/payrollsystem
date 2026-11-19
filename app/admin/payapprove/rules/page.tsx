@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requirePagePermission } from "../../../lib/auth/page-guard.server";
 import { getLatestPayrollRuleSet } from "../../../lib/payroll/rules-service.server";
-import { PayrollRulesEditor } from "./PayrollRulesEditor";
+import PayrollRulesEditor from "./PayrollRulesEditor";
 
 export default async function PayrollRulesPage() {
   const actor = await requirePagePermission("payroll:approve");

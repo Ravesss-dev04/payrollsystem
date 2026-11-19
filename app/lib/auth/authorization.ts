@@ -20,9 +20,39 @@ export const PERMISSION_DEFINITIONS = [
   { key: "leave:manage", module: "Leave", label: "Manage leave" },
   { key: "leave:request", module: "Leave", label: "Request leave" },
   { key: "reports:read", module: "Reports", label: "View reports" },
+  { key: "compensation:policy:manage", module: "Compensation", label: "Manage compensation policy" },
+  { key: "compensation:adjustment:request", module: "Compensation", label: "Request salary adjustment" },
+  { key: "compensation:adjustment:approve", module: "Compensation", label: "Approve salary adjustment" },
 ] as const;
 
 export type Permission = (typeof PERMISSION_DEFINITIONS)[number]["key"];
+
+export async function requirePermission(
+  userId: string,
+  permission: Permission,
+): Promise<{ allowed: boolean; reason?: string }> {
+  const { prisma } = await import("../db");
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      role: true,
+      permissionDenials: { select: { permission: true } },
+    },
+  });
+  if (!user || !isRole(user.role)) {
+    return { allowed: false, reason: "authenticated user not found" };
+  }
+  const allowed = effectivePermissions({
+    role: user.role,
+    deniedPermissions: user.permissionDenials
+      .map(({ permission }) => permission)
+      .filter(isPermission),
+  }).has(permission);
+  return allowed
+    ? { allowed: true }
+    : { allowed: false, reason: "permission not granted" };
+}
 
 const PERMISSION_KEYS = new Set<string>(
   PERMISSION_DEFINITIONS.map(({ key }) => key),
@@ -66,6 +96,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "leave:read",
     "leave:manage",
     "reports:read",
+    "compensation:policy:manage",
+    "compensation:adjustment:approve",
+    "compensation:policy:manage",
+    "compensation:adjustment:approve",
   ]),
   hr: new Set([
     "employees:read",
@@ -76,6 +110,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "attendance:manage",
     "leave:read",
     "leave:manage",
+    "compensation:adjustment:request",
+    "compensation:policy:manage",
+    "compensation:adjustment:request",
   ]),
   tl: new Set(),
   employee: new Set([
