@@ -260,7 +260,7 @@ function Form({
   tab: Tab;
   record: RecordType | null;
   onClose: () => void;
-  onSave: (v: RecordType) => void;
+  onSave: (v: RecordType) => void | Promise<void>;
   allGrades: PayGrade[];
   allAdjustments: SalaryAdjustment[];
 }) {
@@ -408,7 +408,7 @@ function Form({
         return;
       }
       const events = record ? (record as SalaryAdjustment).events : [];
-      onSave({
+      void onSave({
         ...form,
         current: employee.amount,
         basis: employee.basis,
@@ -617,6 +617,91 @@ export default function CompensationPage() {
   const [note, setNote] = useState("");
   const [message, setMessage] = useState("");
   const [role, setRole] = useState<"Company Admin" | "HR">("Company Admin");
+  useEffect(() => {
+    let mounted = true;
+    async function loadCompensation() {
+      try {
+        const [gradesResponse, allowancesResponse, bonusesResponse, adjustmentsResponse] = await Promise.all([
+          fetch("/api/admin/compensation/pay-grades"),
+          fetch("/api/admin/compensation/allowances"),
+          fetch("/api/admin/compensation/bonuses"),
+          fetch("/api/admin/compensation/adjustments"),
+        ]);
+        if (!mounted) return;
+        if (gradesResponse.ok) {
+          const payload = await gradesResponse.json();
+          setGrades((payload.payGrades ?? []).map((grade: any) => ({
+            id: grade.id,
+            code: grade.code,
+            description: grade.name,
+            basis: grade.basis,
+            amount: String(grade.minBasePay ?? "0"),
+            effective: String(grade.effectiveFrom).slice(0, 10),
+            status: grade.status,
+            notes: grade.notes ?? "",
+            assigned: grade._count?.employeeGrades ?? grade.assignedEmployeeCount ?? 0,
+          })));
+        }
+        if (allowancesResponse.ok) {
+          const payload = await allowancesResponse.json();
+          setAllowances((payload.allowances ?? []).map((allowance: any) => ({
+            id: allowance.id,
+            name: allowance.name,
+            description: allowance.description ?? "",
+            amount: String(allowance.amount ?? "0"),
+            recurrence: allowance.recurrence,
+            eligibility: allowance.eligibility,
+            branch: allowance.applicableBranches ?? "All branches",
+            start: String(allowance.effectiveFrom).slice(0, 10),
+            end: allowance.effectiveTo ? String(allowance.effectiveTo).slice(0, 10) : "",
+            status: allowance.status,
+            tax: allowance.taxTreatment,
+            history: [],
+          })));
+        }
+        if (bonusesResponse.ok) {
+          const payload = await bonusesResponse.json();
+          setBonuses((payload.programs ?? []).map((program: any) => ({
+            id: program.id,
+            name: program.name,
+            description: program.description ?? "",
+            type: program.type,
+            basis: program.calculationBasis,
+            value: String(program.value ?? "0"),
+            eligibility: program.eligibility,
+            frequency: program.frequency,
+            start: String(program.effectiveFrom).slice(0, 10),
+            end: program.effectiveTo ? String(program.effectiveTo).slice(0, 10) : "",
+            approval: program.approvalRequired,
+            status: program.status,
+          })));
+        }
+        if (adjustmentsResponse.ok) {
+          const payload = await adjustmentsResponse.json();
+          setAdjustments((payload.adjustments ?? []).map((adjustment: any) => ({
+            id: adjustment.id,
+            employeeId: adjustment.employeeId,
+            current: "0",
+            proposed: String(adjustment.proposedBasePay ?? "0"),
+            basis: adjustment.basis,
+            effective: String(adjustment.effectiveFrom).slice(0, 10),
+            reason: adjustment.reason,
+            category: adjustment.category,
+            document: adjustment.supportingDocumentReference ?? "",
+            notes: adjustment.rejectionReason ?? "",
+            requestedBy: adjustment.requestedBy?.name ?? "",
+            requestedAt: String(adjustment.requestedAt ?? "").slice(0, 10),
+            status: adjustment.status,
+            events: (adjustment.events ?? []).map((event: any) => ({ action: event.action, actor: event.actorRole, time: String(event.createdAt).slice(0, 10), note: event.notes })),
+          })));
+        }
+      } catch {
+        if (mounted) setMessage("Compensation data could not be loaded from the database.");
+      }
+    }
+    void loadCompensation();
+    return () => { mounted = false; };
+  }, []);
   const source: RecordType[] =
     tab === "Pay Grades"
       ? gradeList
@@ -655,7 +740,88 @@ export default function CompensationPage() {
       return false;
     return true;
   });
-  function save(v: RecordType) {
+  async function save(v: RecordType) {
+    try {
+      if (tab === "Pay Grades") {
+        const grade = v as PayGrade;
+        const response = await fetch("/api/admin/compensation/pay-grades", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            code: grade.code,
+            name: grade.description,
+            basis: grade.basis,
+            minBasePay: grade.amount,
+            maxBasePay: grade.amount,
+            effectiveFrom: grade.effective,
+            status: grade.status,
+            notes: grade.notes,
+          }),
+        });
+        if (!response.ok) throw new Error("Pay grade could not be saved");
+      } else if (tab === "Allowances") {
+        const allowance = v as AllowancePolicy;
+        const response = await fetch("/api/admin/compensation/allowances", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            code: allowance.id.toUpperCase().replace(/[^A-Z0-9_-]/g, "_").slice(0, 40),
+            name: allowance.name,
+            description: allowance.description,
+            amount: allowance.amount,
+            recurrence: allowance.recurrence === "One-time" ? "OneTime" : "Monthly",
+            eligibility: allowance.eligibility === "All employees" ? "AllEmployees" : "SelectedEmployees",
+            selectedData: allowance.eligibility === "All employees" ? undefined : { source: allowance.eligibility },
+            applicableBranches: allowance.branch,
+            effectiveFrom: allowance.start,
+            effectiveTo: allowance.end || null,
+            status: allowance.status,
+            taxTreatment: allowance.tax === "Pending validation" ? "Pending" : "Conditional",
+          }),
+        });
+        if (!response.ok) throw new Error("Allowance could not be saved");
+      } else if (tab === "Bonuses & Incentives") {
+        const bonus = v as BonusProgram;
+        const response = await fetch("/api/admin/compensation/bonuses", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            name: bonus.name,
+            description: bonus.description,
+            type: bonus.type === "Percentage-Based" ? "PercentageBased" : "FixedAmount",
+            calculationBasis: bonus.basis,
+            value: bonus.value,
+            valueType: bonus.type === "Percentage-Based" ? "Percentage" : "Amount",
+            eligibility: "AllEmployees",
+            frequency: bonus.frequency === "One-time" ? "OneTime" : bonus.frequency,
+            effectiveFrom: bonus.start,
+            effectiveTo: bonus.end || null,
+            approvalRequired: "HRReviewAndAdminApproval",
+            status: bonus.status,
+          }),
+        });
+        if (!response.ok) throw new Error("Bonus program could not be saved");
+      } else {
+        const adjustment = v as SalaryAdjustment;
+        const response = await fetch("/api/admin/compensation/adjustments", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            employeeId: adjustment.employeeId,
+            proposedBasePay: adjustment.proposed,
+            basis: adjustment.basis,
+            effectiveFrom: adjustment.effective,
+            reason: adjustment.reason,
+            category: adjustment.category.replaceAll(" ", ""),
+            supportingDocumentReference: adjustment.document || undefined,
+          }),
+        });
+        if (!response.ok) throw new Error("Salary adjustment could not be saved");
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Save failed");
+      return;
+    }
     if (tab === "Pay Grades")
       setGrades((x) =>
         x.some((a) => a.id === v.id)
@@ -682,16 +848,28 @@ export default function CompensationPage() {
       );
     setForm(null);
     setDetail(null);
-    setMessage(
-      "Saved in this frontend demo only. No payroll or employee pay records were changed.",
-    );
+    setMessage("Saved to the compensation database and recorded in the audit history.");
   }
-  function decide() {
+  async function decide() {
     if (!confirm) return;
     const { action, record } = confirm;
     if (["Reject", "Return for Revision"].includes(action) && !note.trim())
       return;
     if ("employeeId" in record) {
+      const endpoint = action === "Approve"
+        ? `/api/admin/compensation/adjustments/${record.id}/approve`
+        : action === "Reject"
+          ? `/api/admin/compensation/adjustments/${record.id}/reject`
+          : `/api/admin/compensation/adjustments/${record.id}/return`;
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(action === "Approve" ? {} : { reason: note.trim() }),
+      });
+      if (!response.ok) {
+        setMessage("The salary adjustment action could not be completed.");
+        return;
+      }
       const status =
         action === "Approve"
           ? "Approved"
@@ -746,9 +924,7 @@ export default function CompensationPage() {
     }
     setConfirm(null);
     setNote("");
-    setMessage(
-      "Demo status updated locally. No payroll or employee pay records were changed.",
-    );
+    setMessage("Workflow action completed and recorded in the audit history.");
   }
   const statuses =
     tab === "Pay Grades" || tab === "Allowances"

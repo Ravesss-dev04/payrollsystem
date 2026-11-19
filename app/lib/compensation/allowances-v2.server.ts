@@ -45,7 +45,7 @@ export const createAllowanceSchema = z.object({
     "SpecificBranch",
     "SelectedEmployees",
   ] as const),
-  selectedData: z.record(z.any()).optional().nullable(),
+  selectedData: z.record(z.string(), z.any()).optional().nullable(),
   applicableBranches: z.string().max(1000).optional().nullable(),
   effectiveFrom: z.string()
     .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid start date" })
@@ -169,7 +169,7 @@ export async function createAllowance(
       amount: input.amount,
       recurrence: input.recurrence as AllowanceRecurrence,
       eligibility: input.eligibility as AllowanceEligibility,
-      selectedData: input.selectedData ?? undefined,
+      selectedData: input.selectedData as any,
       applicableBranches: input.applicableBranches,
       effectiveFrom: input.effectiveFrom,
       effectiveTo: input.effectiveTo,
@@ -466,15 +466,6 @@ export async function getAllowanceDetails(id: string): Promise<any> {
       },
       createdBy: {
         select: { id: true, email: true, name: true },
-      },
-      auditEvents: {
-        orderBy: { createdAt: "desc" },
-        take: 10,
-        include: {
-          actor: {
-            select: { id: true, email: true, name: true },
-          },
-        },
       },
     },
   });

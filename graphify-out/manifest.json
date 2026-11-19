@@ -510,10 +510,10 @@
     "semantic_hash": "c35d09912c81d19e529179dcaab84811"
   },
   "app/admin/compensation/page.tsx": {
-    "mtime": 1795009590.563122,
-    "seen": 1795090246.788084,
-    "ast_hash": "c27b25ecc23dc2e85a06962041a97de2",
-    "semantic_hash": "c27b25ecc23dc2e85a06962041a97de2"
+    "mtime": 1795091564.6103632,
+    "seen": 1795091610.8474653,
+    "ast_hash": "969aa77441b47061db514d7b7064e1b3",
+    "semantic_hash": ""
   },
   "app/admin/compensation/types.ts": {
     "mtime": 1794714436.838509,
@@ -804,9 +804,9 @@
     "semantic_hash": "43784b5ddddf08608e00e2da32e9922c"
   },
   "app/lib/auth/authorization.ts": {
-    "mtime": 1795087641.9787066,
-    "seen": 1795090246.7884946,
-    "ast_hash": "e644e5efca7a8280684003e54e11557c",
+    "mtime": 1795090515.5352745,
+    "seen": 1795091481.6761048,
+    "ast_hash": "2ebf64038fe9a135fc349bc4fe04c0b0",
     "semantic_hash": ""
   },
   "app/lib/auth/cookies.ts": {
@@ -1842,15 +1842,15 @@
     "semantic_hash": ""
   },
   "app/admin/payapprove/rules/PayrollRulesEditor.tsx": {
-    "mtime": 1795076013.3295264,
-    "seen": 1795090246.788224,
-    "ast_hash": "d2387b6d2ef2ab708932276a10501a28",
+    "mtime": 1795090831.3136702,
+    "seen": 1795091481.6751144,
+    "ast_hash": "90c26cc2c0cf60bf95199c3ec606b638",
     "semantic_hash": ""
   },
   "app/admin/payapprove/rules/page.tsx": {
-    "mtime": 1795009602.909891,
-    "seen": 1795090246.7882261,
-    "ast_hash": "9c288bdfcbdec2ecfb0621a106cf9618",
+    "mtime": 1795090835.965821,
+    "seen": 1795091481.6751213,
+    "ast_hash": "4e281be768011bf2890a3ff938ebf407",
     "semantic_hash": ""
   },
   "app/admin/payapprove/rules/rules-api.ts": {
@@ -2070,9 +2070,9 @@
     "semantic_hash": ""
   },
   "app/api/admin/payroll/rules/route.ts": {
-    "mtime": 1795088976.593712,
-    "seen": 1795090246.7883341,
-    "ast_hash": "940adbffe3edb756ee667d0cf0c94ad2",
+    "mtime": 1795090535.6741219,
+    "seen": 1795091481.6755438,
+    "ast_hash": "b56af3c45aa148553c8333bc62b7ce11",
     "semantic_hash": ""
   },
   "app/api/admin/roles/[roleId]/route.ts": {
@@ -2346,9 +2346,9 @@
     "semantic_hash": ""
   },
   "app/lib/audit/domain-audit.ts": {
-    "mtime": 1795088976.2499719,
-    "seen": 1795090246.788488,
-    "ast_hash": "a6c46bd1c646398624b9e6f41599e810",
+    "mtime": 1795090519.450952,
+    "seen": 1795091481.6760824,
+    "ast_hash": "7ecbeb511d45c254811db7f8e9839095",
     "semantic_hash": ""
   },
   "app/lib/auth/csrf.ts": {
@@ -2850,45 +2850,45 @@
     "semantic_hash": ""
   },
   "app/api/admin/compensation/allowances/[id]/route.ts": {
-    "mtime": 1795088974.7321744,
-    "seen": 1795090246.7882836,
-    "ast_hash": "d90c627d61bba92cfd47f83f57c6e4b0",
+    "mtime": 1795090786.5939336,
+    "seen": 1795091481.675349,
+    "ast_hash": "7631cf491ffda6ec0eab10c9b9c568d2",
     "semantic_hash": ""
   },
   "app/api/admin/compensation/allowances/route.ts": {
-    "mtime": 1795088976.593712,
-    "seen": 1795090246.7882857,
-    "ast_hash": "e171b503dba0c75399fff4383ff5ddc6",
+    "mtime": 1795090786.5924413,
+    "seen": 1795091481.6753554,
+    "ast_hash": "5ae4954e3becc6f9c4387b5107f7136e",
     "semantic_hash": ""
   },
   "app/api/admin/compensation/pay-grades/[id]/employees/route.ts": {
-    "mtime": 1795088976.3093052,
-    "seen": 1795090246.7882874,
-    "ast_hash": "a00980bce50cf6d911a1becb2f9cd0ae",
+    "mtime": 1795090786.5976267,
+    "seen": 1795091481.6753902,
+    "ast_hash": "a35608d2cd223cdf1da9c8a745c65ba4",
     "semantic_hash": ""
   },
   "app/api/admin/compensation/pay-grades/[id]/history/route.ts": {
-    "mtime": 1795088976.3143098,
-    "seen": 1795090246.7882898,
-    "ast_hash": "f16e5c40c65a87a90fe6412d9f9c217e",
+    "mtime": 1795090786.5987668,
+    "seen": 1795091481.6753967,
+    "ast_hash": "359f82667052ce89da385561962ccbce",
     "semantic_hash": ""
   },
   "app/api/admin/compensation/pay-grades/[id]/route.ts": {
-    "mtime": 1795088976.3143098,
-    "seen": 1795090246.7882922,
-    "ast_hash": "f2ddba51c287a5964868e41dcede49e3",
+    "mtime": 1795090786.5963275,
+    "seen": 1795091481.6754034,
+    "ast_hash": "0df7f659a6af388b8ded4e3c195f230e",
     "semantic_hash": ""
   },
   "app/api/admin/compensation/pay-grades/route.ts": {
-    "mtime": 1795088976.593712,
-    "seen": 1795090246.788294,
-    "ast_hash": "5aae3a4a53791c6abff6c495f6bc9f35",
+    "mtime": 1795090786.595123,
+    "seen": 1795091481.6754096,
+    "ast_hash": "a65e52eb07486f06c382ed28c8fb863c",
     "semantic_hash": ""
   },
   "app/api/admin/payroll/rules/[code]/route.ts": {
-    "mtime": 1795088974.7321744,
-    "seen": 1795090246.7883317,
-    "ast_hash": "45b18a34bf56e48abaa83fb06fa1e8ad",
+    "mtime": 1795090563.6247885,
+    "seen": 1795091481.6755378,
+    "ast_hash": "6c50e9b008aff0c2b7af1d06f938f3fc",
     "semantic_hash": ""
   },
   "app/api/hr/payroll/rules/route.ts": {
@@ -3018,45 +3018,45 @@
     "semantic_hash": ""
   },
   "app/lib/compensation/allowances-v2.server.ts": {
-    "mtime": 1795088976.345576,
-    "seen": 1795090246.7885342,
-    "ast_hash": "85ca152155ac9bf9a59dd0b5ad4c5129",
+    "mtime": 1795090849.7748885,
+    "seen": 1795091481.676244,
+    "ast_hash": "90b60bdb111dc80c5633b33f91d7e8d7",
     "semantic_hash": ""
   },
   "app/lib/compensation/api-response-transform.server.ts": {
-    "mtime": 1795088976.3133087,
-    "seen": 1795090246.7885363,
-    "ast_hash": "82ef3ae1ccc7ba423f8011a878e6772d",
+    "mtime": 1795090354.9306982,
+    "seen": 1795091481.6762505,
+    "ast_hash": "ec7366a29c4b3b0f6a50513fcede6f27",
     "semantic_hash": ""
   },
   "app/lib/compensation/authorization.server.ts": {
-    "mtime": 1795088974.7321744,
-    "seen": 1795090246.7885382,
-    "ast_hash": "629de4e05fc3bd93333b364a4f2a1f28",
+    "mtime": 1795090677.1618524,
+    "seen": 1795091481.6762567,
+    "ast_hash": "eab8cc882ac816ceff0e18bca6828707",
     "semantic_hash": ""
   },
   "app/lib/compensation/bonuses.server.ts": {
-    "mtime": 1795088976.3143098,
-    "seen": 1795090246.78854,
-    "ast_hash": "42ea5aa7821443bc22641c241fb7233a",
+    "mtime": 1795090328.9422338,
+    "seen": 1795091481.6762629,
+    "ast_hash": "2b340dc5756cd7007232da0618711b91",
     "semantic_hash": ""
   },
   "app/lib/compensation/money.ts": {
-    "mtime": 1795088976.1405945,
-    "seen": 1795090246.7885423,
-    "ast_hash": "f18bcdeaeff0b68fcddcf2d0992c0f4f",
+    "mtime": 1795090354.928699,
+    "seen": 1795091481.6762695,
+    "ast_hash": "2bc26e0ac884aa004bdd96aabebfa850",
     "semantic_hash": ""
   },
   "app/lib/compensation/pay-grades-v2.server.ts": {
-    "mtime": 1795088976.3133087,
-    "seen": 1795090246.788544,
-    "ast_hash": "5cbda2dc6ab3c39ac867589d531b723b",
+    "mtime": 1795090663.0081725,
+    "seen": 1795091481.6762757,
+    "ast_hash": "97df3ea57cc112b5fd58412565d51297",
     "semantic_hash": ""
   },
   "app/lib/compensation/salary-adjustments.server.ts": {
-    "mtime": 1795088976.3143098,
-    "seen": 1795090246.7885458,
-    "ast_hash": "400ff14819f171378a395022f13733bb",
+    "mtime": 1795090681.8150885,
+    "seen": 1795091481.6762822,
+    "ast_hash": "cc9aeed06e8d51b6975146cb3562aad1",
     "semantic_hash": ""
   },
   "app/lib/payroll-results/payroll-notifications.server.ts": {
@@ -3072,9 +3072,9 @@
     "semantic_hash": ""
   },
   "app/lib/payroll/rule-service.server.ts": {
-    "mtime": 1795088976.593712,
-    "seen": 1795090246.7886043,
-    "ast_hash": "ece399e9e52ceaa68dfc8e3ee6ba2c2a",
+    "mtime": 1795090685.416659,
+    "seen": 1795091481.6764903,
+    "ast_hash": "0d6143d980417ee4fbfc53bc27ad20cc",
     "semantic_hash": ""
   },
   "tests/domain/controlled-formula-engine.test.ts": {
@@ -3117,6 +3117,78 @@
     "mtime": 1795063494.036459,
     "seen": 1795090246.7891636,
     "ast_hash": "259583542d4d223d8d72df07dae72813",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/_auth.ts": {
+    "mtime": 1795090612.9543998,
+    "seen": 1795091481.6753116,
+    "ast_hash": "1210e558c01388d733e8a69b562fbf23",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/approve/route.ts": {
+    "mtime": 1795091153.272652,
+    "seen": 1795091481.6753185,
+    "ast_hash": "a215a44e65d9613484714d134177a1bf",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/reject/route.ts": {
+    "mtime": 1795091153.2736616,
+    "seen": 1795091481.6753244,
+    "ast_hash": "61d51acfbf0441ed1a818bfa8fc22bbb",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/return/route.ts": {
+    "mtime": 1795091153.2746584,
+    "seen": 1795091481.6753302,
+    "ast_hash": "9b9574f11b34a01396dacab75dea14d6",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/route.ts": {
+    "mtime": 1795091153.269487,
+    "seen": 1795091481.675336,
+    "ast_hash": "b4430082ac0350b823a54e09aeb5e0f4",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/route.ts": {
+    "mtime": 1795091153.268486,
+    "seen": 1795091481.6753418,
+    "ast_hash": "cc9ceb3207366af253d3aafb4f6383bb",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/[programId]/awards/route.ts": {
+    "mtime": 1795091124.1667657,
+    "seen": 1795091481.675361,
+    "ast_hash": "7dd02c63904993175e5375b490a719bc",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/[programId]/route.ts": {
+    "mtime": 1795091124.1657085,
+    "seen": 1795091481.6753664,
+    "ast_hash": "fc7117529c7dfe96b11f5c9a650202c9",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/awards/[awardId]/approve/route.ts": {
+    "mtime": 1795091124.1677809,
+    "seen": 1795091481.6753724,
+    "ast_hash": "7a6e0ed4ebfa0565301fad70580c7d0d",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/awards/[awardId]/reject/route.ts": {
+    "mtime": 1795091124.1687822,
+    "seen": 1795091481.675378,
+    "ast_hash": "1ca273d5f90d98a8b7f98f00c2083291",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/route.ts": {
+    "mtime": 1795091124.163691,
+    "seen": 1795091481.675384,
+    "ast_hash": "d20586a4287fd3ca6a0d439ea45034a5",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261122000000_add_compensation_models/migration.sql": {
+    "mtime": 1795091048.204471,
+    "seen": 1795091481.676695,
+    "ast_hash": "ae820186c70dbb5d05a29e3b9736ff19",
     "semantic_hash": ""
   },
   "package-lock.json": {

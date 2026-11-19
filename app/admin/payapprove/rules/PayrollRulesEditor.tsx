@@ -85,19 +85,21 @@ const ELIGIBILITY_OPTIONS = [
 
 interface PayrollRuleEditorProps {
   rule?: PayrollRule;
-  onSave: (rule: PayrollRule) => Promise<void>;
-  onCancel: () => void;
+  initialRuleSet?: { configuration?: { rules?: PayrollRule[] } } | null;
+  onSave?: (rule: PayrollRule) => Promise<void>;
+  onCancel?: () => void;
   loading?: boolean;
 }
 
 export default function PayrollRuleEditor({
   rule,
+  initialRuleSet,
   onSave,
-  onCancel,
+  onCancel = () => window.history.back(),
   loading = false,
 }: PayrollRuleEditorProps) {
   const [formData, setFormData] = useState<PayrollRule>(
-    rule || {
+    rule || initialRuleSet?.configuration?.rules?.[0] || {
       name: "",
       code: "",
       description: "",
@@ -196,7 +198,19 @@ export default function PayrollRuleEditor({
 
   const handleSave = async () => {
     if (!validateForm()) return;
-    await onSave(formData);
+    if (onSave) {
+      await onSave(formData);
+      return;
+    }
+    const response = await fetch("/api/admin/payroll/rules", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null);
+      throw new Error(payload?.error || "Failed to save rule");
+    }
   };
 
   const Section = ({
@@ -235,6 +249,7 @@ export default function PayrollRuleEditor({
     value,
     onChange,
     type = "text",
+    step,
     required = false,
     description,
     error,

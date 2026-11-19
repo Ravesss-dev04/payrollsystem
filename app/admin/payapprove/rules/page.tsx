@@ -24,7 +24,7 @@ export default async function PayrollRulesPage() {
           saving.
         </p>
       </div>
-      <PayrollRulesEditor initialRuleSet={initialRuleSet} />
+      <PayrollRulesEditor initialRuleSet={initialRuleSet as any} />
     </main>
   );
 }
