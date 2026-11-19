@@ -4,7 +4,7 @@ import { requirePagePermission } from "../../lib/auth/page-guard.server";
 export default async function HrSettingsPage() {
   const session = await requirePagePermission("employees:manage");
   return (
-    <main className="min-h-dvh bg-[#f5f2fc] p-6 text-[#111329]">
+    <main className="min-h-0 flex-1 overflow-y-auto bg-[#f5f2fc] p-6 text-[#111329]">
       <div className="mx-auto max-w-3xl">
         <Link href="/hr/dashboard" className="text-sm font-semibold text-violet-700 hover:underline">? HR dashboard</Link>
         <h1 className="mt-6 text-2xl font-bold">Account settings</h1>

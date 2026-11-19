@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+const Office3D = dynamic(() => import("./Office3D"), { ssr: false, loading: () => <div className="p-8 text-sm">Loading 3D office?</div> });
 import {
   LuMapPinned,
   LuMap,
@@ -79,7 +81,7 @@ export default function FloorPlanClient() {
   const [desks, setDesks] = useState<Desk[]>(initialDesks);
   const [selected, setSelected] = useState<string | null>("D-308");
   const [zone, setZone] = useState<string | null>(null);
-  const [mode, setMode] = useState<"map" | "list">("map");
+  const [mode, setMode] = useState<"map" | "3d" | "list">("map");
   const [expanded, setExpanded] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -93,6 +95,38 @@ export default function FloorPlanClient() {
   const [candidate, setCandidate] = useState("");
   const [employeeSearch, setEmployeeSearch] = useState("");
   const [query, setQuery] = useState("");
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [spatialMode, setSpatialMode] = useState<"map" | "3d">("map");
+  const [webglError, setWebglError] = useState(false);
+  const positionAnchor = (p: { x: number; y: number } | null) => {
+    const container = mapRef.current;
+    if (!p || !container) { setAnchor(null); return; }
+    const width = Math.min(256, container.clientWidth - 16);
+    const x = p.x + 14 + width <= container.clientWidth - 8 ? p.x + 14 : p.x - width - 14;
+    const y = p.y - 145 >= 8 ? p.y - 145 : p.y + 14;
+    setAnchor({ x: Math.max(8, Math.min(container.clientWidth - width - 8, x)), y: Math.max(8, Math.min(container.clientHeight - 155, y)) });
+  };
+  const update2dAnchor = () => {
+    const container = mapRef.current;
+    const target = container?.querySelector<SVGGElement>(`[data-desk="${hovered}"]`);
+    if (!container || !target) return;
+    const a = target.getBoundingClientRect(); const b = container.getBoundingClientRect();
+    positionAnchor({ x: a.left + a.width / 2 - b.left, y: a.top + a.height / 2 - b.top });
+  };
+  useEffect(() => {
+    if (mode !== "map" || !hovered) return;
+    const id = requestAnimationFrame(update2dAnchor);
+    const observer = new ResizeObserver(update2dAnchor);
+    if (mapRef.current) observer.observe(mapRef.current);
+    return () => { cancelAnimationFrame(id); observer.disconnect(); };
+  // Position depends on the selected SVG desk and the current map transform.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hovered, zoom, pan, mode]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [deskType, setDeskType] = useState("all");
   const [status, setStatus] = useState("all");
   const [sort, setSort] = useState("id");
   const [toast, setToast] = useState("");
@@ -118,6 +152,7 @@ export default function FloorPlanClient() {
           const z = zones.find((x) => x.id === d.zoneId);
           return (
             (!zone || d.zoneId === zone) &&
+            (deskType === "all" || d.type === deskType) &&
             (status === "all" ||
               (status === "occupied" ? !!d.employeeId : !d.employeeId)) &&
             `${d.id} ${e?.name || ""} ${z?.name || ""} ${assets
@@ -133,8 +168,12 @@ export default function FloorPlanClient() {
             ? a.zoneId.localeCompare(b.zoneId)
             : a.id.localeCompare(b.id, undefined, { numeric: true }),
         ),
-    [desks, query, status, zone, sort],
+    [desks, query, status, zone, sort, deskType],
   );
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const previewDesk = desks.find((d) => d.id === hovered);
+  const previewEmployee = employees.find((e) => e.id === previewDesk?.employeeId);
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(""), 3500);
@@ -269,9 +308,11 @@ export default function FloorPlanClient() {
         </section>
       </aside>
       <div className="min-w-0 space-y-3">
-        {mode === "map" ? (
+        {mode !== "list" ? (
           <>
-            <div className={`${card} relative overflow-hidden p-2`}>
+            <div ref={mapRef} className={`${card} relative overflow-hidden p-2`}>
+              {webglError && <p role="status" className="p-2 text-xs text-amber-700">3D is unavailable on this device. Showing the 2D map.</p>}
+              {mode === "3d" ? <Office3D desks={desks} selected={selected} hovered={hovered} zone={zone} onSelect={setSelected} onHover={setHovered} onZone={chooseZone} onAnchor={(p) => positionAnchor(p ? { x: p.x + 8, y: p.y + 8 } : null)} onFailure={() => { setWebglError(true); setMode("map"); }} /> : <>
               <div
                 className="overflow-hidden rounded-xl bg-[#fafaff]"
                 style={{ touchAction: "none" }}
@@ -441,10 +482,15 @@ export default function FloorPlanClient() {
                         <g
                           key={d.id}
                           data-interactive="true"
+                          data-desk={d.id}
                           role="button"
                           tabIndex={0}
                           aria-label={`Desk ${d.id}, ${d.employeeId ? "occupied" : "available"}, ${z.name}`}
                           aria-pressed={selected === d.id}
+                          onPointerEnter={() => setHovered(d.id)}
+                          onPointerLeave={() => setHovered(null)}
+                          onFocus={() => setHovered(d.id)}
+                          onBlur={() => setHovered(null)}
                           onClick={() => setSelected(d.id)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
@@ -455,33 +501,10 @@ export default function FloorPlanClient() {
                           className="cursor-pointer"
                         >
                           <title>{`${d.id} — ${d.employeeId ? "Occupied" : "Available"}`}</title>
-                          <rect
-                            x={d.x - 8}
-                            y={d.y - 8}
-                            width="16"
-                            height="16"
-                            rx="3"
-                            fill="white"
-                            stroke="#dad8e5"
-                          />
-                          <circle
-                            cx={d.x}
-                            cy={d.y}
-                            r="4.5"
-                            fill={d.employeeId ? "#28b75e" : "white"}
-                            stroke={d.employeeId ? "#169d4c" : "#a9afbf"}
-                            strokeWidth="1.5"
-                          />
-                          {assets.some(
-                            (a) =>
-                              a.employeeId === d.employeeId && d.employeeId,
-                          ) && (
-                            <path
-                              d={`M${d.x - 3} ${d.y + 6}h6`}
-                              stroke="#7540c8"
-                              strokeWidth="1.5"
-                            />
-                          )}
+                          <rect x={d.x - 9} y={d.y - 5} width="18" height="10" rx="2" fill="#fff" stroke="#aaa3bd" />
+                          <rect x={d.x - 5} y={d.y - 9} width="10" height="6" rx="1" fill="#514f69" stroke="#fff" strokeWidth=".6" />
+                          <path d={`M${d.x - 3} ${d.y + 8}h6`} stroke="#77718d" strokeWidth="3" strokeLinecap="round" />
+                          <circle cx={d.x + 7} cy={d.y - 7} r="2.5" fill={d.employeeId ? "#16a34a" : "#9ca3af"} stroke="white" />
                           {selected === d.id && (
                             <circle
                               cx={d.x}
@@ -524,12 +547,23 @@ export default function FloorPlanClient() {
                   ),
                 )}
               </div>
+              </>}
+              {previewDesk && anchor && (
+                <div style={{ left: anchor.x, top: anchor.y, maxWidth: "calc(100% - 16px)" }} className="pointer-events-none absolute z-10 w-64 rounded-xl border border-violet-200 bg-white p-4 text-xs shadow-xl" role="status">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-violet-100 font-bold text-violet-700">{previewEmployee ? previewEmployee.name.split(" ").map((n) => n[0]).slice(0, 2).join("") : <LuMonitor />}</span>
+                    <div><b className="block text-sm">{previewEmployee?.name || `Desk ${previewDesk.id}`}</b><span className="text-[#73718A]">{previewEmployee ? `${previewEmployee.id} ? ${previewEmployee.role}` : "Available workstation"}</span></div>
+                  </div>
+                  <p className="mt-3 text-[#73718A]">{zones.find((z) => z.id === previewDesk.zoneId)?.name} ? Floor 3 ? {previewDesk.id}</p>
+                  <p className="mt-2 font-semibold">{previewEmployee ? `Devices: ${assets.filter((a) => a.employeeId === previewEmployee.id).map((a) => a.type).join(", ") || "None"}` : "Available ? Select to assign"}</p>
+                </div>
+              )}
             </div>
             <div
               className={`${card} flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 text-[11px] font-medium`}
             >
               <b>Legend</b>
-              <span>?? Occupied</span>
+              <span>? Occupied</span>
               <span>? Available</span>
               <span className="text-violet-700">? Selected Desk</span>
               <span>
@@ -540,6 +574,8 @@ export default function FloorPlanClient() {
           </>
         ) : (
           <section className={`${card} p-4`}>
+            <h2 className="text-base font-bold">Floor Workspace Directory</h2>
+            <p className="mb-4 mt-1 text-xs text-[#73718A]">Browse desks, assignments and devices across this floor.</p>
             <div className="mb-4 flex flex-wrap gap-2">
               <label className="relative min-w-[180px] flex-1">
                 <LuSearch className="absolute left-3 top-3 text-slate-400" />
@@ -550,6 +586,9 @@ export default function FloorPlanClient() {
                   className="w-full rounded-lg border border-violet-100 py-2 pl-9 pr-3 text-xs"
                 />
               </label>
+              <select aria-label="Filter zone" value={zone || "all"} onChange={(e) => { setZone(e.target.value === "all" ? null : e.target.value); setPage(1); }} className="rounded-lg border border-violet-100 p-2 text-xs"><option value="all">All zones</option>{zones.map((z) => <option key={z.id} value={z.id}>{z.name}</option>)}</select>
+              <select aria-label="Filter desk type" value={deskType} onChange={(e) => { setDeskType(e.target.value); setPage(1); }} className="rounded-lg border border-violet-100 p-2 text-xs"><option value="all">All desk types</option>{Array.from(new Set(desks.map((d) => d.type))).map((type) => <option key={type}>{type}</option>)}</select>
+              <button className={button} onClick={() => { setQuery(""); setZone(null); setStatus("all"); setDeskType("all"); setPage(1); }}>Clear filters</button>
               <select
                 aria-label="Filter occupancy"
                 value={status}
@@ -577,11 +616,10 @@ export default function FloorPlanClient() {
                     {[
                       "Desk ID",
                       "Zone",
-                      "Floor",
-                      "Desk Type",
-                      "Status",
-                      "Employee",
-                      "Devices",
+                      "Assigned Employee",
+                      "Employee Position",
+                      "Assigned Devices",
+                      "Occupancy",
                       "Actions",
                     ].map((h) => (
                       <th key={h} className="p-3">
@@ -591,32 +629,20 @@ export default function FloorPlanClient() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((d) => (
-                    <tr key={d.id} className="border-b border-violet-50">
+                  {filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((d) => (
+                    <tr key={d.id} className={`border-b border-violet-50 ${selected === d.id ? "bg-violet-50" : ""}`}>
                       <td className="p-3 font-semibold">{d.id}</td>
                       <td>{zones.find((z) => z.id === d.zoneId)?.name}</td>
-                      <td>Floor 3</td>
-                      <td>{d.type}</td>
-                      <td>{d.employeeId ? "Occupied" : "Available"}</td>
-                      <td>
-                        {employees.find((e) => e.id === d.employeeId)?.name ||
-                          "—"}
-                      </td>
-                      <td>
-                        {assets
-                          .filter(
-                            (a) =>
-                              a.employeeId === d.employeeId && d.employeeId,
-                          )
-                          .map((a) => a.id)
-                          .join(", ") || "—"}
-                      </td>
+                      <td className="py-3">{(() => { const person = employees.find((e) => e.id === d.employeeId); return person ? <div className="flex items-center gap-2"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-violet-100 font-bold text-violet-700">{person.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span><span><b className="block">{person.name}</b><span className="text-[#73718A]">{person.id}</span></span></div> : <span className="text-[#73718A]">Unassigned</span>; })()}</td>
+                      <td>{employees.find((e) => e.id === d.employeeId)?.role || "?"}</td>
+                      <td>{assets.filter((a) => d.employeeId && a.employeeId === d.employeeId).map((a) => <span key={a.id} className="mr-1 inline-block rounded-md bg-violet-50 px-2 py-1 text-violet-700">{a.type}</span>)}</td>
+                      <td><span className={`rounded-full px-2 py-1 font-semibold ${d.employeeId ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>{d.employeeId ? "Occupied" : "Available"}</span></td>
                       <td>
                         <button
-                          onClick={() => setSelected(d.id)}
+                          onClick={() => { setSelected(d.id); setMode(spatialMode); setZone(d.zoneId); setZoom(1.5); setPan({ x: (335 - d.x) * 0.5, y: (280 - d.y) * 0.5 }); }}
                           className="font-semibold text-violet-700"
                         >
-                          View
+                          View on map
                         </button>
                       </td>
                     </tr>
@@ -624,10 +650,14 @@ export default function FloorPlanClient() {
                 </tbody>
               </table>
             </div>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-[#73718A]">
+              <span>{filtered.length} desks ? Page {currentPage} of {pageCount}</span>
+              <div className="flex items-center gap-2"><label>Rows <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="rounded border border-violet-100 p-1">{[10, 25, 50].map((n) => <option key={n}>{n}</option>)}</select></label><button className={button} disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>Previous</button><button className={button} disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)}>Next</button></div>
+            </div>
           </section>
         )}
       </div>
-      <aside className={`${card} min-w-0 p-4 ${desk ? "" : "min-h-48"}`}>
+      <aside className={`${card} min-w-0 p-4 xl:max-h-[760px] xl:overflow-y-auto ${desk ? "fixed inset-x-2 bottom-2 z-40 max-h-[55dvh] overflow-y-auto shadow-2xl sm:static sm:max-h-none sm:shadow-none xl:max-h-[760px]" : "min-h-48"}`}>
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-base font-bold">
             {desk
@@ -782,7 +812,7 @@ export default function FloorPlanClient() {
                 .map((d) => (
                   <button
                     key={d.id}
-                    onClick={() => setSelected(d.id)}
+                    onClick={() => { setSelected(d.id); setZoom(1.5); setPan({ x: (335 - d.x) * 0.5, y: (280 - d.y) * 0.5 }); }}
                     className="flex w-full justify-between border-b border-violet-50 py-2 text-left text-xs hover:text-violet-700"
                   >
                     <span>
@@ -827,14 +857,15 @@ export default function FloorPlanClient() {
           </select>
           <div className="flex rounded-lg border border-[#ddd5ee] bg-white p-1">
             <button
-              onClick={() => setMode("map")}
+              onClick={() => { setHovered(null); setMode("map"); setSpatialMode("map"); }}
               className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold ${mode === "map" ? "bg-violet-600 text-white" : "text-[#58536d]"}`}
             >
               <LuMap />
-              Map
+              2D
             </button>
+            <button onClick={() => { setHovered(null); const canvas = document.createElement("canvas"); if (!canvas.getContext("webgl2") && !canvas.getContext("webgl")) { setWebglError(true); setMode("map"); return; } setMode("3d"); setSpatialMode("3d"); setWebglError(false); }} className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold ${mode === "3d" ? "bg-violet-600 text-white" : "text-[#58536d]"}`}><LuMonitor /> 3D</button>
             <button
-              onClick={() => setMode("list")}
+              onClick={() => { setHovered(null); setMode("list"); }}
               className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold ${mode === "list" ? "bg-violet-600 text-white" : "text-[#58536d]"}`}
             >
               <LuList />
@@ -862,9 +893,9 @@ export default function FloorPlanClient() {
             <div className="flex gap-2">
               <button
                 className={button}
-                onClick={() => setMode(mode === "map" ? "list" : "map")}
+                onClick={() => setMode(mode === "list" ? spatialMode : "list")}
               >
-                {mode === "map" ? "List" : "Map"}
+                {mode === "list" ? "Map" : "List"}
               </button>
               <button className={button} onClick={() => setExpanded(false)}>
                 <LuX /> Exit fullscreen

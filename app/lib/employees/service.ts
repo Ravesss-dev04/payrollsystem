@@ -218,6 +218,42 @@ export async function getEmployeeWorkspace(): Promise<EmployeeWorkspace> {
   };
 }
 
+export async function getEmployeeDetails(employeeId: string): Promise<EmployeeSummary> {
+  const id = employeeIdSchema.parse(employeeId);
+  const employee = await prisma.employee.findFirst({
+    where: {
+      id,
+      assignments: {
+        some: {
+          effectiveTo: null,
+          department: { organizationId: ORGANIZATION_ID },
+        },
+      },
+    },
+    select: {
+      id: true,
+      employeeNumber: true,
+      firstName: true,
+      lastName: true,
+      workEmail: true,
+      assignments: {
+        where: { effectiveTo: null, department: { organizationId: ORGANIZATION_ID } },
+        orderBy: { effectiveFrom: "desc" },
+        select: {
+          effectiveFrom: true,
+          statusDefinition: { select: { code: true, label: true } },
+          department: { select: { id: true, name: true } },
+        },
+      },
+    },
+  });
+  if (!employee) throw new EmployeeServiceError("employee_not_found", 404);
+  const [assignment] = employee.assignments;
+  if (!assignment) throw new EmployeeServiceError("employee_assignment_missing", 409);
+  if (employee.assignments.length !== 1) throw new EmployeeServiceError("assignment_conflict", 409);
+  return toEmployeeSummary(employee, assignment);
+}
+
 export async function createEmployee(
   actor: SessionPrincipal,
   input: CreateEmployeeInput,
