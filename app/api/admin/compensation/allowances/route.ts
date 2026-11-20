@@ -11,7 +11,7 @@ import {
  */
 export async function GET(request: NextRequest) {
   try {
-    await requireCompensationActor(request);
+    await requireCompensationActor(request, "compensation:read");
 
     const params = request.nextUrl.searchParams;
     const search = params.get("search") || undefined;
@@ -19,8 +19,11 @@ export async function GET(request: NextRequest) {
     const eligibility = params.get("eligibility") || undefined;
     const recurrence = params.get("recurrence") || undefined;
     const applicableBranch = params.get("applicableBranch") || undefined;
-    const limit = Math.min(parseInt(params.get("limit") || "20"), 100);
-    const offset = parseInt(params.get("offset") || "0");
+    const minAmount = params.get("minAmount");
+    const maxAmount = params.get("maxAmount");
+    const page = Math.max(1, Number(params.get("page") || "1"));
+    const limit = Math.min(Math.max(1, Number(params.get("pageSize") || params.get("limit") || "20")), 100);
+    const offset = (page - 1) * limit || Math.max(0, Number(params.get("offset") || "0"));
 
     const { allowances, total } = await listAllowances({
       search,
@@ -28,6 +31,8 @@ export async function GET(request: NextRequest) {
       eligibility,
       recurrence,
       applicableBranch,
+      minAmount: minAmount ? Number(minAmount) : undefined,
+      maxAmount: maxAmount ? Number(maxAmount) : undefined,
       limit,
       offset,
     });

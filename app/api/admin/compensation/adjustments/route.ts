@@ -8,12 +8,21 @@ import {
 
 export async function GET(request: Request): Promise<Response> {
   try {
-    const actor = await requireApiPermission(request, "compensation:adjustment:request");
+    const actor = await requireApiPermission(request, "compensation:read");
     const url = new URL(request.url);
-    return Response.json({ adjustments: await listSalaryAdjustments(actor, {
+    const result = await listSalaryAdjustments(actor, {
       status: url.searchParams.get("status") ?? undefined,
       employeeId: url.searchParams.get("employeeId") ?? undefined,
-    }) });
+      search: url.searchParams.get("search") ?? undefined,
+      department: url.searchParams.get("department") ?? undefined,
+      position: url.searchParams.get("position") ?? undefined,
+      category: url.searchParams.get("category") ?? undefined,
+      requestedByUserId: url.searchParams.get("requestedByUserId") ?? undefined,
+      effectiveDate: url.searchParams.get("effectiveDate") ? new Date(`${url.searchParams.get("effectiveDate")}T00:00:00.000Z`) : undefined,
+      page: Number(url.searchParams.get("page") || "1"),
+      pageSize: Number(url.searchParams.get("pageSize") || "20"),
+    });
+    return Response.json({ adjustments: result.adjustments, pagination: { page: result.page, pageSize: result.pageSize, total: result.total, pages: Math.ceil(result.total / result.pageSize) } });
   } catch (error) {
     return Response.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: 403 });
   }

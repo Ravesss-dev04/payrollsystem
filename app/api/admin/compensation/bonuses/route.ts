@@ -8,13 +8,18 @@ import {
 
 export async function GET(request: Request): Promise<Response> {
   try {
-    const actor = await requireApiPermission(request, "compensation:policy:manage");
+    const actor = await requireApiPermission(request, "compensation:read");
     const url = new URL(request.url);
     const programs = await listBonusPrograms(actor, {
       status: url.searchParams.get("status") ?? undefined,
       type: url.searchParams.get("type") ?? undefined,
+      frequency: url.searchParams.get("frequency") ?? undefined,
+      eligibility: url.searchParams.get("eligibility") ?? undefined,
+      search: url.searchParams.get("search") ?? undefined,
+      page: Number(url.searchParams.get("page") || "1"),
+      pageSize: Number(url.searchParams.get("pageSize") || "20"),
     });
-    return Response.json({ programs });
+    return Response.json({ programs: programs.programs, pagination: { page: programs.page, pageSize: programs.pageSize, total: programs.total, pages: Math.ceil(programs.total / programs.pageSize) } });
   } catch (error) {
     if (error instanceof z.ZodError) return Response.json({ error: "invalid_request" }, { status: 400 });
     return Response.json({ error: "forbidden" }, { status: 403 });

@@ -1,0 +1,1 @@
+-- Status values are represented by Prisma enums and are enforced by the compensation migration.

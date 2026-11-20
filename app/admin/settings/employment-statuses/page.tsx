@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { EmploymentStatusPolicyForm } from "../EmploymentStatusPolicyForm";
 import { requirePagePermission } from "../../../lib/auth/page-guard.server";
-import { getEmploymentStatusPolicy } from "../../../lib/organization/service";
+import { getEmploymentStatusPolicies, getEmploymentStatusPolicy } from "../../../lib/organization/service";
 
 export default async function EmploymentStatusesPage() {
   await requirePagePermission("company:manage");
-  const definitions = await getEmploymentStatusPolicy();
+  const [definitions, policies] = await Promise.all([
+    getEmploymentStatusPolicy(),
+    getEmploymentStatusPolicies(),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -24,7 +27,13 @@ export default async function EmploymentStatusesPage() {
           availability does not determine workforce headcount.
         </p>
       </header>
-      <EmploymentStatusPolicyForm initialDefinitions={definitions} />
+      <EmploymentStatusPolicyForm initialDefinitions={definitions} initialPolicies={policies.map((policy) => ({
+        id: policy.id,
+        version: policy.version,
+        effectiveFrom: policy.effectiveFrom.toISOString().slice(0, 10),
+        createdAt: policy.createdAt.toISOString(),
+        definitions: policy.definitions.map(({ code, label, active, headcountEligible }) => ({ code, label, active, headcountEligible })),
+      }))} />
     </div>
   );
 }

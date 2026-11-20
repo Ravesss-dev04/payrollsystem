@@ -3,7 +3,7 @@ import { getSalaryAdjustment } from "@/app/lib/compensation/salary-adjustments.s
 
 export async function GET(request: Request, { params }: { params: Promise<{ adjustmentId: string }> }) {
   try {
-    const actor = await requireApiPermission(request, "compensation:adjustment:request");
+    const actor = await requireApiPermission(request, "compensation:read");
     const { adjustmentId } = await params;
     return Response.json({ adjustment: await getSalaryAdjustment(actor, adjustmentId) });
   } catch (error) {

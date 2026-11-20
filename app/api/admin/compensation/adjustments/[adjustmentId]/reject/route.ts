@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { requireApiPermission } from "@/app/lib/auth/api-guard.server";
-import { rejectSalaryAdjustment } from "@/app/lib/compensation/salary-adjustments.server";
+import { rejectSalaryAdjustment, SalaryAdjustmentServiceError } from "@/app/lib/compensation/salary-adjustments.server";
 
 export async function POST(request: Request, { params }: { params: Promise<{ adjustmentId: string }> }) {
   try {
@@ -10,6 +10,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ adj
     return Response.json({ adjustment: await rejectSalaryAdjustment(actor, adjustmentId, reason) });
   } catch (error) {
     if (error instanceof z.ZodError) return Response.json({ error: "invalid_request", issues: error.issues }, { status: 400 });
-    return Response.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: 400 });
+    return Response.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: error instanceof SalaryAdjustmentServiceError ? error.status : 400 });
   }
 }

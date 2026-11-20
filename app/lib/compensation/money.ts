@@ -62,16 +62,23 @@ export function isValidMoneyString(value: string): boolean {
     return false;
   }
 
-  const num = parseFloat(value);
-  if (isNaN(num) || num <= 0) {
+  const normalized = value.trim();
+  if (!/^\d{1,15}(?:\.\d{1,2})?$/.test(normalized)) {
     return false;
   }
 
-  // Check decimal places (max 2)
-  const parts = value.split(".");
-  if (parts[1] && parts[1].length > 2) {
+  const num = Number(normalized);
+  if (!Number.isFinite(num) || num <= 0 || num > 999999999999999.99) {
     return false;
   }
 
   return true;
+}
+
+/** Parse an API money value only after strict currency validation. */
+export function parseMoneyString(value: string): number {
+  if (!isValidMoneyString(value)) {
+    throw new Error("Money values must be positive numbers with at most two decimal places");
+  }
+  return Number(value.trim());
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireCompensationActor } from "../../../_auth";
-import { getAssignedEmployees } from "@/app/lib/compensation/pay-grades-v2.server";
+import { assignEmployeePayGrade, getAssignedEmployees } from "@/app/lib/compensation/pay-grades-v2.server";
+import { z } from "zod";
 
 /**
  * GET /api/admin/compensation/pay-grades/[id]/employees
@@ -12,7 +13,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    await requireCompensationActor(request);
+    await requireCompensationActor(request, "compensation:read");
 
     const limit = Math.min(
       parseInt(request.nextUrl.searchParams.get("limit") || "20"),
@@ -40,5 +41,21 @@ export async function GET(
       { error: "Failed to fetch assigned employees" },
       { status: 500 }
     );
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const actor = await requireCompensationActor(request, "compensation:assignment:manage");
+    const { id } = await params;
+    const input = z.object({ employeeId: z.string().min(1), effectiveFrom: z.coerce.date() }).parse(await request.json());
+    const assignment = await assignEmployeePayGrade(input.employeeId, id, actor.userId, input.effectiveFrom);
+    return NextResponse.json({ assignment }, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) return NextResponse.json({ error: "invalid_request", issues: error.issues }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: 400 });
   }
 }

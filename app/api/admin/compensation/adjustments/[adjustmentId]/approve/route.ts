@@ -1,5 +1,5 @@
 import { requireApiPermission } from "@/app/lib/auth/api-guard.server";
-import { approveSalaryAdjustment } from "@/app/lib/compensation/salary-adjustments.server";
+import { approveSalaryAdjustment, SalaryAdjustmentServiceError } from "@/app/lib/compensation/salary-adjustments.server";
 
 export async function POST(request: Request, { params }: { params: Promise<{ adjustmentId: string }> }) {
   try {
@@ -7,6 +7,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ adj
     const { adjustmentId } = await params;
     return Response.json({ adjustment: await approveSalaryAdjustment(actor, adjustmentId) });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: 400 });
+    return Response.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: error instanceof SalaryAdjustmentServiceError ? error.status : 400 });
   }
 }

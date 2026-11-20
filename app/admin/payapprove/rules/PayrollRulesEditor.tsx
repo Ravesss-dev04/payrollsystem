@@ -48,6 +48,15 @@ interface PayrollRule {
   excludedFromContributionBasis?: string[];
   // Formula (if applicable)
   customFormula?: string;
+  formulaAst?: {
+    type: "binary";
+    operator: "+" | "-" | "*";
+    left: { type: "variable"; name: string };
+    right: { type: "literal"; value: number };
+  };
+  formulaVariable?: string;
+  formulaOperator?: "add" | "subtract" | "multiply";
+  formulaOperand?: string;
   formulaVariables?: Array<{ name: string; description: string; dataType: string }>;
   // Metadata
   createdBy?: string;
@@ -83,12 +92,47 @@ const ELIGIBILITY_OPTIONS = [
   { value: "SelectedEmployees", label: "Selected Employees" },
 ];
 
+const FORMULA_VARIABLES = [
+  { value: "basicSalary", label: "Basic salary" },
+  { value: "monthlyRate", label: "Monthly rate" },
+  { value: "dailyRate", label: "Daily rate" },
+  { value: "hourlyRate", label: "Hourly rate" },
+  { value: "regularHours", label: "Regular hours" },
+  { value: "overtimeHours", label: "Overtime hours" },
+  { value: "daysWorked", label: "Days worked" },
+  { value: "unitsProduced", label: "Units produced" },
+  { value: "taxableCompensation", label: "Taxable compensation" },
+];
+
+const FORMULA_OPERATORS = [
+  { value: "multiply", label: "Multiply by", symbol: "*" },
+  { value: "add", label: "Add", symbol: "+" },
+  { value: "subtract", label: "Subtract", symbol: "-" },
+] as const;
+
 interface PayrollRuleEditorProps {
   rule?: PayrollRule;
   initialRuleSet?: { configuration?: { rules?: PayrollRule[] } } | null;
   onSave?: (rule: PayrollRule) => Promise<void>;
   onCancel?: () => void;
   loading?: boolean;
+}
+
+function buildControlledFormula(rule: PayrollRule) {
+  if (!rule.formulaVariable || !rule.formulaOperator) return null;
+  const operand = Number(rule.formulaOperand);
+  if (!Number.isFinite(operand)) return null;
+  const operator = FORMULA_OPERATORS.find((item) => item.value === rule.formulaOperator);
+  if (!operator) return null;
+  return {
+    text: `${rule.formulaVariable} ${operator.symbol} ${operand}`,
+    ast: {
+      type: "binary" as const,
+      operator: operator.symbol as "+" | "-" | "*",
+      left: { type: "variable" as const, name: rule.formulaVariable },
+      right: { type: "literal" as const, value: operand },
+    },
+  };
 }
 
 export default function PayrollRuleEditor({
@@ -198,14 +242,18 @@ export default function PayrollRuleEditor({
 
   const handleSave = async () => {
     if (!validateForm()) return;
+    const controlledFormula = buildControlledFormula(formData);
+    const normalizedRule = controlledFormula
+      ? { ...formData, customFormula: controlledFormula.text, formulaAst: controlledFormula.ast }
+      : formData;
     if (onSave) {
-      await onSave(formData);
+      await onSave(normalizedRule);
       return;
     }
     const response = await fetch("/api/admin/payroll/rules", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(normalizedRule),
     });
     if (!response.ok) {
       const payload = await response.json().catch(() => null);
@@ -796,21 +844,36 @@ export default function PayrollRuleEditor({
                 </div>
               </div>
 
-              <FormField
-                label="Custom Formula (Optional)"
-                value={formData.customFormula || ""}
-                onChange={(v) => handleFieldChange("customFormula", v)}
-                type="textarea"
-                placeholder="e.g., (baseSalary * 0.10) + fixedAmount"
-                description="Use approved variables like: baseSalary, hoursWorked, dailyRate, percentage"
-              />
+              <div className="grid gap-4 sm:grid-cols-3">
+                <FormField
+                  label="Approved variable"
+                  value={formData.formulaVariable || "basicSalary"}
+                  onChange={(v) => handleFieldChange("formulaVariable", v)}
+                  options={FORMULA_VARIABLES}
+                  description="Only variables supported by the centralized formula engine are available."
+                />
+                <FormField
+                  label="Operation"
+                  value={formData.formulaOperator || "multiply"}
+                  onChange={(v) => handleFieldChange("formulaOperator", v)}
+                  options={FORMULA_OPERATORS.map(({ value, label }) => ({ value, label }))}
+                />
+                <FormField
+                  label="Operand"
+                  value={formData.formulaOperand || formData.percentage || "0"}
+                  onChange={(v) => handleFieldChange("formulaOperand", v)}
+                  type="number"
+                  step="0.01"
+                  description="Use a numeric rate or fixed amount; executable code is never accepted."
+                />
+              </div>
 
               <div>
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Available Variables</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="p-2 bg-gray-50 border border-gray-200 rounded">
-                    <code className="text-violet-600">baseSalary</code>
-                    <p className="text-xs text-gray-600 mt-1">Employee's base monthly salary</p>
+                    <code className="text-violet-600">basicSalary</code>
+                    <p className="text-xs text-gray-600 mt-1">Employee's approved basic salary</p>
                   </div>
                   <div className="p-2 bg-gray-50 border border-gray-200 rounded">
                     <code className="text-violet-600">dailyRate</code>
@@ -821,8 +884,8 @@ export default function PayrollRuleEditor({
                     <p className="text-xs text-gray-600 mt-1">Hourly rate (dailyRate / 8)</p>
                   </div>
                   <div className="p-2 bg-gray-50 border border-gray-200 rounded">
-                    <code className="text-violet-600">hoursWorked</code>
-                    <p className="text-xs text-gray-600 mt-1">Actual hours worked this period</p>
+                    <code className="text-violet-600">regularHours</code>
+                    <p className="text-xs text-gray-600 mt-1">Regular hours worked this period</p>
                   </div>
                   <div className="p-2 bg-gray-50 border border-gray-200 rounded">
                     <code className="text-violet-600">daysWorked</code>
@@ -849,27 +912,14 @@ export default function PayrollRuleEditor({
                 </div>
               </div>
 
-              {formData.customFormula && (
+              {buildControlledFormula(formData) && (
                 <div className="border border-blue-200 bg-blue-50 rounded-lg p-4">
                   <h4 className="text-sm font-medium text-blue-900 mb-2">Formula Preview</h4>
                   <p className="text-sm text-blue-800 font-mono break-words">
-                    {formData.customFormula}
+                    {buildControlledFormula(formData)?.text}
                   </p>
                   <p className="text-xs text-blue-700 mt-2">
-                    Example with baseSalary=₱30,000: ₱
-                    {(() => {
-                      try {
-                        const formula = formData.customFormula
-                          .replace(/baseSalary/g, "30000")
-                          .replace(/dailyRate/g, String(30000 / 22))
-                          .replace(/hourlyRate/g, String(30000 / 22 / 8))
-                          .replace(/percentage/g, formData.percentage || "0");
-                        // Simple eval for preview only (not executed on server)
-                        return eval(formula).toFixed(2);
-                      } catch (e) {
-                        return "Invalid formula";
-                      }
-                    })()}
+                    Preview uses the approved formula shape and a sample value of ₱30,000. The server formula engine performs the authoritative calculation.
                   </p>
                 </div>
               )}

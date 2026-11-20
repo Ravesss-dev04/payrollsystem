@@ -10,6 +10,14 @@ type DomainAuditInput = {
     entityId: string;
     summary: string;
     details?: Prisma.InputJsonValue;
+  recordVersion?: number;
+  previousVersion?: number;
+  reason?: string;
+  effectiveDate?: Date;
+  approvalStatus?: string;
+  affectedEmployeeId?: string;
+  affectedGroup?: Prisma.InputJsonValue;
+  relatedDocumentReference?: string;
 };
 
 type LegacyDomainAuditInput = {
@@ -20,6 +28,14 @@ type LegacyDomainAuditInput = {
   entityId: string;
   summary: string;
   details?: unknown;
+  recordVersion?: number;
+  previousVersion?: number;
+  reason?: string;
+  effectiveDate?: Date;
+  approvalStatus?: string;
+  affectedEmployeeId?: string;
+  affectedGroup?: unknown;
+  relatedDocumentReference?: string;
 };
 
 export async function writeDomainAuditEvent(
@@ -37,6 +53,7 @@ export async function writeDomainAuditEvent(
   const input = maybeInput ?? transactionOrInput as LegacyDomainAuditInput;
   const actorUserId = "actor" in input ? input.actor.userId : input.actorUserId;
   const actorRole = "actor" in input ? input.actor.role : input.actorRole;
+  const value = input as DomainAuditInput & LegacyDomainAuditInput;
   await transaction.domainAuditEvent.create({
     data: {
       actorUserId,
@@ -46,6 +63,14 @@ export async function writeDomainAuditEvent(
       entityId: input.entityId,
       summary: input.summary,
       details: input.details as Prisma.InputJsonValue | undefined,
+      recordVersion: value.recordVersion,
+      previousVersion: value.previousVersion,
+      reason: value.reason,
+      effectiveDate: value.effectiveDate,
+      approvalStatus: value.approvalStatus,
+      affectedEmployeeId: value.affectedEmployeeId,
+      affectedGroup: value.affectedGroup as Prisma.InputJsonValue | undefined,
+      relatedDocumentReference: value.relatedDocumentReference,
     },
     select: { id: true },
   });
@@ -70,6 +95,13 @@ export async function writeDomainAuditEventWithChanges(
     }>;
     justification?: string;
     supportingDocuments?: string[];
+    recordVersion?: number;
+    previousVersion?: number;
+    effectiveDate?: Date;
+    approvalStatus?: string;
+    affectedEmployeeId?: string;
+    affectedGroup?: Prisma.InputJsonValue;
+    relatedDocumentReference?: string;
   },
 ): Promise<void> {
   await transaction.domainAuditEvent.create({
@@ -85,6 +117,13 @@ export async function writeDomainAuditEventWithChanges(
         justification: input.justification,
         supportingDocuments: input.supportingDocuments || [],
       },
+      recordVersion: input.recordVersion,
+      previousVersion: input.previousVersion,
+      effectiveDate: input.effectiveDate,
+      approvalStatus: input.approvalStatus,
+      affectedEmployeeId: input.affectedEmployeeId,
+      affectedGroup: input.affectedGroup,
+      relatedDocumentReference: input.relatedDocumentReference,
     },
     select: { id: true },
   });

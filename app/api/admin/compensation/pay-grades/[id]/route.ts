@@ -19,7 +19,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    await requireCompensationActor(request);
+    await requireCompensationActor(request, "compensation:read");
 
     const payGrade = await getPayGradeDetails(id);
     if (!payGrade) {

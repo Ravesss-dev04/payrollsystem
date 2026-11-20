@@ -113,6 +113,9 @@ export async function createPayrollRuleSetDraft(
           version,
           effectiveFrom: draft.effectiveFrom,
         },
+        recordVersion: version,
+        effectiveDate: new Date(`${draft.effectiveFrom}T00:00:00.000Z`),
+        approvalStatus: "Draft",
       });
 
       return ruleSet;

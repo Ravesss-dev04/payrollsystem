@@ -4,6 +4,7 @@ import { writeDomainAuditEvent } from "@/app/lib/audit/domain-audit";
 import { requirePermission } from "@/app/lib/auth/authorization";
 import type { AllowanceRecurrence, AllowanceEligibility } from "@/app/generated/prisma/client";
 import { z } from "zod";
+import { isValidMoneyString } from "./money";
 
 /**
  * Allowance validation schema
@@ -21,9 +22,7 @@ export const createAllowanceSchema = z.object({
     .optional()
     .nullable(),
   amount: z.string()
-    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
-      message: "Amount must be a valid non-negative number",
-    })
+    .trim().refine(isValidMoneyString, "Amount must be a positive amount with at most two decimal places")
     .transform((val) => parseFloat(val)),
   recurrence: z.enum([
     "Weekly",
@@ -198,6 +197,8 @@ export async function createAllowance(
       recurrence: allowance.recurrence,
       eligibility: allowance.eligibility,
     },
+    effectiveDate: allowance.effectiveFrom,
+    approvalStatus: allowance.status,
   });
 
   return allowance;
@@ -230,15 +231,31 @@ export async function updateAllowance(
     throw new Error("Allowance not found");
   }
 
-  // Validate eligibility if changing
-  if (input.eligibility) {
-    const eligibilityCheck = validateEligibilitySelections(
-      input.eligibility as AllowanceEligibility,
-      input.selectedData || null
-    );
-    if (!eligibilityCheck.valid) {
-      throw new Error(`Validation failed: ${eligibilityCheck.errors.join("; ")}`);
-    }
+  // Validate the complete post-update record, not only fields present in the
+  // patch. This prevents contradictory dates, tax treatment, or eligibility
+  // data from being introduced through partial updates.
+  const candidate = {
+    code: input.code ?? existing.code,
+    name: input.name ?? existing.name,
+    description: input.description === undefined ? existing.description : input.description,
+    amount: input.amount ?? Number(existing.amount),
+    recurrence: input.recurrence ?? existing.recurrence,
+    eligibility: input.eligibility ?? existing.eligibility,
+    selectedData: input.selectedData === undefined ? existing.selectedData as Record<string, any> | null : input.selectedData,
+    applicableBranches: input.applicableBranches === undefined ? existing.applicableBranches : input.applicableBranches,
+    effectiveFrom: input.effectiveFrom ?? existing.effectiveFrom,
+    effectiveTo: input.effectiveTo === undefined ? existing.effectiveTo : input.effectiveTo,
+    status: input.status ?? existing.status,
+    taxTreatment: input.taxTreatment ?? existing.taxTreatment,
+    contributionTreatment: input.contributionTreatment === undefined ? existing.contributionTreatment : input.contributionTreatment,
+    thirteenthMonthTreatment: input.thirteenthMonthTreatment === undefined ? existing.thirteenthMonthTreatment : input.thirteenthMonthTreatment,
+    payrollCalculationCategory: input.payrollCalculationCategory === undefined ? existing.payrollCalculationCategory : input.payrollCalculationCategory,
+    taxStatutoryReference: input.taxStatutoryReference === undefined ? existing.taxStatutoryReference : input.taxStatutoryReference,
+    notes: input.notes === undefined ? existing.notes : input.notes,
+  } as CreateAllowanceInput;
+  const validation = validateAllowance(candidate);
+  if (!validation.valid) {
+    throw new Error(`Validation failed: ${validation.errors.join("; ")}`);
   }
 
   // Record previous values
@@ -300,6 +317,8 @@ export async function updateAllowance(
       affectedEmployees: existing._count.employeeAllowances,
       reason,
     },
+    effectiveDate: updated.effectiveFrom,
+    approvalStatus: updated.status,
   });
 
   return updated;
@@ -337,7 +356,7 @@ export async function pauseAllowance(
     where: { id },
     data: {
       status: "Paused",
-      pausedAt: new Date(),
+      pausedAt: pauseEffectiveDate,
       pausedByUserId: userId,
       updatedByUserId: userId,
     },
@@ -368,6 +387,8 @@ export async function pauseAllowance(
       pauseEffectiveDate: pauseEffectiveDate.toISOString(),
       reason,
     },
+    effectiveDate: pauseEffectiveDate,
+    approvalStatus: "Paused",
   });
 
   return paused;
@@ -428,6 +449,7 @@ export async function retireAllowance(
       code: existing.code,
       reason,
     },
+    approvalStatus: "Retired",
   });
 
   return retired;
@@ -496,6 +518,8 @@ export async function listAllowances(options: {
   eligibility?: string;
   recurrence?: string;
   applicableBranch?: string;
+  minAmount?: number;
+  maxAmount?: number;
   limit?: number;
   offset?: number;
 } = {}): Promise<{ allowances: any[]; total: number }> {
@@ -505,6 +529,8 @@ export async function listAllowances(options: {
     eligibility,
     recurrence,
     applicableBranch,
+    minAmount,
+    maxAmount,
     limit = 20,
     offset = 0,
   } = options;
@@ -531,12 +557,27 @@ export async function listAllowances(options: {
     };
   }
 
+  if (minAmount !== undefined) where.amount = { ...(where.amount ?? {}), gte: minAmount };
+  if (maxAmount !== undefined) where.amount = { ...(where.amount ?? {}), lte: maxAmount };
+
   if (search) {
+    const numericSearch = Number(search);
+    const recurrenceValues = ["Weekly", "Biweekly", "Semimonthly", "Monthly", "Bimonthly", "Quarterly", "Annually", "OneTime", "EveryPayrollPeriod"] as const;
+    const eligibilityValues = ["AllEmployees", "SpecificDepartment", "SpecificPosition", "SpecificEmploymentCategory", "SpecificPayGrade", "SpecificBranch", "SelectedEmployees"] as const;
+    const recurrenceMatches = recurrenceValues.filter((value) => value.toLowerCase().includes(search.toLowerCase()));
+    const eligibilityMatches = eligibilityValues.filter((value) => value.toLowerCase().includes(search.toLowerCase()));
     // Case-insensitive partial match on code, name, amount
-    where.OR = [
-      { code: { contains: search.toUpperCase(), mode: "insensitive" } },
-      { name: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
+    where.AND = [
+      ...(where.AND ?? []),
+      { OR: [
+        { code: { contains: search.toUpperCase(), mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        ...(Number.isFinite(numericSearch) ? [{ amount: { equals: numericSearch } }] : []),
+        ...(recurrenceMatches.length ? [{ recurrence: { in: recurrenceMatches } }] : []),
+        ...(eligibilityMatches.length ? [{ eligibility: { in: eligibilityMatches } }] : []),
+        { applicableBranches: { contains: search, mode: "insensitive" } },
+      ] },
     ];
   }
 
@@ -549,7 +590,7 @@ export async function listAllowances(options: {
           select: { employeeAllowances: true },
         },
       },
-      orderBy: [{ createdAt: "desc" }],
+    orderBy: [{ name: "asc" }, { code: "asc" }],
       take: limit,
       skip: offset,
     }),
@@ -665,6 +706,14 @@ export async function assignEmployeeAllowance(
   userId: string,
   effectiveDate: Date
 ): Promise<any> {
+  const permission = await requirePermission(userId, "compensation:assignment:manage");
+  if (!permission.allowed) {
+    throw new Error(`Permission denied: ${permission.reason}`);
+  }
+
+  const employee = await prisma.employee.findUnique({ where: { id: employeeId }, select: { id: true } });
+  if (!employee) throw new Error("Employee not found");
+
   // Check allowance is not Retired or Paused
   const allowance = await prisma.allowancePolicy.findUnique({
     where: { id: allowanceId },
@@ -682,14 +731,27 @@ export async function assignEmployeeAllowance(
     throw new Error("Cannot assign paused allowance");
   }
 
-  // Create assignment
-  return prisma.employeeAllowance.create({
-    data: {
-      employeeId,
-      allowancePolicyId: allowanceId,
-      effectiveFrom: effectiveDate,
-      assignedByUserId: userId,
-    },
+  const actor = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  if (!actor) throw new Error("User not found");
+
+  return prisma.$transaction(async (tx) => {
+    const assignment = await tx.employeeAllowance.create({
+      data: { employeeId, allowancePolicyId: allowanceId, effectiveFrom: effectiveDate, assignedByUserId: userId },
+    });
+    await tx.domainAuditEvent.create({
+      data: {
+        actorUserId: userId,
+        actorRole: actor.role,
+        action: "assign",
+        entityType: "EmployeeAllowance",
+        entityId: assignment.id,
+        summary: `Assigned allowance ${allowance.code} to employee`,
+        details: { employeeId, allowanceId, effectiveDate } as any,
+        effectiveDate,
+        affectedEmployeeId: employeeId,
+      },
+    });
+    return assignment;
   });
 }
 
@@ -702,13 +764,21 @@ export async function reviewTaxTreatment(
   taxTreatment: string,
   reason?: string
 ): Promise<any> {
-  // Would need specific tax review permission
+  const permission = await requirePermission(userId, "compensation:tax:review");
+  if (!permission.allowed) throw new Error(`Permission denied: ${permission.reason}`);
+  if (!["Taxable", "NonTaxable", "Pending", "Conditional"].includes(taxTreatment)) {
+    throw new Error("Unsupported tax treatment");
+  }
   const allowance = await prisma.allowancePolicy.findUnique({
     where: { id: allowanceId },
   });
 
   if (!allowance) {
     throw new Error("Allowance not found");
+  }
+
+  if (taxTreatment === "NonTaxable" && !allowance.taxStatutoryReference) {
+    throw new Error("Non-taxable treatment requires a statutory reference");
   }
 
   const updated = await prisma.allowancePolicy.update({

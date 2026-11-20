@@ -4,18 +4,20 @@ import { writeDomainAuditEvent } from "../audit/domain-audit";
 import type { SessionPrincipal } from "../auth/session-policy";
 import {
   branchInputSchema,
+  branchUpdateSchema,
   departmentInputSchema,
+  departmentUpdateSchema,
   employmentStatusPolicyInputSchema,
   organizationSettingsInputSchema,
-  organizationUnitUpdateSchema,
   teamInputSchema,
   teamUpdateSchema,
   type BranchInput,
+  type BranchUpdate,
   type DepartmentInput,
+  type DepartmentUpdate,
   type EmploymentStatusDefinition,
   type EmploymentStatusPolicyInput,
   type OrganizationSettingsInput,
-  type OrganizationUnitUpdate,
   type TeamInput,
   type TeamUpdate,
 } from "./policy";
@@ -49,8 +51,10 @@ export class OrganizationServiceError extends Error {
       | "policy_effective_date_must_increase"
       | "department_not_found"
       | "branch_not_found"
+      | "branch_has_active_departments"
       | "team_not_found"
-      | "department_has_active_teams",
+      | "department_has_active_teams"
+      | "department_has_active_employees",
     public readonly status: 403 | 404 | 409,
   ) {
     super(code);
@@ -75,7 +79,10 @@ export async function getBranches() {
   return prisma.branch.findMany({
     where: { organizationId: ORGANIZATION_ID },
     orderBy: { name: "asc" },
-    select: { id: true, name: true, active: true },
+    select: {
+      id: true, code: true, name: true, location: true, description: true, active: true,
+      _count: { select: { departments: true } },
+    },
   });
 }
 
@@ -92,6 +99,9 @@ export async function createBranch(actor: SessionPrincipal, input: BranchInput) 
       data: {
         organizationId: ORGANIZATION_ID,
         name: branchInput.name,
+        ...(branchInput.code ? { code: branchInput.code } : {}),
+        ...(branchInput.location ? { location: branchInput.location } : {}),
+        ...(branchInput.description ? { description: branchInput.description } : {}),
       },
       select: { id: true, name: true, active: true },
     });
@@ -101,6 +111,7 @@ export async function createBranch(actor: SessionPrincipal, input: BranchInput) 
       entityType: "branch",
       entityId: branch.id,
       summary: "Branch created",
+      details: { current: branch },
     });
     return branch;
   });
@@ -109,20 +120,28 @@ export async function createBranch(actor: SessionPrincipal, input: BranchInput) 
 export async function updateBranch(
   actor: SessionPrincipal,
   branchId: string,
-  input: OrganizationUnitUpdate,
+  input: BranchUpdate,
 ) {
   requireAdmin(actor);
-  const update = organizationUnitUpdateSchema.parse(input);
+  const update = branchUpdateSchema.parse(input);
   return prisma.$transaction(async (transaction) => {
     const current = await transaction.branch.findFirst({
       where: { id: branchId, organizationId: ORGANIZATION_ID },
-      select: { id: true },
+      select: { id: true, code: true, name: true, location: true, description: true, active: true },
     });
     if (!current) throw new OrganizationServiceError("branch_not_found", 404);
+    if (update.active === false) {
+      const dependentDepartments = await transaction.department.count({
+        where: { branchId, active: true },
+      });
+      if (dependentDepartments > 0) {
+        throw new OrganizationServiceError("branch_has_active_departments", 409);
+      }
+    }
     const branch = await transaction.branch.update({
       where: { id: branchId },
       data: update,
-      select: { id: true, name: true, active: true },
+      select: { id: true, code: true, name: true, location: true, description: true, active: true, _count: { select: { departments: true } } },
     });
     await writeDomainAuditEvent(transaction, {
       actor,
@@ -130,6 +149,7 @@ export async function updateBranch(
       entityType: "branch",
       entityId: branch.id,
       summary: "Branch updated",
+      details: { previous: current, current: branch },
     });
     return branch;
   });
@@ -139,7 +159,43 @@ export async function getDepartments() {
   return prisma.department.findMany({
     where: { organizationId: ORGANIZATION_ID },
     orderBy: { name: "asc" },
-    select: { id: true, name: true, active: true },
+    select: {
+      id: true, branchId: true, code: true, name: true, description: true, active: true,
+      branch: { select: { id: true, code: true, name: true, active: true } },
+      _count: { select: { employeeAssignments: true } },
+    },
+  });
+}
+
+export async function getBranchDetails(branchId: string) {
+  return prisma.branch.findFirst({
+    where: { id: branchId, organizationId: ORGANIZATION_ID },
+    include: {
+      departments: {
+        orderBy: { name: "asc" },
+        select: { id: true, code: true, name: true, description: true, active: true, _count: { select: { employeeAssignments: true } } },
+      },
+      _count: { select: { departments: true } },
+    },
+  });
+}
+
+export async function getDepartmentDetails(departmentId: string) {
+  return prisma.department.findFirst({
+    where: { id: departmentId, organizationId: ORGANIZATION_ID },
+    include: {
+      branch: { select: { id: true, code: true, name: true, active: true } },
+      _count: { select: { employeeAssignments: true, teams: true } },
+    },
+  });
+}
+
+export async function getOrganizationHistory(entityType = "organization", entityId = ORGANIZATION_ID) {
+  return prisma.domainAuditEvent.findMany({
+    where: { entityType, entityId },
+    include: { actor: { select: { id: true, name: true, email: true, role: true } } },
+    orderBy: { createdAt: "desc" },
+    take: 100,
   });
 }
 
@@ -155,10 +211,18 @@ export async function createDepartment(
       select: { id: true },
     });
     requireOrganization(organization);
+    const branch = await transaction.branch.findFirst({
+      where: { id: departmentInput.branchId, organizationId: ORGANIZATION_ID, active: true },
+      select: { id: true },
+    });
+    if (!branch) throw new OrganizationServiceError("branch_not_found", 404);
     const department = await transaction.department.create({
       data: {
         organizationId: ORGANIZATION_ID,
+        branchId: branch.id,
         name: departmentInput.name,
+        ...(departmentInput.code ? { code: departmentInput.code } : {}),
+        ...(departmentInput.description ? { description: departmentInput.description } : {}),
       },
       select: { id: true, name: true, active: true },
     });
@@ -168,6 +232,7 @@ export async function createDepartment(
       entityType: "department",
       entityId: department.id,
       summary: "Department created",
+      details: { current: department },
     });
     return department;
   });
@@ -176,14 +241,14 @@ export async function createDepartment(
 export async function updateDepartment(
   actor: SessionPrincipal,
   departmentId: string,
-  input: OrganizationUnitUpdate,
+  input: DepartmentUpdate,
 ) {
   requireAdmin(actor);
-  const update = organizationUnitUpdateSchema.parse(input);
+  const update = departmentUpdateSchema.parse(input);
   return prisma.$transaction(async (transaction) => {
     const current = await transaction.department.findFirst({
       where: { id: departmentId, organizationId: ORGANIZATION_ID },
-      select: { id: true },
+      select: { id: true, branchId: true },
     });
     if (!current) {
       throw new OrganizationServiceError("department_not_found", 404);
@@ -198,11 +263,24 @@ export async function updateDepartment(
           409,
         );
       }
+      const activeEmployees = await transaction.employeeAssignment.count({
+        where: { departmentId, effectiveTo: null },
+      });
+      if (activeEmployees > 0) {
+        throw new OrganizationServiceError("department_has_active_employees", 409);
+      }
+    }
+    if (update.branchId) {
+      const branch = await transaction.branch.findFirst({
+        where: { id: update.branchId, organizationId: ORGANIZATION_ID, active: true },
+        select: { id: true },
+      });
+      if (!branch) throw new OrganizationServiceError("branch_not_found", 404);
     }
     const department = await transaction.department.update({
       where: { id: departmentId },
       data: update,
-      select: { id: true, name: true, active: true },
+      select: { id: true, branchId: true, code: true, name: true, description: true, active: true, branch: { select: { id: true, code: true, name: true, active: true } }, _count: { select: { employeeAssignments: true } } },
     });
     await writeDomainAuditEvent(transaction, {
       actor,
@@ -210,6 +288,7 @@ export async function updateDepartment(
       entityType: "department",
       entityId: department.id,
       summary: "Department updated",
+      details: { previous: current, current: department },
     });
     return department;
   });
@@ -324,6 +403,10 @@ export async function saveOrganizationSettings(
   const settings = organizationSettingsInputSchema.parse(input);
 
   return prisma.$transaction(async (transaction) => {
+    const previous = await transaction.organizationSettings.findUnique({
+      where: { id: ORGANIZATION_ID },
+      select: { name: true, timeZone: true },
+    });
     const organization = await transaction.organizationSettings.upsert({
       where: { id: ORGANIZATION_ID },
       create: {
@@ -350,6 +433,10 @@ export async function saveOrganizationSettings(
       entityType: "organization",
       entityId: ORGANIZATION_ID,
       summary: "Organization settings updated",
+      details: {
+        previous,
+        current: { name: organization.name, timeZone: organization.timeZone },
+      },
     });
     return organization;
   });
@@ -384,6 +471,36 @@ export async function getEmploymentStatusPolicy(): Promise<
       label: true,
       headcountEligible: true,
     },
+  });
+}
+
+export async function getEmploymentStatusPolicies() {
+  return prisma.employmentStatusPolicy.findMany({
+    where: { organizationId: ORGANIZATION_ID },
+    orderBy: [{ effectiveFrom: "desc" }, { version: "desc" }],
+    include: {
+      createdBy: { select: { id: true, name: true, email: true } },
+      definitions: { orderBy: { code: "asc" } },
+    },
+  });
+}
+
+export async function getEmploymentStatusPolicyDetails(policyId: string) {
+  return prisma.employmentStatusPolicy.findFirst({
+    where: { id: policyId, organizationId: ORGANIZATION_ID },
+    include: {
+      createdBy: { select: { id: true, name: true, email: true } },
+      definitions: { orderBy: { code: "asc" } },
+    },
+  });
+}
+
+export async function getEmploymentStatusPolicyHistory(policyId?: string) {
+  return prisma.domainAuditEvent.findMany({
+    where: { entityType: "employment_status_policy", ...(policyId ? { entityId: policyId } : {}) },
+    include: { actor: { select: { id: true, name: true, email: true, role: true } } },
+    orderBy: { createdAt: "desc" },
+    take: 100,
   });
 }
 

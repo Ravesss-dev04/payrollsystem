@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    await requireCompensationActor(request);
+    await requireCompensationActor(request, "compensation:read");
 
     const limit = Math.min(
       parseInt(request.nextUrl.searchParams.get("limit") || "50"),

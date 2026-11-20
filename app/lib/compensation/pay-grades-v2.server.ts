@@ -4,6 +4,7 @@ import { writeDomainAuditEvent } from "@/app/lib/audit/domain-audit";
 import { requirePermission } from "@/app/lib/auth/authorization";
 import type { CompensationBasis } from "@/app/generated/prisma/client";
 import { z } from "zod";
+import { isValidMoneyString } from "./money";
 
 /**
  * Pay Grade validation schema
@@ -26,14 +27,10 @@ export const createPayGradeSchema = z.object({
     .nullable(),
   basis: z.enum(["Monthly", "Daily", "Hourly"]),
   minBasePay: z.string()
-    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
-      message: "Min pay must be a valid non-negative number",
-    })
+    .trim().refine(isValidMoneyString, "Min pay must be a positive amount with at most two decimal places")
     .transform((val) => parseFloat(val)),
   maxBasePay: z.string()
-    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
-      message: "Max pay must be a valid non-negative number",
-    })
+    .trim().refine(isValidMoneyString, "Max pay must be a positive amount with at most two decimal places")
     .transform((val) => parseFloat(val)),
   effectiveFrom: z.string()
     .refine((val) => !isNaN(Date.parse(val)), {
@@ -168,6 +165,11 @@ export async function updatePayGrade(
     throw new Error("Pay grade not found");
   }
 
+  if (input.code && input.code !== existing.code) {
+    const duplicate = await prisma.payGrade.findUnique({ where: { code: input.code }, select: { id: true } });
+    if (duplicate) throw new Error("Pay grade code already exists");
+  }
+
   // If modifying salary range and employees assigned, flag discrepancy
   const changedSalaryRange =
     (input.minBasePay !== undefined && input.minBasePay !== Number(existing.minBasePay)) ||
@@ -178,12 +180,25 @@ export async function updatePayGrade(
     // For now, just note in audit
   }
 
-  // Validate if provided
-  if (input.minBasePay !== undefined && input.maxBasePay !== undefined) {
-    if (input.minBasePay > input.maxBasePay) {
-      throw new Error("Minimum pay cannot exceed maximum pay");
-    }
+  const candidate = {
+    code: input.code ?? existing.code,
+    name: input.name ?? existing.name,
+    description: input.description ?? existing.description,
+    position: input.position ?? existing.position,
+    basis: input.basis ?? existing.basis,
+    minBasePay: Number(input.minBasePay ?? existing.minBasePay),
+    maxBasePay: Number(input.maxBasePay ?? existing.maxBasePay),
+    effectiveFrom: new Date(input.effectiveFrom ?? existing.effectiveFrom),
+    effectiveTo: input.effectiveTo === undefined ? existing.effectiveTo : input.effectiveTo,
+    status: (input.status ?? existing.status) as "Active" | "Inactive",
+    notes: input.notes ?? existing.notes,
+  };
+  const validation = validatePayGrade(candidate as CreatePayGradeInput);
+  if (!validation.valid) {
+    throw new Error(`Validation failed: ${validation.errors.join("; ")}`);
   }
+  const conflicts = await checkSalaryRangeConflicts(candidate as unknown as CreatePayGradeInput, id);
+  if (conflicts.hasConflicts) throw new Error("Salary range conflict detected for this position and compensation basis");
 
   // Record previous values for audit
   const previous = {
@@ -305,6 +320,9 @@ export async function listPayGrades(options: {
   status?: string;
   basis?: string;
   position?: string;
+  effectiveOn?: Date;
+  minBasePay?: number;
+  maxBasePay?: number;
   limit?: number;
   offset?: number;
 } = {}): Promise<{ payGrades: any[]; total: number }> {
@@ -313,6 +331,9 @@ export async function listPayGrades(options: {
     status,
     basis,
     position,
+    effectiveOn,
+    minBasePay,
+    maxBasePay,
     limit = 20,
     offset = 0,
   } = options;
@@ -335,12 +356,28 @@ export async function listPayGrades(options: {
     };
   }
 
+  if (effectiveOn) {
+    where.effectiveFrom = { lte: effectiveOn };
+    where.AND = [
+      ...(where.AND ?? []),
+      { OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveOn } }] },
+    ];
+  }
+
+  if (minBasePay !== undefined) where.maxBasePay = { gte: minBasePay };
+  if (maxBasePay !== undefined) where.minBasePay = { lte: maxBasePay };
+
   if (search) {
     // Case-insensitive partial match on code, name, description
-    where.OR = [
-      { code: { contains: search.toUpperCase(), mode: "insensitive" } },
-      { name: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
+    where.AND = [
+      ...(where.AND ?? []),
+      {
+        OR: [
+          { code: { contains: search.toUpperCase(), mode: "insensitive" } },
+          { name: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+        ],
+      },
     ];
   }
 
@@ -353,9 +390,7 @@ export async function listPayGrades(options: {
           select: { employeeGrades: true },
         },
       },
-      orderBy: [
-        { createdAt: "desc" }, // Most recent first
-      ],
+      orderBy: [{ name: "asc" }, { code: "asc" }],
       take: limit,
       skip: offset,
     }),
@@ -365,7 +400,7 @@ export async function listPayGrades(options: {
   // Add computed fields
   const enriched = payGrades.map((pg) => ({
     ...pg,
-    payRange: `${pg.basis === "Hourly" ? "₱" : ""}${pg.minBasePay} – ${pg.maxBasePay}`,
+    payRange: `${pg.minBasePay} – ${pg.maxBasePay}`,
     assignedEmployeeCount: pg._count.employeeGrades,
   }));
 
@@ -395,7 +430,7 @@ export async function retirePayGrade(
     include: {
       employeeGrades: {
         where: {
-          effectiveTo: null, // Active assignments only
+          OR: [{ effectiveTo: null }, { effectiveFrom: { gt: new Date() } }],
         },
       },
     },
@@ -445,14 +480,22 @@ export async function retirePayGrade(
  * Returns conflicts when multiple pay grades have overlapping ranges in same position/basis
  */
 export async function checkSalaryRangeConflicts(
-  payGrade: CreatePayGradeInput
+  payGrade: CreatePayGradeInput,
+  excludeId?: string,
 ): Promise<{ conflicts: any[]; hasConflicts: boolean }> {
+  const scope: any[] = [
+    { basis: payGrade.basis },
+    { status: "Active" },
+  ];
+  if (payGrade.position) {
+    scope.push({ position: { equals: payGrade.position } });
+  }
+  if (excludeId) scope.push({ id: { not: excludeId } });
+
   const overlapping = await prisma.payGrade.findMany({
     where: {
       AND: [
-        { position: payGrade.position },
-        { basis: payGrade.basis },
-        { status: "Active" },
+        ...scope,
         {
           OR: [
             // My min is in their range
@@ -575,43 +618,88 @@ export async function reassignEmployeePayGrade(
   userId: string,
   effectiveDate: Date
 ): Promise<any> {
-  // End the old assignment
-  await prisma.employeePayGrade.updateMany({
-    where: {
-      employeeId,
-      payGradeId: oldPayGradeId,
-      effectiveTo: null,
-    },
-    data: {
-      effectiveTo: new Date(effectiveDate.getTime() - 24 * 60 * 60 * 1000), // Day before
-    },
-  });
+  const permission = await requirePermission(userId, "compensation:assignment:manage");
+  if (!permission.allowed) {
+    throw new Error(`Permission denied: ${permission.reason}`);
+  }
 
-  // Create new assignment
-  const newAssignment = await prisma.employeePayGrade.create({
-    data: {
-      employeeId,
-      payGradeId: newPayGradeId,
-      effectiveFrom: effectiveDate,
-      assignedByUserId: userId,
-    },
-  });
+  const [employee, newPayGrade] = await Promise.all([
+    prisma.employee.findUnique({ where: { id: employeeId }, select: { id: true } }),
+    prisma.payGrade.findUnique({ where: { id: newPayGradeId }, select: { id: true, status: true } }),
+  ]);
+  if (!employee) throw new Error("Employee not found");
+  if (!newPayGrade) throw new Error("New pay grade not found");
+  if (newPayGrade.status !== "Active") throw new Error("Only active pay grades can be assigned");
 
-  // Audit
-  await writeDomainAuditEvent({
-    actorUserId: userId,
-    actorRole: "admin",
-    action: "reassign",
-    entityType: "EmployeePayGrade",
-    entityId: newAssignment.id,
-    summary: `Reassigned employee pay grade`,
-    details: {
-      employeeId,
-      oldPayGradeId,
-      newPayGradeId,
-      effectiveDate,
-    },
-  });
+  const actor = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  if (!actor) throw new Error("User not found");
 
-  return newAssignment;
+  return prisma.$transaction(async (tx) => {
+    await tx.employeePayGrade.updateMany({
+      where: { employeeId, payGradeId: oldPayGradeId, effectiveTo: null },
+      data: { effectiveTo: new Date(effectiveDate.getTime() - 24 * 60 * 60 * 1000) },
+    });
+
+    const newAssignment = await tx.employeePayGrade.create({
+      data: { employeeId, payGradeId: newPayGradeId, effectiveFrom: effectiveDate, assignedByUserId: userId },
+    });
+
+    await tx.domainAuditEvent.create({
+      data: {
+        actorUserId: userId,
+        actorRole: actor.role,
+        action: "reassign",
+        entityType: "EmployeePayGrade",
+        entityId: newAssignment.id,
+        summary: "Reassigned employee pay grade",
+        details: { employeeId, oldPayGradeId, newPayGradeId, effectiveDate } as any,
+        effectiveDate,
+        affectedEmployeeId: employeeId,
+      },
+    });
+    return newAssignment;
+  });
+}
+
+export async function assignEmployeePayGrade(
+  employeeId: string,
+  payGradeId: string,
+  userId: string,
+  effectiveDate: Date,
+): Promise<any> {
+  const permission = await requirePermission(userId, "compensation:assignment:manage");
+  if (!permission.allowed) throw new Error(`Permission denied: ${permission.reason}`);
+  const [employee, payGrade, actor] = await Promise.all([
+    prisma.employee.findUnique({ where: { id: employeeId }, select: { id: true } }),
+    prisma.payGrade.findUnique({ where: { id: payGradeId }, select: { id: true, status: true } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
+  ]);
+  if (!employee) throw new Error("Employee not found");
+  if (!payGrade) throw new Error("Pay grade not found");
+  if (payGrade.status !== "Active") throw new Error("Only active pay grades can be assigned");
+  if (!actor) throw new Error("User not found");
+
+  return prisma.$transaction(async (tx) => {
+    await tx.employeePayGrade.updateMany({
+      where: { employeeId, effectiveTo: null },
+      data: { effectiveTo: new Date(effectiveDate.getTime() - 24 * 60 * 60 * 1000) },
+    });
+    const assignment = await tx.employeePayGrade.create({
+      data: { employeeId, payGradeId, effectiveFrom: effectiveDate, assignedByUserId: userId },
+    });
+    await tx.domainAuditEvent.create({
+      data: {
+        actorUserId: userId,
+        actorRole: actor.role,
+        action: "assign",
+        entityType: "EmployeePayGrade",
+        entityId: assignment.id,
+        summary: "Assigned employee pay grade",
+        details: { employeeId, payGradeId, effectiveDate } as any,
+        effectiveDate,
+        affectedEmployeeId: employeeId,
+      },
+    });
+    return assignment;
+  });
 }

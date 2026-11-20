@@ -21,6 +21,9 @@ export const PERMISSION_DEFINITIONS = [
   { key: "leave:request", module: "Leave", label: "Request leave" },
   { key: "reports:read", module: "Reports", label: "View reports" },
   { key: "compensation:policy:manage", module: "Compensation", label: "Manage compensation policy" },
+  { key: "compensation:read", module: "Compensation", label: "View compensation structures" },
+  { key: "compensation:tax:review", module: "Compensation", label: "Review allowance tax treatment" },
+  { key: "compensation:assignment:manage", module: "Compensation", label: "Manage employee compensation assignments" },
   { key: "compensation:adjustment:request", module: "Compensation", label: "Request salary adjustment" },
   { key: "compensation:adjustment:approve", module: "Compensation", label: "Approve salary adjustment" },
 ] as const;
@@ -69,6 +72,10 @@ export const ROLE_PERMISSION_CEILINGS: Record<Role, ReadonlySet<Permission>> = {
     "attendance:manage",
     "leave:read",
     "leave:manage",
+    "compensation:read",
+    "compensation:tax:review",
+    "compensation:adjustment:request",
+    "compensation:assignment:manage",
   ]),
   tl: new Set(),
   employee: new Set([
@@ -97,9 +104,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "leave:manage",
     "reports:read",
     "compensation:policy:manage",
+    "compensation:read",
     "compensation:adjustment:approve",
-    "compensation:policy:manage",
-    "compensation:adjustment:approve",
+    "compensation:assignment:manage",
   ]),
   hr: new Set([
     "employees:read",
@@ -111,8 +118,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "leave:read",
     "leave:manage",
     "compensation:adjustment:request",
-    "compensation:policy:manage",
-    "compensation:adjustment:request",
+    "compensation:read",
+    "compensation:assignment:manage",
   ]),
   tl: new Set(),
   employee: new Set([

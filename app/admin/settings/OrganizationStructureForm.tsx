@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import {
   branchInputSchema,
+  branchUpdateSchema,
   departmentInputSchema,
-  organizationUnitUpdateSchema,
-  teamInputSchema,
-  teamUpdateSchema,
+  departmentUpdateSchema,
 } from "../../lib/organization/policy";
 import {
   branchResponseSchema,
   departmentResponseSchema,
-  teamResponseSchema,
   requestSettingsApi,
   type SettingsTeam,
   type SettingsUnit,
@@ -20,7 +18,8 @@ import {
 type Props = {
   initialBranches: SettingsUnit[];
   initialDepartments: SettingsUnit[];
-  initialTeams: SettingsTeam[];
+  /** Kept for compatibility with existing tests/callers; Team UI is intentionally removed. */
+  initialTeams?: SettingsTeam[];
   organizationConfigured?: boolean;
 };
 
@@ -56,6 +55,7 @@ function UnitList<T extends SettingsUnit>({
   onSave,
   onToggle,
   context,
+  renderExtra,
 }: {
   singular: string;
   title: string;
@@ -65,6 +65,7 @@ function UnitList<T extends SettingsUnit>({
   onSave: (id: string, name: string) => Promise<void>;
   onToggle: (item: T) => Promise<void>;
   context?: (item: T) => string;
+  renderExtra?: (item: T) => ReactNode;
 }) {
   return (
     <section className="space-y-3">
@@ -100,6 +101,7 @@ function UnitList<T extends SettingsUnit>({
                 {context && (
                   <p className="text-xs text-[#73718A]">{context(item)}</p>
                 )}
+                {renderExtra?.(item)}
               </div>
               <span
                 className={`text-xs font-medium ${item.active ? "text-green-700" : "text-[#73718A]"}`}
@@ -133,16 +135,18 @@ function UnitList<T extends SettingsUnit>({
 export function OrganizationStructureForm({
   initialBranches,
   initialDepartments,
-  initialTeams,
   organizationConfigured = true,
 }: Props) {
   const [branches, setBranches] = useState(initialBranches);
   const [departments, setDepartments] = useState(initialDepartments);
-  const [teams, setTeams] = useState(initialTeams);
   const [branchName, setBranchName] = useState("");
+  const [branchCode, setBranchCode] = useState("");
+  const [branchLocation, setBranchLocation] = useState("");
   const [departmentName, setDepartmentName] = useState("");
-  const [teamName, setTeamName] = useState("");
-  const [teamDepartmentId, setTeamDepartmentId] = useState("");
+  const [departmentBranchId, setDepartmentBranchId] = useState("");
+  const [departmentBranchIds, setDepartmentBranchIds] = useState<Record<string, string>>(
+    Object.fromEntries(initialDepartments.map((department) => [department.id, department.branchId ?? ""])),
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -165,7 +169,7 @@ export function OrganizationStructureForm({
     event.preventDefault();
     startRequest();
     try {
-      const input = branchInputSchema.parse({ name: branchName });
+      const input = branchInputSchema.parse({ name: branchName, code: branchCode || null, location: branchLocation || null });
       const result = branchResponseSchema.parse(
         await requestSettingsApi("/api/admin/settings/branches", {
           method: "POST",
@@ -174,6 +178,8 @@ export function OrganizationStructureForm({
       );
       setBranches((current) => [...current, result.branch]);
       setBranchName("");
+      setBranchCode("");
+      setBranchLocation("");
       setMessage("Branch added.");
     } catch (caught) {
       failRequest(caught);
@@ -186,7 +192,7 @@ export function OrganizationStructureForm({
     event.preventDefault();
     startRequest();
     try {
-      const input = departmentInputSchema.parse({ name: departmentName });
+      const input = departmentInputSchema.parse({ name: departmentName, branchId: departmentBranchId });
       const result = departmentResponseSchema.parse(
         await requestSettingsApi("/api/admin/settings/departments", {
           method: "POST",
@@ -195,31 +201,8 @@ export function OrganizationStructureForm({
       );
       setDepartments((current) => [...current, result.department]);
       setDepartmentName("");
+      setDepartmentBranchId("");
       setMessage("Department added.");
-    } catch (caught) {
-      failRequest(caught);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function createTeam(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    startRequest();
-    try {
-      const input = teamInputSchema.parse({
-        name: teamName,
-        departmentId: teamDepartmentId,
-      });
-      const result = teamResponseSchema.parse(
-        await requestSettingsApi("/api/admin/settings/teams", {
-          method: "POST",
-          body: input,
-        }),
-      );
-      setTeams((current) => [...current, result.team]);
-      setTeamName("");
-      setMessage("Team added.");
     } catch (caught) {
       failRequest(caught);
     } finally {
@@ -230,7 +213,7 @@ export function OrganizationStructureForm({
   async function saveBranch(id: string, name: string) {
     startRequest();
     try {
-      const input = organizationUnitUpdateSchema.parse({ name });
+      const input = branchUpdateSchema.parse({ name });
       const result = branchResponseSchema.parse(
         await requestSettingsApi(
           `/api/admin/settings/branches/${encodeURIComponent(id)}`,
@@ -253,7 +236,7 @@ export function OrganizationStructureForm({
   async function saveDepartment(id: string, name: string) {
     startRequest();
     try {
-      const input = organizationUnitUpdateSchema.parse({ name });
+      const input = departmentUpdateSchema.parse({ name, branchId: departmentBranchIds[id] || undefined });
       const result = departmentResponseSchema.parse(
         await requestSettingsApi(
           `/api/admin/settings/departments/${encodeURIComponent(id)}`,
@@ -273,28 +256,9 @@ export function OrganizationStructureForm({
     }
   }
 
-  async function saveTeam(id: string, name: string) {
-    startRequest();
-    try {
-      const input = teamUpdateSchema.parse({ name });
-      const result = teamResponseSchema.parse(
-        await requestSettingsApi(
-          `/api/admin/settings/teams/${encodeURIComponent(id)}`,
-          { method: "PATCH", body: input },
-        ),
-      );
-      setTeams((current) => current.map((item) => item.id === id ? result.team : item));
-      setMessage("Team updated.");
-    } catch (caught) {
-      failRequest(caught);
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function toggleActive(
-    collection: "branches" | "departments" | "teams",
-    item: SettingsUnit | SettingsTeam,
+    collection: "branches" | "departments",
+    item: SettingsUnit,
   ) {
     startRequest();
     try {
@@ -312,11 +276,6 @@ export function OrganizationStructureForm({
         const result = departmentResponseSchema.parse(response);
         setDepartments((current) =>
           current.map((row) => row.id === item.id ? result.department : row),
-        );
-      } else {
-        const result = teamResponseSchema.parse(response);
-        setTeams((current) =>
-          current.map((row) => row.id === item.id ? result.team : row),
         );
       }
       setMessage(item.active ? "Item deactivated." : "Item reactivated.");
@@ -339,17 +298,11 @@ export function OrganizationStructureForm({
     );
   }
 
-  function changeTeamName(id: string, name: string) {
-    setTeams((current) =>
-      current.map((item) => (item.id === id ? { ...item, name } : item)),
-    );
-  }
-
   return (
     <div className="space-y-6">
       {!organizationConfigured && (
         <p role="status" className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Save organization settings before adding branches, departments, or teams.
+          Save organization settings before adding branches or departments.
         </p>
       )}
       <SettingsMessage error={error} message={message} />
@@ -373,6 +326,8 @@ export function OrganizationStructureForm({
             disabled={!organizationConfigured || busy}
             className="min-w-0 flex-1 rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm focus:border-[#7C3AED] focus:outline-none"
           />
+          <input aria-label="Branch code" maxLength={40} value={branchCode} onChange={(event) => setBranchCode(event.target.value.toUpperCase())} placeholder="Code (optional)" disabled={!organizationConfigured || busy} className="min-w-0 flex-1 rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm" />
+          <input aria-label="Branch location" maxLength={500} value={branchLocation} onChange={(event) => setBranchLocation(event.target.value)} placeholder="Location" disabled={!organizationConfigured || busy} className="min-w-0 flex-1 rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm" />
           <button type="submit" disabled={!organizationConfigured || busy} className="rounded-lg bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
             Add branch
           </button>
@@ -408,6 +363,10 @@ export function OrganizationStructureForm({
             disabled={!organizationConfigured || busy}
             className="min-w-0 flex-1 rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm focus:border-[#7C3AED] focus:outline-none"
           />
+          <select aria-label="Department branch" required value={departmentBranchId} onChange={(event) => setDepartmentBranchId(event.target.value)} disabled={!organizationConfigured || busy || !branches.some((branch) => branch.active)} className="min-w-0 flex-1 rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm">
+            <option value="">Select branch</option>
+            {branches.filter((branch) => branch.active).map((branch) => <option key={branch.id} value={branch.id}>{branch.name}</option>)}
+          </select>
           <button type="submit" disabled={!organizationConfigured || busy} className="rounded-lg bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
             Add department
           </button>
@@ -420,61 +379,13 @@ export function OrganizationStructureForm({
           onNameChange={changeDepartmentName}
           onSave={saveDepartment}
           onToggle={(item) => toggleActive("departments", item)}
-        />
-      </section>
-
-      <section className="space-y-5 rounded-xl border border-[#EDEAF6] bg-white p-5 shadow-sm sm:p-6">
-        <div>
-          <h2 className="text-lg font-semibold">Teams</h2>
-          <p className="mt-1 text-sm text-[#73718A]">
-            Every team must belong to an active department.
-          </p>
-        </div>
-        <form onSubmit={(event) => void createTeam(event)} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-          <div className="space-y-1">
-            <label htmlFor="new-team" className="sr-only">Team name</label>
-            <input
-              id="new-team"
-              aria-label="Team name"
-              required
-              maxLength={120}
-              value={teamName}
-              onChange={(event) => setTeamName(event.target.value)}
-              placeholder="Team name"
-              disabled={!organizationConfigured || busy}
-              className="w-full rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm focus:border-[#7C3AED] focus:outline-none"
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="team-department" className="sr-only">Department for team</label>
-            <select
-              id="team-department"
-              aria-label="Department for team"
-              required
-              value={teamDepartmentId}
-              onChange={(event) => setTeamDepartmentId(event.target.value)}
-              disabled={!organizationConfigured || busy || !departments.some((department) => department.active)}
-              className="w-full rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm focus:border-[#7C3AED] focus:outline-none"
-            >
-              <option value="">Select a department</option>
-              {departments.filter((department) => department.active).map((department) => (
-                <option key={department.id} value={department.id}>{department.name}</option>
-              ))}
+          context={(item) => item.branch?.name ? `Branch: ${item.branch.name}` : "Branch not assigned"}
+          renderExtra={(item) => (
+            <select aria-label={`Branch for ${item.name}`} value={departmentBranchIds[item.id] ?? item.branchId ?? ""} onChange={(event) => setDepartmentBranchIds((current) => ({ ...current, [item.id]: event.target.value }))} className="mt-2 w-full rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm">
+              <option value="">Select branch</option>
+              {branches.filter((branch) => branch.active).map((branch) => <option key={branch.id} value={branch.id}>{branch.name}</option>)}
             </select>
-          </div>
-          <button type="submit" disabled={!organizationConfigured || busy || !departments.some((department) => department.active)} className="rounded-lg bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
-            Add team
-          </button>
-        </form>
-        <UnitList
-          singular="Team"
-          title="Teams"
-          items={teams}
-          busy={busy}
-          onNameChange={changeTeamName}
-          onSave={saveTeam}
-          onToggle={(item) => toggleActive("teams", item)}
-          context={(item) => `Department: ${item.department.name}`}
+          )}
         />
       </section>
     </div>

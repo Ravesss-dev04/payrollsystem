@@ -18,14 +18,7 @@ import {
   LuSearch,
   LuX,
 } from "react-icons/lu";
-import { DemoDataNotice } from "../components/DemoDataNotice";
-import {
-  grades as initialGrades,
-  allowances as initialAllowances,
-  bonuses as initialBonuses,
-  adjustments as initialAdjustments,
-  employees,
-} from "./data";
+import { employees } from "./data";
 import type {
   PayGrade,
   AllowancePolicy,
@@ -46,6 +39,7 @@ type Field = {
   type?: string;
   options?: string[];
   required?: boolean;
+  remoteSearch?: boolean;
 };
 const tabs: Tab[] = [
   "Pay Grades",
@@ -69,11 +63,29 @@ const money = (v: string | number) =>
 const validAmount = (s: string) => /^\d+(\.\d{1,2})?$/.test(s) && Number(s) > 0;
 const today = () => new Date().toLocaleString("en-PH");
 const uid = () => crypto.randomUUID();
+const allowanceRecurrenceLabel = (value: string) => ({
+  OneTime: "One-time",
+  EveryPayrollPeriod: "Every eligible payroll period",
+  Biweekly: "Biweekly (every two weeks)",
+  Semimonthly: "Semimonthly (twice per month)",
+  Bimonthly: "Bimonthly (every two months)",
+}[value] || value);
+const allowanceEligibilityLabel = (value: string) => ({
+  AllEmployees: "All employees",
+  SpecificDepartment: "Specific departments",
+  SpecificPosition: "Specific positions",
+  SpecificEmploymentCategory: "Specific employment categories",
+  SpecificPayGrade: "Specific pay grades",
+  SpecificBranch: "Specific branches",
+  SelectedEmployees: "Selected employees",
+}[value] || value);
 const gradeFields: Field[] = [
   { key: "code", label: "Pay Grade Code", required: true },
   { key: "description", label: "Grade Name / Description", required: true },
+  { key: "position", label: "Position or Position Group" },
   { key: "basis", label: "Pay Basis", options: ["Monthly", "Daily", "Hourly"] },
-  { key: "amount", label: "Base Pay Amount (PHP)", required: true },
+  { key: "minAmount", label: "Minimum Base Pay (PHP)", required: true },
+  { key: "maxAmount", label: "Maximum Base Pay (PHP)", required: true },
   { key: "effective", label: "Effective Date", type: "date", required: true },
   { key: "status", label: "Status", options: ["Active", "Inactive"] },
   { key: "notes", label: "Grade Notes", type: "textarea" },
@@ -86,11 +98,15 @@ const allowanceFields: Field[] = [
     key: "recurrence",
     label: "Recurrence",
     options: [
-      "One-time",
-      "Every payroll cutoff",
+      "Weekly",
+      "Biweekly (every two weeks)",
+      "Semimonthly (twice per month)",
       "Monthly",
+      "Bimonthly (every two months)",
       "Quarterly",
-      "Other configured schedule",
+      "Annually",
+      "One-time",
+      "Every eligible payroll period",
     ],
   },
   {
@@ -98,10 +114,12 @@ const allowanceFields: Field[] = [
     label: "Eligible Employee Group",
     options: [
       "All employees",
-      "Specific department",
-      "Specific role",
-      "Specific employment arrangement",
-      "Manually assigned employees",
+      "Specific departments",
+      "Specific positions",
+      "Specific employment categories",
+      "Specific pay grades",
+      "Specific branches",
+      "Selected employees",
     ],
   },
   { key: "branch", label: "Applicable Branches" },
@@ -111,10 +129,11 @@ const allowanceFields: Field[] = [
   {
     key: "tax",
     label: "Tax Treatment Review",
-    options: ["Pending validation", "Configurable designation"],
+    options: ["Taxable", "NonTaxable", "Pending validation", "Conditional"],
   },
 ];
 const bonusFields: Field[] = [
+  { key: "code", label: "Program Code", required: true },
   { key: "name", label: "Program Name", required: true },
   { key: "description", label: "Description", type: "textarea" },
   {
@@ -163,7 +182,7 @@ const adjustmentFields: Field[] = [
   {
     key: "employeeId",
     label: "Employee",
-    options: employees.map((e) => e.id),
+    remoteSearch: true,
     required: true,
   },
   { key: "proposed", label: "Proposed Base Pay (PHP)", required: true },
@@ -270,8 +289,10 @@ function Form({
           id: uid(),
           code: "",
           description: "",
+          position: "",
           basis: "Monthly",
-          amount: "",
+          minAmount: "",
+          maxAmount: "",
           effective: "",
           status: "Active",
           notes: "",
@@ -295,6 +316,7 @@ function Form({
         : tab === "Bonuses & Incentives"
           ? {
               id: uid(),
+              code: "",
               name: "",
               description: "",
               type: "Fixed Amount",
@@ -335,6 +357,8 @@ function Form({
   const [initial] = useState(() => JSON.stringify(form));
   const [discard, setDiscard] = useState(false);
   const [error, setError] = useState("");
+  const [employeeSearch, setEmployeeSearch] = useState("");
+  const [employeeOptions, setEmployeeOptions] = useState<Array<{ id: string; employeeNumber: string; firstName: string; lastName: string }>>([]);
   const fields =
     tab === "Pay Grades"
       ? gradeFields
@@ -343,7 +367,28 @@ function Form({
         : tab === "Bonuses & Incentives"
           ? bonusFields
           : adjustmentFields;
-  const employee = employees.find((e) => e.id === form.employeeId);
+  const remoteEmployee = employeeOptions.find((e) => e.id === form.employeeId);
+  const employee = employees.find((e) => e.id === form.employeeId) ?? (remoteEmployee ? {
+    id: remoteEmployee.id,
+    name: `${remoteEmployee.firstName} ${remoteEmployee.lastName}`,
+    department: "",
+    position: "",
+    grade: "",
+    amount: "",
+    basis: "Monthly" as const,
+  } : undefined);
+  useEffect(() => {
+    if (tab !== "Salary Adjustments") return;
+    const controller = new AbortController();
+    const params = new URLSearchParams({ page: "1", pageSize: "20" });
+    const search = employeeSearch.trim() || String(form.employeeId || "");
+    if (search) params.set("search", search);
+    fetch(`/api/admin/compensation/employees?${params}`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Employee search unavailable")))
+      .then((payload) => setEmployeeOptions(payload.employees ?? []))
+      .catch((fetchError) => { if (fetchError.name !== "AbortError") setEmployeeOptions([]); });
+    return () => controller.abort();
+  }, [tab, employeeSearch, form.employeeId]);
   const dirty = JSON.stringify(form) !== initial;
   function close() {
     if (dirty) setDiscard(true);
@@ -357,7 +402,15 @@ function Form({
       }
     }
     const amount = String(form.amount || form.value || form.proposed || "");
-    if (!validAmount(amount)) {
+    if (tab === "Pay Grades" && (!validAmount(String(form.minAmount || "")) || !validAmount(String(form.maxAmount || "")))) {
+      setError("Enter valid minimum and maximum pay values.");
+      return;
+    }
+    if (tab === "Pay Grades" && Number(form.minAmount) > Number(form.maxAmount)) {
+      setError("Minimum pay cannot exceed maximum pay.");
+      return;
+    }
+    if (tab !== "Pay Grades" && !validAmount(amount)) {
       setError("Enter a positive amount with at most two decimal places.");
       return;
     }
@@ -469,7 +522,29 @@ function Form({
                 {f.label}
                 {f.required && " *"}
               </span>
-              {f.options ? (
+              {f.remoteSearch ? (
+                <div className="space-y-2">
+                  <input
+                    className={input}
+                    value={employeeSearch}
+                    onChange={(e) => setEmployeeSearch(e.target.value)}
+                    placeholder="Search by employee name or number"
+                    aria-label="Search employees"
+                  />
+                  <select
+                    className={input}
+                    value={String(form[f.key] || "")}
+                    onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                  >
+                    <option value="">Select employee</option>
+                    {employeeOptions.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.firstName} {option.lastName} — {option.employeeNumber}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : f.options ? (
                 <select
                   className={input}
                   value={String(form[f.key] || "")}
@@ -519,6 +594,23 @@ function Form({
             {Number(form.assigned)} assigned employees. Grade amounts are
             references and do not change individual salaries.
           </p>
+        )}
+        {tab === "Allowances" && (
+          <div className="mt-4 space-y-3">
+            {form.eligibility !== "All employees" && (
+              <label className="block sm:col-span-2">
+                <span className="mb-1.5 block text-sm font-semibold">Selected records *</span>
+                <input className={input} value={String(form.selection || "")} onChange={(e) => setForm({ ...form, selection: e.target.value })} placeholder="Enter IDs or names separated by commas" />
+                <span className="mt-1 block text-xs text-[#73718A]">Selection is required for this eligibility rule and will be stored with the allowance policy.</span>
+              </label>
+            )}
+            {form.tax === "NonTaxable" && (
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-semibold">Statutory reference *</span>
+                <input className={input} value={String(form.taxReference || "")} onChange={(e) => setForm({ ...form, taxReference: e.target.value })} placeholder="Reference supporting non-taxable treatment" />
+              </label>
+            )}
+          </div>
         )}
         {tab === "Allowances" && (
           <p className="mt-4 text-sm text-[#73718A]">
@@ -590,10 +682,10 @@ function Form({
 }
 export default function CompensationPage() {
   const [tab, setTab] = useState<Tab>("Pay Grades");
-  const [gradeList, setGrades] = useState(initialGrades);
-  const [allowanceList, setAllowances] = useState(initialAllowances);
-  const [bonusList, setBonuses] = useState(initialBonuses);
-  const [adjustmentList, setAdjustments] = useState(initialAdjustments);
+  const [gradeList, setGrades] = useState<PayGrade[]>([]);
+  const [allowanceList, setAllowances] = useState<AllowancePolicy[]>([]);
+  const [bonusList, setBonuses] = useState<BonusProgram[]>([]);
+  const [adjustmentList, setAdjustments] = useState<SalaryAdjustment[]>([]);
   const [queries, setQueries] = useState<Record<Tab, string>>({
     "Pay Grades": "",
     Allowances: "",
@@ -608,6 +700,15 @@ export default function CompensationPage() {
   });
   const [extra, setExtra] = useState("All");
   const [date, setDate] = useState("");
+  const [payGradeBasis, setPayGradeBasis] = useState("All");
+  const [payGradeMin, setPayGradeMin] = useState("");
+  const [payGradeMax, setPayGradeMax] = useState("");
+  const [payGradePage, setPayGradePage] = useState(1);
+  const [payGradePages, setPayGradePages] = useState(1);
+  const [allowanceRecurrence, setAllowanceRecurrence] = useState("All");
+  const [allowanceBranch, setAllowanceBranch] = useState("");
+  const [allowancePage, setAllowancePage] = useState(1);
+  const [allowancePages, setAllowancePages] = useState(1);
   const [form, setForm] = useState<{ record: RecordType | null } | null>(null);
   const [detail, setDetail] = useState<RecordType | null>(null);
   const [confirm, setConfirm] = useState<{
@@ -616,11 +717,20 @@ export default function CompensationPage() {
   } | null>(null);
   const [note, setNote] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [role, setRole] = useState<"Company Admin" | "HR">("Company Admin");
   useEffect(() => {
     let mounted = true;
     async function loadCompensation() {
       try {
+        setLoading(true);
+        setLoadError("");
+        const sessionResponse = await fetch("/api/auth/session");
+        if (sessionResponse.ok) {
+          const sessionPayload = await sessionResponse.json();
+          setRole(sessionPayload.session?.role === "hr" ? "HR" : "Company Admin");
+        }
         const [gradesResponse, allowancesResponse, bonusesResponse, adjustmentsResponse] = await Promise.all([
           fetch("/api/admin/compensation/pay-grades"),
           fetch("/api/admin/compensation/allowances"),
@@ -634,8 +744,10 @@ export default function CompensationPage() {
             id: grade.id,
             code: grade.code,
             description: grade.name,
+            position: grade.position ?? "",
             basis: grade.basis,
-            amount: String(grade.minBasePay ?? "0"),
+            minAmount: String(grade.minBasePay ?? "0"),
+            maxAmount: String(grade.maxBasePay ?? "0"),
             effective: String(grade.effectiveFrom).slice(0, 10),
             status: grade.status,
             notes: grade.notes ?? "",
@@ -649,20 +761,22 @@ export default function CompensationPage() {
             name: allowance.name,
             description: allowance.description ?? "",
             amount: String(allowance.amount ?? "0"),
-            recurrence: allowance.recurrence,
-            eligibility: allowance.eligibility,
+            recurrence: allowanceRecurrenceLabel(allowance.recurrence),
+            eligibility: allowanceEligibilityLabel(allowance.eligibility),
             branch: allowance.applicableBranches ?? "All branches",
             start: String(allowance.effectiveFrom).slice(0, 10),
             end: allowance.effectiveTo ? String(allowance.effectiveTo).slice(0, 10) : "",
             status: allowance.status,
             tax: allowance.taxTreatment,
             history: [],
+            assigned: allowance.assignedEmployeeCount ?? allowance._count?.employeeAllowances ?? 0,
           })));
         }
         if (bonusesResponse.ok) {
           const payload = await bonusesResponse.json();
           setBonuses((payload.programs ?? []).map((program: any) => ({
             id: program.id,
+            code: program.code ?? "",
             name: program.name,
             description: program.description ?? "",
             type: program.type,
@@ -696,12 +810,79 @@ export default function CompensationPage() {
           })));
         }
       } catch {
-        if (mounted) setMessage("Compensation data could not be loaded from the database.");
+        if (mounted) setLoadError("Compensation data could not be loaded. Try again.");
+      } finally {
+        if (mounted) setLoading(false);
       }
     }
     void loadCompensation();
     return () => { mounted = false; };
   }, []);
+  useEffect(() => {
+    if (tab !== "Pay Grades") return;
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      page: String(payGradePage),
+      pageSize: "20",
+    });
+    if (queries["Pay Grades"]) params.set("search", queries["Pay Grades"]);
+    if (filters["Pay Grades"] !== "All") params.set("status", filters["Pay Grades"]);
+    if (payGradeBasis !== "All") params.set("basis", payGradeBasis);
+    if (date) params.set("effectiveOn", date);
+    if (payGradeMin) params.set("minBasePay", payGradeMin);
+    if (payGradeMax) params.set("maxBasePay", payGradeMax);
+    fetch(`/api/admin/compensation/pay-grades?${params}`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Pay grades unavailable")))
+      .then((payload) => {
+        setGrades((payload.payGrades ?? []).map((grade: any) => ({
+          id: grade.id,
+          code: grade.code,
+          description: grade.name,
+          position: grade.position ?? "",
+          basis: grade.basis,
+          minAmount: String(grade.minBasePay ?? "0"),
+          maxAmount: String(grade.maxBasePay ?? "0"),
+          effective: String(grade.effectiveFrom).slice(0, 10),
+          status: grade.status,
+          notes: grade.notes ?? "",
+          assigned: grade.assignedEmployeeCount ?? grade._count?.employeeGrades ?? 0,
+        })));
+        setPayGradePages(payload.pagination?.pages ?? 1);
+      })
+      .catch((error) => { if (error.name !== "AbortError") setMessage("Pay grade data could not be loaded."); });
+    return () => controller.abort();
+  }, [tab, queries, filters, payGradeBasis, date, payGradeMin, payGradeMax, payGradePage]);
+  useEffect(() => {
+    if (tab !== "Allowances") return;
+    const controller = new AbortController();
+    const params = new URLSearchParams({ page: String(allowancePage), pageSize: "20" });
+    if (queries.Allowances) params.set("search", queries.Allowances);
+    if (filters.Allowances !== "All") params.set("status", filters.Allowances);
+    if (allowanceRecurrence !== "All") params.set("recurrence", allowanceRecurrence);
+    if (allowanceBranch) params.set("applicableBranch", allowanceBranch);
+    fetch(`/api/admin/compensation/allowances?${params}`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Allowances unavailable")))
+      .then((payload) => {
+        setAllowances((payload.allowances ?? []).map((allowance: any) => ({
+          id: allowance.id,
+          name: allowance.name,
+          description: allowance.description ?? "",
+          amount: String(allowance.amount ?? "0"),
+          recurrence: allowanceRecurrenceLabel(allowance.recurrence),
+          eligibility: allowanceEligibilityLabel(allowance.eligibility),
+          branch: allowance.applicableBranches ?? "All branches",
+          start: String(allowance.effectiveFrom).slice(0, 10),
+          end: allowance.effectiveTo ? String(allowance.effectiveTo).slice(0, 10) : "",
+          status: allowance.status,
+          tax: allowance.taxTreatment,
+          history: [],
+          assigned: allowance.assignedEmployeeCount ?? allowance._count?.employeeAllowances ?? 0,
+        })));
+        setAllowancePages(payload.pagination?.pages ?? 1);
+      })
+      .catch((error) => { if (error.name !== "AbortError") setMessage("Allowance data could not be loaded."); });
+    return () => controller.abort();
+  }, [tab, queries, filters, allowanceRecurrence, allowanceBranch, allowancePage]);
   const source: RecordType[] =
     tab === "Pay Grades"
       ? gradeList
@@ -713,7 +894,7 @@ export default function CompensationPage() {
   const employeeFor = (id: string) => employees.find((e) => e.id === id);
   const rows = source.filter((r) => {
     const name =
-      "code" in r
+      "minAmount" in r
         ? `${r.code} ${r.description}`
         : "employeeId" in r
           ? `${employeeFor(r.employeeId)?.name} ${r.employeeId}`
@@ -750,9 +931,10 @@ export default function CompensationPage() {
           body: JSON.stringify({
             code: grade.code,
             name: grade.description,
+            position: grade.position,
             basis: grade.basis,
-            minBasePay: grade.amount,
-            maxBasePay: grade.amount,
+            minBasePay: grade.minAmount,
+            maxBasePay: grade.maxAmount,
             effectiveFrom: grade.effective,
             status: grade.status,
             notes: grade.notes,
@@ -761,6 +943,30 @@ export default function CompensationPage() {
         if (!response.ok) throw new Error("Pay grade could not be saved");
       } else if (tab === "Allowances") {
         const allowance = v as AllowancePolicy;
+        const recurrenceMap: Record<string, string> = {
+          "One-time": "OneTime",
+          "Every eligible payroll period": "EveryPayrollPeriod",
+          "Biweekly (every two weeks)": "Biweekly",
+          "Semimonthly (twice per month)": "Semimonthly",
+          "Bimonthly (every two months)": "Bimonthly",
+        };
+        const eligibilityMap: Record<string, string> = {
+          "All employees": "AllEmployees",
+          "Specific departments": "SpecificDepartment",
+          "Specific positions": "SpecificPosition",
+          "Specific employment categories": "SpecificEmploymentCategory",
+          "Specific pay grades": "SpecificPayGrade",
+          "Specific branches": "SpecificBranch",
+          "Selected employees": "SelectedEmployees",
+        };
+        if (allowance.eligibility !== "All employees" && !String((v as any).selection || "").trim()) {
+          setMessage("Select the records covered by this allowance before saving.");
+          return;
+        }
+        if ((v as any).tax === "NonTaxable" && !String((v as any).taxReference || "").trim()) {
+          setMessage("A statutory reference is required for non-taxable treatment.");
+          return;
+        }
         const response = await fetch("/api/admin/compensation/allowances", {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -769,14 +975,15 @@ export default function CompensationPage() {
             name: allowance.name,
             description: allowance.description,
             amount: allowance.amount,
-            recurrence: allowance.recurrence === "One-time" ? "OneTime" : "Monthly",
-            eligibility: allowance.eligibility === "All employees" ? "AllEmployees" : "SelectedEmployees",
-            selectedData: allowance.eligibility === "All employees" ? undefined : { source: allowance.eligibility },
+            recurrence: recurrenceMap[allowance.recurrence] || allowance.recurrence,
+            eligibility: eligibilityMap[allowance.eligibility] || allowance.eligibility,
+            selectedData: allowance.eligibility === "All employees" ? undefined : { values: String((v as any).selection).split(",").map((item) => item.trim()).filter(Boolean) },
             applicableBranches: allowance.branch,
             effectiveFrom: allowance.start,
             effectiveTo: allowance.end || null,
             status: allowance.status,
-            taxTreatment: allowance.tax === "Pending validation" ? "Pending" : "Conditional",
+            taxTreatment: allowance.tax === "NonTaxable" ? "NonTaxable" : allowance.tax === "Taxable" ? "Taxable" : allowance.tax === "Conditional" ? "Conditional" : "Pending",
+            taxStatutoryReference: (v as any).taxReference || undefined,
           }),
         });
         if (!response.ok) throw new Error("Allowance could not be saved");
@@ -787,9 +994,10 @@ export default function CompensationPage() {
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             name: bonus.name,
+            code: bonus.code,
             description: bonus.description,
             type: bonus.type === "Percentage-Based" ? "PercentageBased" : "FixedAmount",
-            calculationBasis: bonus.basis,
+            calculationBasis: bonus.type === "Percentage-Based" ? "PercentageOfBasicPay" : bonus.type === "Performance-Based Rule" ? "PerformanceBased" : "FixedAmount",
             value: bonus.value,
             valueType: bonus.type === "Percentage-Based" ? "Percentage" : "Amount",
             eligibility: "AllEmployees",
@@ -891,26 +1099,54 @@ export default function CompensationPage() {
       } as SalaryAdjustment;
       setAdjustments((x) => x.map((a) => (a.id === record.id ? updated : a)));
       setDetail(updated);
-    } else if ("code" in record) {
+    } else if ("minAmount" in record) {
       if (record.assigned > 0) return;
       setGrades((x) =>
         x.map((a) => (a.id === record.id ? { ...a, status: "Inactive" } : a)),
       );
       setDetail(null);
     } else if ("recurrence" in record) {
+      const endpoint = action === "Retire"
+        ? `/api/admin/compensation/allowances/${record.id}/retire`
+        : action === "Pause"
+          ? `/api/admin/compensation/allowances/${record.id}/pause`
+          : `/api/admin/compensation/allowances/${record.id}`;
+      const response = await fetch(endpoint, {
+        method: action === "Reactivate" ? "PUT" : "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(action === "Reactivate" ? { status: "Active" } : { reason: note.trim(), pauseEffectiveDate: today() }),
+      });
+      if (!response.ok) {
+        setMessage("The allowance lifecycle action could not be completed.");
+        return;
+      }
       setAllowances((x) =>
         x.map((a) =>
           a.id === record.id
             ? {
                 ...a,
-                status: "Inactive",
-                history: [...a.history, `Deactivated ${today()}`],
+                status: action === "Retire" ? "Retired" : action === "Pause" ? "Paused" : "Active",
+                history: [...a.history, `${action} ${today()}`],
               }
             : a,
         ),
       );
       setDetail(null);
     } else {
+      const endpoint = action === "Retire"
+        ? `/api/admin/compensation/bonuses/${record.id}/retire`
+        : action === "Reactivate"
+          ? `/api/admin/compensation/bonuses/${record.id}/resume`
+          : `/api/admin/compensation/bonuses/${record.id}/pause`;
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(action === "Reactivate" ? { effectiveDate: today() } : { effectiveDate: today(), reason: note.trim() }),
+      });
+      if (!response.ok) {
+        setMessage("The bonus program lifecycle action could not be completed.");
+        return;
+      }
       const status =
         action === "Pause"
           ? "Paused"
@@ -947,6 +1183,8 @@ export default function CompensationPage() {
     "Salary Adjustments":
       "Review proposed employee salary changes and track approval decisions.",
   };
+  const canManagePolicy = role === "Company Admin";
+  const canCreate = tab === "Salary Adjustments" ? role === "HR" : canManagePolicy;
   return (
     <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -958,21 +1196,6 @@ export default function CompensationPage() {
             Manage pay structures, allowances, and salary adjustments.
           </p>
         </div>
-        <label className="text-xs font-semibold text-[#73718A]">
-          Demo role{" "}
-          <select
-            aria-label="Demo role"
-            className={`${input} mt-1`}
-            value={role}
-            onChange={(e) => setRole(e.target.value as typeof role)}
-          >
-            <option>Company Admin</option>
-            <option>HR</option>
-          </select>
-        </label>
-      </div>
-      <div className="mt-4">
-        <DemoDataNotice />
       </div>
       <div
         role="tablist"
@@ -995,6 +1218,17 @@ export default function CompensationPage() {
           </button>
         ))}
       </div>
+      {loadError && (
+        <div role="alert" className="mt-4 flex items-center justify-between rounded-lg bg-red-50 p-3 text-sm text-red-800">
+          <span>{loadError}</span>
+          <button className="font-semibold underline" onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      )}
+      {loading && (
+        <div role="status" aria-live="polite" className="mt-6 rounded-xl border border-[#e3dff0] bg-white p-8 text-center text-sm text-[#73718A]">
+          Loading compensation records…
+        </div>
+      )}
       {message && (
         <div
           role="status"
@@ -1014,8 +1248,7 @@ export default function CompensationPage() {
         <p className="mt-1 text-sm text-[#73718A]">{descriptions[tab]}</p>
         {tab === "Pay Grades" && (
           <p className="mt-2 text-xs text-[#73718A]">
-            122 employees are assigned to these sample grades; 6 of 128 are
-            unassigned. Counts are aggregate, not a complete roster.
+            Counts are loaded from the database after the page loads.
           </p>
         )}
         {tab === "Salary Adjustments" && (
@@ -1055,6 +1288,36 @@ export default function CompensationPage() {
             <option key={s}>{s}</option>
           ))}
         </select>
+        {tab === "Pay Grades" && (
+          <>
+            <select
+              aria-label="Compensation basis filter"
+              className={`${input} sm:w-44`}
+              value={payGradeBasis}
+              onChange={(e) => { setPayGradeBasis(e.target.value); setPayGradePage(1); }}
+            >
+              <option value="All">All pay bases</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Daily">Daily</option>
+              <option value="Hourly">Hourly</option>
+            </select>
+            <input aria-label="Pay grade effective date" type="date" className={`${input} sm:w-44`} value={date} onChange={(e) => { setDate(e.target.value); setPayGradePage(1); }} />
+            <input aria-label="Minimum base pay filter" inputMode="decimal" placeholder="Min pay" className={`${input} sm:w-32`} value={payGradeMin} onChange={(e) => { setPayGradeMin(e.target.value); setPayGradePage(1); }} />
+            <input aria-label="Maximum base pay filter" inputMode="decimal" placeholder="Max pay" className={`${input} sm:w-32`} value={payGradeMax} onChange={(e) => { setPayGradeMax(e.target.value); setPayGradePage(1); }} />
+          </>
+        )}
+        {tab === "Allowances" && (
+          <>
+            <select aria-label="Allowance recurrence filter" className={`${input} sm:w-52`} value={allowanceRecurrence} onChange={(e) => { setAllowanceRecurrence(e.target.value); setAllowancePage(1); }}>
+              <option value="All">All recurrence</option>
+              <option value="Weekly">Weekly</option><option value="Biweekly">Biweekly</option>
+              <option value="Semimonthly">Semimonthly</option><option value="Monthly">Monthly</option>
+              <option value="Bimonthly">Bimonthly (every two months)</option><option value="Quarterly">Quarterly</option>
+              <option value="Annually">Annually</option><option value="OneTime">One-time</option><option value="EveryPayrollPeriod">Every payroll period</option>
+            </select>
+            <input aria-label="Applicable branch filter" placeholder="Branch" className={`${input} sm:w-40`} value={allowanceBranch} onChange={(e) => { setAllowanceBranch(e.target.value); setAllowancePage(1); }} />
+          </>
+        )}
         {(tab === "Allowances" || tab === "Bonuses & Incentives") && (
           <select
             aria-label={
@@ -1072,10 +1335,12 @@ export default function CompensationPage() {
             {(tab === "Allowances"
               ? [
                   "All employees",
-                  "Specific department",
-                  "Specific role",
-                  "Specific employment arrangement",
-                  "Manually assigned employees",
+                  "Specific departments",
+                  "Specific positions",
+                  "Specific employment categories",
+                  "Specific pay grades",
+                  "Specific branches",
+                  "Selected employees",
                 ]
               : ["Fixed Amount", "Percentage-Based", "Performance-Based Rule"]
             ).map((o) => (
@@ -1092,20 +1357,36 @@ export default function CompensationPage() {
             onChange={(e) => setDate(e.target.value)}
           />
         )}
-        <button
-          className={`${primary} w-full sm:ml-auto sm:w-auto`}
-          onClick={() => setForm({ record: null })}
-        >
-          <LuPlus />{" "}
-          {tab === "Pay Grades"
-            ? "Add Pay Grade"
-            : tab === "Allowances"
-              ? "Add Allowance"
-              : tab === "Bonuses & Incentives"
-                ? "Add Bonus / Incentive"
-                : "Create Adjustment"}
-        </button>
+        {canCreate && (
+          <button
+            className={`${primary} w-full sm:ml-auto sm:w-auto`}
+            onClick={() => setForm({ record: null })}
+          >
+            <LuPlus />{" "}
+            {tab === "Pay Grades"
+              ? "Add Pay Grade"
+              : tab === "Allowances"
+                ? "Add Allowance"
+                : tab === "Bonuses & Incentives"
+                  ? "Add Bonus / Incentive"
+                  : "Create Adjustment"}
+          </button>
+        )}
       </div>
+      {tab === "Pay Grades" && payGradePages > 1 && (
+        <div className="mt-3 flex items-center justify-end gap-2 text-sm">
+          <button className={secondary} disabled={payGradePage <= 1} onClick={() => setPayGradePage((page) => Math.max(1, page - 1))}>Previous</button>
+          <span>Page {payGradePage} of {payGradePages}</span>
+          <button className={secondary} disabled={payGradePage >= payGradePages} onClick={() => setPayGradePage((page) => Math.min(payGradePages, page + 1))}>Next</button>
+        </div>
+      )}
+      {tab === "Allowances" && allowancePages > 1 && (
+        <div className="mt-3 flex items-center justify-end gap-2 text-sm">
+          <button className={secondary} disabled={allowancePage <= 1} onClick={() => setAllowancePage((page) => Math.max(1, page - 1))}>Previous</button>
+          <span>Page {allowancePage} of {allowancePages}</span>
+          <button className={secondary} disabled={allowancePage >= allowancePages} onClick={() => setAllowancePage((page) => Math.min(allowancePages, page + 1))}>Next</button>
+        </div>
+      )}
       <div
         role="tabpanel"
         className="overflow-hidden rounded-xl border border-[#e3dff0] bg-white"
@@ -1114,8 +1395,8 @@ export default function CompensationPage() {
           {(tab === "Pay Grades"
             ? [
                 "Pay Grade",
-                "Description",
-                "Base Pay (PHP)",
+                "Position",
+                "Base Pay Range",
                 "Employees",
                 "Actions",
               ]
@@ -1170,7 +1451,7 @@ export default function CompensationPage() {
           </div>
         ) : (
           rows.map((r) => {
-            const g = "code" in r ? r : null;
+            const g = "minAmount" in r ? r : null;
             const a = "recurrence" in r ? r : null;
             const b = "type" in r ? r : null;
             const s = "employeeId" in r ? r : null;
@@ -1185,16 +1466,17 @@ export default function CompensationPage() {
                     className="text-left font-bold text-[#29233e] hover:text-violet-700 hover:underline"
                     onClick={() => setDetail(r)}
                   >
-                    {g?.code || a?.name || b?.name || emp?.name}
+                    {g?.description || g?.code || a?.name || b?.name || emp?.name}
                   </button>
                   {s && (
                     <p className="text-xs text-[#73718A]">
                       {s.employeeId} · {emp?.department}
                     </p>
                   )}
+                  {g && <p className="text-xs text-[#73718A]">{g.code}</p>}
                 </div>
                 <div className="md:col-span-2">
-                  {g?.description ||
+                  {g?.position ||
                     (a
                       ? money(a.amount)
                       : b?.type ||
@@ -1205,7 +1487,7 @@ export default function CompensationPage() {
                 <div className="md:col-span-2">
                   {g ? (
                     <>
-                      {money(g.amount)}
+                      {money(g.minAmount)} – {money(g.maxAmount)}
                       <span className="block text-xs text-[#73718A]">
                         {g.basis}
                       </span>
@@ -1240,11 +1522,12 @@ export default function CompensationPage() {
                   >
                     <LuEye />
                   </button>
-                  {!s && (
+                  {!s && canManagePolicy && (
                     <>
                       <button
                         aria-label="Edit"
                         className="rounded p-2 hover:bg-violet-50"
+                        disabled={r.status === "Retired"}
                         onClick={() => setForm({ record: r })}
                       >
                         <LuPencil />
@@ -1252,6 +1535,7 @@ export default function CompensationPage() {
                       <button
                         aria-label="Retire or deactivate"
                         className="rounded p-2 hover:bg-violet-50"
+                        disabled={r.status === "Retired"}
                         onClick={() =>
                           setConfirm({ action: "Retire", record: r })
                         }
@@ -1310,7 +1594,7 @@ export default function CompensationPage() {
       {detail && !("employeeId" in detail) && (
         <Modal
           title={
-            "code" in detail
+            "minAmount" in detail
               ? "Pay Grade Details"
               : "recurrence" in detail
                 ? "Allowance Details"
@@ -1330,7 +1614,7 @@ export default function CompensationPage() {
               >
                 {"type" in detail && <LuPencil aria-hidden="true" />} Edit
               </button>
-              {"type" in detail && detail.status !== "Retired" && (
+              {(("type" in detail) || ("recurrence" in detail)) && detail.status !== "Retired" && (
                 <button
                   className={`${secondary} inline-flex items-center gap-2 border-amber-200 text-amber-800 hover:bg-amber-50`}
                   onClick={() =>
@@ -1386,7 +1670,7 @@ export default function CompensationPage() {
               <button
                 className={primary}
                 disabled={
-                  ("code" in confirm.record && confirm.record.assigned > 0) ||
+                  ("minAmount" in confirm.record && confirm.record.assigned > 0) ||
                   (["Reject", "Return for Revision"].includes(confirm.action) &&
                     !note.trim())
                 }
@@ -1420,7 +1704,7 @@ export default function CompensationPage() {
                   </label>
                 )}
               </>
-            ) : "code" in confirm.record && confirm.record.assigned > 0 ? (
+            ) : "minAmount" in confirm.record && confirm.record.assigned > 0 ? (
               <p>
                 This grade has {confirm.record.assigned} assigned employees.
                 Reassign employees or establish a safe effective-dated
@@ -1470,12 +1754,13 @@ function Detail({
   compact?: boolean;
 }) {
   const fields: [string, ReactNode][] = [];
-  if ("code" in record)
+  if ("minAmount" in record)
     fields.push(
       ["Grade", `${record.code} — ${record.description}`],
+      ["Position", record.position || "—"],
       ["Status", record.status],
       ["Pay Basis", record.basis],
-      ["Base Pay", money(record.amount)],
+      ["Base Pay Range", `${money(record.minAmount)} – ${money(record.maxAmount)}`],
       ["Effective Date", record.effective],
       [
         "Assigned Employees",
@@ -1496,8 +1781,9 @@ function Detail({
       ["Tax Treatment", record.tax],
       [
         "Assignment Summary",
-        "Eligibility is a policy rule; a complete roster is not modeled.",
+        `${record.assigned ?? 0} affected employees; eligibility is evaluated by the payroll configuration engine.`,
       ],
+      ["Tax Treatment", record.tax],
       ["History", record.history.join(" · ")],
     );
   else if ("employeeId" in record) {

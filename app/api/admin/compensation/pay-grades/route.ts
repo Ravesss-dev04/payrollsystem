@@ -13,7 +13,7 @@ import {
  */
 export async function GET(request: NextRequest) {
   try {
-    await requireCompensationActor(request);
+    await requireCompensationActor(request, "compensation:read");
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
@@ -21,14 +21,28 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") || undefined;
     const basis = searchParams.get("basis") || undefined;
     const position = searchParams.get("position") || undefined;
-    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
-    const offset = parseInt(searchParams.get("offset") || "0");
+    const effectiveOn = searchParams.get("effectiveOn") || undefined;
+    const minBasePay = searchParams.get("minBasePay");
+    const maxBasePay = searchParams.get("maxBasePay");
+    const page = Math.max(1, Number(searchParams.get("page") || "1"));
+    const limit = Math.min(Math.max(1, Number(searchParams.get("pageSize") || searchParams.get("limit") || "20")), 100);
+    const offset = (page - 1) * limit || Math.max(0, Number(searchParams.get("offset") || "0"));
+
+    if (effectiveOn && Number.isNaN(Date.parse(effectiveOn))) {
+      return NextResponse.json({ error: "Invalid effective date" }, { status: 400 });
+    }
+    if ((minBasePay && !Number.isFinite(Number(minBasePay))) || (maxBasePay && !Number.isFinite(Number(maxBasePay)))) {
+      return NextResponse.json({ error: "Invalid base pay filter" }, { status: 400 });
+    }
 
     const { payGrades, total } = await listPayGrades({
       search: search || undefined,
       status,
       basis,
       position,
+      effectiveOn: effectiveOn ? new Date(`${effectiveOn}T00:00:00.000Z`) : undefined,
+      minBasePay: minBasePay ? Number(minBasePay) : undefined,
+      maxBasePay: maxBasePay ? Number(maxBasePay) : undefined,
       limit,
       offset,
     });

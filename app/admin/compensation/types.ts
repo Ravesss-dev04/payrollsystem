@@ -9,8 +9,10 @@ export type PayGrade = {
   id: string;
   code: string;
   description: string;
+  position?: string;
   basis: PayBasis;
-  amount: string;
+  minAmount: string;
+  maxAmount: string;
   effective: string;
   status: CompensationStatus;
   notes: string;
@@ -29,9 +31,11 @@ export type AllowancePolicy = {
   status: CompensationStatus;
   tax: string;
   history: string[];
+  assigned?: number;
 };
 export type BonusProgram = {
   id: string;
+  code: string;
   name: string;
   description: string;
   type: string;

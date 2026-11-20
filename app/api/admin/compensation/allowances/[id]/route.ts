@@ -7,6 +7,8 @@ import {
   retireAllowance,
   createAllowanceSchema,
 } from "@/app/lib/compensation/allowances-v2.server";
+import { assignEmployeeAllowance } from "@/app/lib/compensation/allowances-v2.server";
+import { z } from "zod";
 
 /**
  * GET /api/admin/compensation/allowances/[id]
@@ -17,7 +19,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    await requireCompensationActor(request);
+    await requireCompensationActor(request, "compensation:read");
 
     const allowance = await getAllowanceDetails(id);
     if (!allowance) {
@@ -83,6 +85,22 @@ export async function PUT(
       { error: "Failed to update allowance" },
       { status: 500 }
     );
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const actor = await requireCompensationActor(request, "compensation:assignment:manage");
+    const { id } = await params;
+    const input = z.object({ employeeId: z.string().min(1), effectiveFrom: z.coerce.date() }).parse(await request.json());
+    const assignment = await assignEmployeeAllowance(input.employeeId, id, actor.userId, input.effectiveFrom);
+    return NextResponse.json({ assignment }, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) return NextResponse.json({ error: "invalid_request", issues: error.issues }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "request_failed" }, { status: 400 });
   }
 }
 

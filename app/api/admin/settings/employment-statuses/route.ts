@@ -2,6 +2,7 @@ import { jsonResponse } from "../../../../lib/auth/http";
 import { employmentStatusPolicyInputSchema } from "../../../../lib/organization/policy";
 import {
   getEmploymentStatusPolicy,
+  getEmploymentStatusPolicies,
   saveEmploymentStatusPolicy,
 } from "../../../../lib/organization/service";
 import {
@@ -14,7 +15,7 @@ export async function GET(request: Request): Promise<Response> {
   return withAdminSettingsAccess(request, async () => {
     const invalidQuery = rejectSearchParams(request);
     if (invalidQuery) return invalidQuery;
-    return jsonResponse({ definitions: await getEmploymentStatusPolicy() });
+    return jsonResponse({ definitions: await getEmploymentStatusPolicy(), policies: await getEmploymentStatusPolicies() });
   });
 }
 

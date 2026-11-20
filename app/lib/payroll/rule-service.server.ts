@@ -1,4 +1,5 @@
 import { prisma } from "@/app/lib/db";
+import { formulaAstSchema } from "@/app/lib/payroll/formula-engine";
 
 interface PayrollRule {
   id?: string;
@@ -39,6 +40,7 @@ interface PayrollRule {
   employerPaid: boolean;
   excludedFromContributionBasis?: string[];
   customFormula?: string;
+  formulaAst?: unknown;
   formulaVariables?: Array<{ name: string; description: string; dataType: string }>;
   createdBy?: string;
   createdAt?: string;
@@ -56,6 +58,16 @@ export function validatePayrollRule(rule: PayrollRule): { valid: boolean; errors
   if (!rule.name?.trim()) errors.push("Rule name is required");
   if (!rule.code?.trim()) errors.push("Rule code is required");
   if (!rule.effectiveStartDate) errors.push("Effective start date is required");
+
+  if (rule.customFormula && !rule.formulaAst) {
+    errors.push("Formula must be created with the approved formula builder");
+  }
+  if (rule.formulaAst) {
+    const parsedFormula = formulaAstSchema.safeParse(rule.formulaAst);
+    if (!parsedFormula.success) {
+      errors.push("Formula contains an unsupported variable or expression");
+    }
+  }
 
   // Validate calculation basis-specific fields
   if (rule.calculationBasis === "Percentage") {

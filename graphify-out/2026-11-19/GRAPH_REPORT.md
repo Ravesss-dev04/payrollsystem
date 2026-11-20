@@ -1,70 +1,70 @@
 # Graph Report - payrollsystem  (2026-11-19)
 
 ## Corpus Check
-- 532 files · ~304,984 words
+- 583 files · ~335,038 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 5 file(s) not represented in the graph (top: (none) 1, .ico 1, .css 1)
+- Unclassified: 6 file(s) not represented in the graph (top: (none) 1, .ico 1, .css 1)
 
 ## Summary
-- 3545 nodes · 7557 edges · 233 communities (214 shown, 19 thin omitted)
+- 3865 nodes · 8228 edges · 264 communities (239 shown, 25 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 37 edges (avg confidence: 0.88)
 - Token cost: 31,300 input · 6,500 output
 
 ## Graph Freshness
-- Built from commit: `b03952c0`
+- Built from commit: `c596c0a9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - UsersTable.tsx
-- requirePagePermission
+- next
 - compensation/page.tsx
 - Role and feature specification
 - AdminDashboardClient.tsx
 - react-icons
-- AdminProfileMenu
+- SessionRecoveryStatus
 - provision-test-accounts.ts
 - Prisma Postgres provisioning
 - company/data.ts
 - Prisma Client Methods
-- session-store.ts
+- getCurrentSession
 - Filter Conditions and Operators
-- login/route.ts
+- leave-management/page.tsx
 - init.md
 - Enterprise Admin Dashboard Design
-- session.server.ts
+- verify/route.ts
 - authorization.ts
 - allowances-v2.server.ts
-- verify/route.ts
+- AttendanceDetailClient.tsx
 - db-push.md
 - package.json
 - Generated Prisma Client
 - compilerOptions
-- jsonResponse
+- readJsonBody
 - PrismaClient Constructor
 - migrate-diff.md
 - calculator.ts
 - mcp.md
 - Payroll system implementation and traceability plan
 - dependencies
-- config-service.server.ts
+- company-config.ts
 - Prisma Composer app setup
 - Prisma MongoDB client API mapping
 - Legacy Postgres Migration Docs
 - Authentication Input Schemas
 - LoginClient.tsx
 - Model queries
-- http.ts
+- reconciliation.ts
 - Prisma CLI agent safety checkpoint
-- deduction-categories-service.server.ts
-- EmployeesClient.tsx
-- policy-schemas.ts
-- migrate-resolve.md
-- MongoDB cutover checklist
+- PayrollBatchDetails.tsx
+- employees/service.ts
+- payroll-management/page.tsx
+- formula-engine.ts
+- attendance-management/page.tsx
 - Prisma Composer Deployment
 - Adopt schema and migrations
 - MongoDB Schema-to-Contract Mapping
-- MongoDB Cutover Verification Checklist
+- api-guard.server.ts
 - client-api.ts
 - app-composer-setup.md
 - deploy
@@ -75,43 +75,41 @@
 - rules-service.server.ts
 - Compare two schema sources
 - Prisma Model Queries
-- MongoDB Migration Workflow Mapping
 - MongoDB migrations mapping
+- announcements/page.tsx
 - scripts
-- disbursement/route.ts
+- config-service.server.ts
 - prisma-compute
 - prisma-orm-setup replacement skill
-- employees/service.ts
+- Office3D.tsx
 - prisma-orm-setup
 - Test accounts and persistent sessions
-- eslint.config.mjs
-- admin/dashboard/page.tsx
+- payroll-results/schemas.ts
+- payroll-end-to-end-lifecycle.test.ts
 - jsonResponse
 - debug.md
 - format.md
-- dotenv
+- policy-schemas.ts
 - FloorPlanClient.tsx
 - Project README
-- PayrollPreparationClient.tsx
-- [id]/decision/route.ts
+- ADMIN-SETTINGS-PROMPT.md
 - PAYROLL-RULES-AND-COMPENSATION.md
 - TASK 5 – IMPLEMENT BONUS AND INCENTIVE MANAGEMENT APIS
-- withAdminSettingsAccess
+- 4. EMPLOYMENT STATUS POLICY
 - Prisma shell completion
 - Prisma CLI, client, engines, platform, Node.js, and datasource diagnostics
 - Prisma format
 - Repository Agent Instructions
 - TASK 4 – IMPLEMENT ALLOWANCE LIST AND APIS
-- hr/payroll/config/route.ts
 - auth
 - TASK 6 – IMPLEMENT SALARY ADJUSTMENT REQUEST AND APPROVAL WORKFLOW
-- policy-resolution.ts
+- [code]/route.ts
 - TASK 3 – IMPLEMENT PAY GRADE LIST AND APIs
 - _shared.ts
 - users/service.ts
 - apiAuthorizationErrorResponse
 - `User`
-- requestPayrollApi
+- PayrollReviewClient.tsx
 - organization-test-database.ts
 - policy-service.server.ts
 - Prisma Client API Reference
@@ -120,10 +118,10 @@
 - Migration Fixes
 - Environment Variables
 - Platform Limits
-- [code]/route.ts
+- departments/route.ts
 - v7 Breaking Changes
 - TASK 14 – COMPREHENSIVE TESTING
-- payroll-results/schemas.ts
+- xlsx.ts
 - Driver Adapters
 - react
 - rules-api.ts
@@ -133,7 +131,7 @@
 - Removed Features
 - AttendancePolicies.tsx
 - Removed Features
-- polling.ts
+- decidePayrollBatch
 - views.ts
 - PAYROLL-APPROVAL.md
 - settings-api.ts
@@ -149,9 +147,10 @@
 - Environment Variables
 - Prisma Accelerate Users
 - ESM and CommonJS Support
-- users-roles/data.ts
-- db.ts
+- announcements/[id]/page.tsx
+- bonuses.server.ts
 - UsersRolesClient
+- TASK 6 – IMPLEMENT AND VERIFY DATABASE STRUCTURES
 - PostgreSQL Setup
 - Prisma Accelerate Users
 - ESM and CommonJS Support
@@ -163,6 +162,7 @@
 - CompanyBranches.tsx
 - Payroll and HR Domain Workflows Plan
 - Workflow and approval matrix
+- http.ts
 - api-response-transform.server.ts
 - deploy-cli-and-ci
 - ops-services-and-config
@@ -170,7 +170,7 @@
 - MySQL Setup
 - PART 8 – VALIDATION AND EXCEPTIONS
 - Prisma Client Methods
-- PayrollRulesEditor.tsx
+- Data ownership and metric definitions
 - TASK 2 – REPLACE THE JSON TEXTAREA WITH STRUCTURED FORM FIELDS
 - Prisma Relation Queries
 - Prisma Transactions
@@ -178,15 +178,18 @@
 - runtime-requirements
 - SQLite Setup
 - TASK 4: Implement XLSX Payroll Report Generation
-- summary.server.ts
+- 5. ORGANIZATION STRUCTURE
+- policy-resolution.ts
 - requestPayrollApi
-- UsersRolesClient.tsx
-- loadSecurityConfig
+- AdminRequestLayout.tsx
+- PayrollApprovalClient.tsx
+- session.server.ts
 - SQL Server Setup
 - PART 21 – FINAL DEVELOPMENT REPORT
-- Data ownership and metric definitions
+- next
 - api/employees.test.ts
 - domain/employees.test.ts
+- CompanyPayrollPolicy
 - TASK 10 – REVIEW AND IMPROVE THE COMPENSATION PAGE
 - CockroachDB Setup
 - TASK 9: Implement Individual Employee Salary Breakdown API
@@ -200,6 +203,8 @@
 - deploy-existing-app
 - deploy-on-push
 - client-api-mapping
+- login/route.ts
+- rate-limit.test.ts
 - 2. MANDATORY DEVELOPMENT RULES
 - config/types.ts
 - prisma validate
@@ -207,6 +212,8 @@
 - complete.md
 - Query options
 - verify-upgrade-checklist
+- db.ts
+- eslint.config.mjs
 - verify-upgrade-checklist
 - EXTENDED-OVERULED-PAYROLL-APPROVAL.md
 - TASK 17 – PAYROLL VALIDATION AND EXCEPTIONS ENGINE
@@ -217,7 +224,6 @@
 - Prisma Query Options
 - Raw queries
 - Standalone Prisma Postgres Provisioning
-- Prisma Postgres on Vercel Marketplace
 - TASK 25: Implement Required Backend APIs
 - Organization and Employee Records Implementation Plan
 - prisma generate
@@ -226,14 +232,13 @@
 - TASK 23 – TESTING AND VERIFICATION
 - TASK 16 – UPDATE EXISTING PAYROLL REVIEW AND XLSX INTEGRATION
 - TASK 5: Implement Payroll Summary APIs
-- Prisma Postgres operations
-- app/layout.tsx
+- 3. ORGANIZATION PROFILE
 - TASK 19 – RETURN, REJECTION, APPROVAL, AND DISBURSEMENT
 - 2. MANDATORY DEVELOPMENT REQUIREMENTS
 - PART 0 – MANDATORY DEVELOPMENT INSTRUCTIONS
 - TASK 29: Update the Payroll Approvals Interface
 - _prisma_migrations table
-- Prisma Postgres Console and Management Operations
+- domain-audit.ts
 - TASK 11 – CENTRALIZED PAYROLL RULES AND CALCULATION FOUNDATION
 - PART 14 – DATA CONSISTENCY AND FINANCIAL INTEGRITY
 - TASK 16: Implement Payroll Audit Timeline API
@@ -245,17 +250,39 @@
 - TASK 18 – PAYROLL ADJUSTMENTS AND AUDIT TIMELINE
 - TASK 15 – ADMIN PAYROLL CONFIGURATION AUDIT
 - TASK 20 – APPROVED AND REJECTED/RETURNED PAYROLL HISTORY
+- summary-schema.ts
+- users/schemas.ts
+- migrate-resolve.md
+- AdminProfileMenu.tsx
+- admin/dashboard/page.tsx
+- payroll-api-integration.test.ts
+- TASK 9 – IMPLEMENT COMPREHENSIVE TESTS
+- MongoDB cutover checklist
+- MongoDB Cutover Verification Checklist
+- Prisma Postgres on Vercel Marketplace
+- MongoDB Migration Workflow Mapping
+- Prisma Postgres operations
+- polling.ts
+- PayrollRulesEditor.tsx
+- 11. IMPLEMENTATION ORDER
+- Prisma Postgres Console and Management Operations
+- [roleId]/route.ts
+- login-policy.ts
+- TASK 8 – COMPLETE FRONTEND INTEGRATION
+- [departmentId]/route.ts
+- 5.2 Department Management
+- 2. MANDATORY DEVELOPMENT INSTRUCTIONS
 
 ## God Nodes (most connected - your core abstractions)
-1. `jsonResponse()` - 164 edges
-2. `requireApiPermission()` - 149 edges
-3. `writeDomainAuditEvent()` - 76 edges
-4. `react` - 63 edges
-5. `readJsonBody()` - 59 edges
-6. `zod` - 58 edges
-7. `next` - 56 edges
-8. `requirePagePermission()` - 52 edges
-9. `react-icons` - 51 edges
+1. `jsonResponse()` - 165 edges
+2. `requireApiPermission()` - 153 edges
+3. `react-icons` - 81 edges
+4. `react` - 77 edges
+5. `writeDomainAuditEvent()` - 75 edges
+6. `next` - 68 edges
+7. `zod` - 62 edges
+8. `readJsonBody()` - 59 edges
+9. `requirePagePermission()` - 54 edges
 10. `requestPayrollApi()` - 44 edges
 
 ## Surprising Connections (you probably didn't know these)
@@ -283,39 +310,39 @@
 - **Prisma 8 Upgrade & Compute Path** — agents_skills_prisma_postgres_upgrade_skill [INFERRED 0.85]
 - **Prisma ORM Version Management** — prisma_orm_setup_selection, prisma_postgres_upgrade_path, prisma_mongodb_upgrade_decision, prisma_upgrade_v7_breaking_changes [INFERRED 0.85]
 
-## Communities (233 total, 19 thin omitted)
+## Communities (264 total, 25 thin omitted)
 
 ### Community 0 - "UsersTable.tsx"
-Cohesion: 0.20
-Nodes (14): RolesPermissions(), UserFormModal(), Badge(), input, Modal(), primary, secondary, UsersTable() (+6 more)
+Cohesion: 0.11
+Nodes (26): PermissionMatrix(), toggle(), RoleFormModal(), RolesPermissions(), UserFormModal(), Avatar(), Badge(), input (+18 more)
 
-### Community 1 - "requirePagePermission"
-Cohesion: 0.10
-Nodes (24): CompanyPage(), Page(), PageProps, Page(), PageProps, ConfigApprovalQueuePage(), statusBadge, AdminDeductionCategoriesPage() (+16 more)
+### Community 1 - "next"
+Cohesion: 0.11
+Nodes (19): CompanyPage(), Page(), PageProps, Page(), PageProps, ConfigApprovalQueuePage(), statusBadge, EmploymentStatusesPage() (+11 more)
 
 ### Community 2 - "compensation/page.tsx"
-Cohesion: 0.05
-Nodes (76): adjustments, allowances, bonuses, employees, grades, adjustmentFields, allowanceFields, BonusDetails() (+68 more)
+Cohesion: 0.08
+Nodes (45): adjustments, allowances, bonuses, employees, grades, adjustmentFields, allowanceFields, BonusDetails() (+37 more)
 
 ### Community 3 - "Role and feature specification"
 Cohesion: 0.12
 Nodes (24): Admin role, Cross-role employee self-service, Role and feature specification, Employee role, Feature inventory, HR role, Team Leader role, Workforce and payroll system (+16 more)
 
 ### Community 4 - "AdminDashboardClient.tsx"
-Cohesion: 0.24
-Nodes (17): AttendanceSummaryChart(), DashboardPanel(), DashboardUnavailableState(), DepartmentsCard(), PayrollExpenseChart(), PendingApprovalsCard(), PendingApprovalsList(), ProjectedPayrollCard() (+9 more)
+Cohesion: 0.26
+Nodes (16): AttendanceSummaryChart(), DashboardPanel(), DashboardUnavailableState(), DepartmentsCard(), PayrollExpenseChart(), PendingApprovalsCard(), PendingApprovalsList(), ProjectedPayrollCard() (+8 more)
 
 ### Community 5 - "react-icons"
-Cohesion: 0.15
-Nodes (20): AttendanceRate(), AttendanceTrend(), sets, LeaveRequest(), PayrollStatus(), PendingPayrollTask(), items, RecentAnnouncement() (+12 more)
+Cohesion: 0.14
+Nodes (19): AttendanceRate(), AttendanceTrend(), sets, LeaveRequest(), PayrollStatus(), PendingPayrollTask(), items, RecentAnnouncement() (+11 more)
 
-### Community 6 - "AdminProfileMenu"
-Cohesion: 0.22
-Nodes (7): AccessPendingPage(), instant, EmployeeAccountPage(), instant, AdminProfileMenu(), signOut(), readCsrfCookie()
+### Community 6 - "SessionRecoveryStatus"
+Cohesion: 0.29
+Nodes (9): ConnectionState, SessionRecoveryStatus(), checkSession(), onOnline(), onVisibilityChange(), scheduleRetry(), classifySessionCheck(), getSessionRetryDelay() (+1 more)
 
 ### Community 7 - "provision-test-accounts.ts"
 Cohesion: 0.12
-Nodes (27): createRecoveryCode(), hashRecoveryCode(), getMySqlPoolConfig(), CredentialRecord, getObject(), getSafeProvisioningErrorCode(), inspectDatabaseCause(), inspect() (+19 more)
+Nodes (27): validateNewPassword(), createRecoveryCode(), hashRecoveryCode(), getMySqlPoolConfig(), CredentialRecord, getObject(), getSafeProvisioningErrorCode(), inspectDatabaseCause() (+19 more)
 
 ### Community 8 - "Prisma Postgres provisioning"
 Cohesion: 0.25
@@ -325,17 +352,17 @@ Nodes (9): Vercel deployment validation, create-db temporary database, Database 
 Cohesion: 0.18
 Nodes (15): businessTypes, holidayTypes, initialBranches, initialCompany, initialDepartments, initialHolidays, BusinessType, CompanyBranch (+7 more)
 
-### Community 11 - "session-store.ts"
-Cohesion: 0.15
-Nodes (11): evaluateSession(), SessionSnapshot, resolveSession(), SESSION_ABSOLUTE_MS, SESSION_IDLE_MS, SessionStore, now, validSession (+3 more)
+### Community 11 - "getCurrentSession"
+Cohesion: 0.14
+Nodes (13): isAccountEnabled(), isRole(), evaluateSession(), SessionSnapshot, resolveSession(), SESSION_ABSOLUTE_MS, SESSION_IDLE_MS, SessionStore (+5 more)
 
 ### Community 12 - "Filter Conditions and Operators"
 Cohesion: 0.23
 Nodes (13): Array field filters, Comparison filters, Filter Conditions and Operators, Equality filters, Full-text search, JSON filters, List filters, Logical operators: AND OR NOT (+5 more)
 
-### Community 13 - "login/route.ts"
-Cohesion: 0.18
-Nodes (19): POST(), authenticateCredentials(), AuthenticatedLoginAccount, LoginAccountRecord, requiresMfa(), requiresMfaReauthentication(), COMMON_PASSWORDS, hashPassword() (+11 more)
+### Community 13 - "leave-management/page.tsx"
+Cohesion: 0.11
+Nodes (35): LeaveApproveCards(), LeaveBalanceCards(), LeaveCalendarCards(), icons, LeaveDistributionCards(), types, LeaveMetric(), LeavePendingRequestCards() (+27 more)
 
 ### Community 14 - "init.md"
 Cohesion: 0.15
@@ -345,29 +372,29 @@ Nodes (12): Prisma db pull, Database schema introspection, MongoDB document samp
 Cohesion: 0.18
 Nodes (9): Admin dashboard role boundary, Enterprise Admin Dashboard Design, Four server-authoritative roles, Least-privilege team scope, MySQL authentication-only schema findings, Overnight shift attendance policy, Payroll HR and Team Leader responsibilities, Shared authoritative business services (+1 more)
 
-### Community 16 - "session.server.ts"
-Cohesion: 0.13
-Nodes (24): POST(), GET(), AuthCookieOptions, CSRF_COOKIE_NAME, csrfCookieOptions(), DEVELOPMENT_CSRF_COOKIE_NAME, DEVELOPMENT_SESSION_COOKIE_NAME, hasValidCsrfToken() (+16 more)
+### Community 16 - "verify/route.ts"
+Cohesion: 0.16
+Nodes (21): POST(), MfaAttemptRejectedError, POST(), recordFailedAttempt(), rejectAttempt(), errorResponse(), POST(), writeSecurityEvent() (+13 more)
 
 ### Community 17 - "authorization.ts"
-Cohesion: 0.14
-Nodes (22): roleLabels, DEFAULT_ROLE_PERMISSIONS, hasPermission(), isAccountEnabled(), isPermission(), LOCKED_ROLE_PERMISSIONS, Permission, PERMISSION_DEFINITIONS (+14 more)
+Cohesion: 0.16
+Nodes (17): DEFAULT_ROLE_PERMISSIONS, LOCKED_ROLE_PERMISSIONS, PERMISSION_DEFINITIONS, PERMISSION_KEYS, ROLE_PERMISSION_CEILINGS, ROLES, permissionSchema, roleIdSchema (+9 more)
 
 ### Community 18 - "allowances-v2.server.ts"
 Cohesion: 0.08
-Nodes (40): GET(), pauseAction(), PUT(), retireAction(), GET(), POST(), requireCompensationActor(), GET() (+32 more)
+Nodes (44): GET(), pauseAction(), POST(), PUT(), retireAction(), GET(), POST(), requireCompensationActor() (+36 more)
 
-### Community 19 - "verify/route.ts"
-Cohesion: 0.16
-Nodes (21): POST(), MfaAttemptRejectedError, POST(), recordFailedAttempt(), rejectAttempt(), writeSecurityEvent(), isRole(), DEVELOPMENT_MFA_CHALLENGE_COOKIE_NAME (+13 more)
+### Community 19 - "AttendanceDetailClient.tsx"
+Cohesion: 0.15
+Nodes (28): addDays(), AttendanceCorrection, AttendanceEmployee, attendanceEmployees, attendanceRecords, AttendanceStatus, CorrectionStatus, DailyAttendanceRecord (+20 more)
 
 ### Community 20 - "db-push.md"
 Cohesion: 0.10
 Nodes (19): prisma migrate deploy, Migration history is not tracked by db push, MongoDB db push workflow, Direct schema synchronization, Prisma Postgres instance management, Local Prisma Postgres, prisma init --db, Shadow database for migrations (+11 more)
 
 ### Community 21 - "package.json"
-Cohesion: 0.11
-Nodes (23): devDependencies, tailwindcss@4.3.3, @tailwindcss/turbopack@4.3.3, @types/bun@^1.4.4, @types/node@^20, @types/nodemailer@^8.0.2, @types/react@^19, @types/react-dom@^19 (+15 more)
+Cohesion: 0.09
+Nodes (29): devDependencies, dotenv@^18.0.10, prisma@7.10.0, tailwindcss@4.3.3, @tailwindcss/turbopack@4.3.3, @types/bun@^1.4.4, @types/node@^20, @types/nodemailer@^8.0.2 (+21 more)
 
 ### Community 22 - "Generated Prisma Client"
 Cohesion: 0.13
@@ -377,9 +404,9 @@ Nodes (18): Prisma db push, Consent checkpoint for data-loss flags, Direct schem
 Cohesion: 0.11
 Nodes (18): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+10 more)
 
-### Community 24 - "jsonResponse"
-Cohesion: 0.10
-Nodes (32): GET(), GET(), PATCH(), RouteParams, POST(), RouteParams, statusSchema, GET() (+24 more)
+### Community 24 - "readJsonBody"
+Cohesion: 0.17
+Nodes (17): POST(), errorResponse(), GET(), organizationResponse(), POST(), GET(), PATCH(), RouteContext (+9 more)
 
 ### Community 25 - "PrismaClient Constructor"
 Cohesion: 0.14
@@ -390,8 +417,8 @@ Cohesion: 0.20
 Nodes (10): Datasource in prisma.config.ts, SQL output from prisma migrate diff, Native SQL execution, prisma db execute, Baseline migration generation, Database drift detection, Empty, schema, migrations, URL, and configured datasource sources, Database schema comparison (+2 more)
 
 ### Community 27 - "calculator.ts"
-Cohesion: 0.08
-Nodes (47): CalculatedEmployeePayroll, calculateEmployeePayroll(), CalculationTrace, DEFAULT_COMPANY_PAYROLL_POLICY, PAYROLL_CALCULATION_ENGINE_VERSION, ALLOWED_FORMULA_VARIABLES, ApprovedCalculationMethod, CalculationMethodParams (+39 more)
+Cohesion: 0.17
+Nodes (26): CalculatedEmployeePayroll, calculateEmployeePayroll(), CalculationTrace, DEFAULT_COMPANY_PAYROLL_POLICY, fromDecimalUnits(), toDecimalUnits(), EXPECTED_PH_REFERENCE_CALCULATION, PHILIPPINE_REFERENCE_PAYROLL_RULESET (+18 more)
 
 ### Community 28 - "mcp.md"
 Cohesion: 0.13
@@ -402,12 +429,12 @@ Cohesion: 0.14
 Nodes (15): Payroll system implementation and traceability plan, Four-role authorization and data-scope foundation, Blocked payroll, attendance, scheduling, leave, and HR domain sources, Implementation sequence and stage gates for payroll system, Requirement-to-role-data-API-UI-security-test traceability matrix, API, export, and audit acceptance criteria, Role, permission, and record-scope acceptance tests, Payroll system acceptance and security test plan (+7 more)
 
 ### Community 30 - "dependencies"
-Cohesion: 0.12
-Nodes (17): dependencies, argon2@^0.45.2, @aws-sdk/client-s3@^3.1169.0, mariadb@3.4.5, next@16.4.6, nodemailer@^10.5.0, otpauth@^9.6.0, @prisma/adapter-mariadb@7.10.0 (+9 more)
+Cohesion: 0.10
+Nodes (21): dependencies, argon2@^0.45.2, @aws-sdk/client-s3@^3.1169.0, mariadb@3.4.5, next@16.4.6, nodemailer@^10.5.0, otpauth@^9.6.0, @prisma/adapter-mariadb@7.10.0 (+13 more)
 
-### Community 31 - "config-service.server.ts"
-Cohesion: 0.09
-Nodes (41): errorResponse(), GET(), PATCH(), errorResponse(), POST(), simulationRequestSchema, HistoryItem, TabId (+33 more)
+### Community 31 - "company-config.ts"
+Cohesion: 0.12
+Nodes (21): HistoryItem, TabId, EmployeeCompensationInput, BenefitItemConfig, benefitItemConfigSchema, CompanyPayrollSettings, companyPayrollSettingsSchema, ConfigDecisionInput (+13 more)
 
 ### Community 32 - "Prisma Composer app setup"
 Cohesion: 0.23
@@ -426,40 +453,40 @@ Cohesion: 0.36
 Nodes (7): ACCOUNT_STATUSES, loginSchema, passwordChangeSchema, profileUpdateSchema, roleUpdateSchema, statusUpdateSchema, totpVerificationSchema
 
 ### Community 36 - "LoginClient.tsx"
-Cohesion: 0.36
-Nodes (7): landingPath(), LoginPage(), submitLogin(), submitMfa(), LoginResponse, buildMfaVerificationPayload(), MfaVerificationMethod
+Cohesion: 0.26
+Nodes (9): landingPath(), LoginPage(), submitLogin(), submitMfa(), LoginResponse, buildMfaVerificationPayload(), MfaVerificationMethod, instant (+1 more)
 
 ### Community 37 - "Model queries"
 Cohesion: 0.17
 Nodes (12): aggregate, count, create, createMany, delete, Model queries, findFirst, findMany (+4 more)
 
-### Community 38 - "http.ts"
-Cohesion: 0.20
-Nodes (14): PATCH(), RouteParams, GET(), POST(), PATCH(), RouteContext, GET(), POST() (+6 more)
+### Community 38 - "reconciliation.ts"
+Cohesion: 0.19
+Nodes (22): aggregatePayrollAdditionalEarningsByCategory(), aggregatePayrollDeductionLinesByCategory(), aggregatePayrollEarningsByCategory(), aggregatePayrollLinesByCategory(), fromUnits(), issue(), payrollBreakdownReconciles(), payrollDeductionCategoryIssues() (+14 more)
 
 ### Community 39 - "Prisma CLI agent safety checkpoint"
 Cohesion: 0.24
 Nodes (11): Explicit consent required before destructive commands, Prisma CLI agent safety checkpoint, db push force-reset and accept-data-loss flags, prisma migrate reset, Prisma MCP server, MCP server exposing Prisma project context, Migration status, migration dev, and Studio tools; no reset tool, Prisma migrate reset (+3 more)
 
-### Community 40 - "deduction-categories-service.server.ts"
-Cohesion: 0.36
-Nodes (10): activateDeductionCategoryDraft(), categorySetSelect, createDeductionCategoryDraft(), DeductionCategoryServiceError, getActiveDeductionCategorySetForSubmission(), getDeductionCategorySets(), parseStoredDeductionCategoryNames(), presentCategorySet() (+2 more)
+### Community 40 - "PayrollBatchDetails.tsx"
+Cohesion: 0.13
+Nodes (31): DemoDataNotice(), Adjustments(), Badge(), Breakdown(), deduct, Dialog(), download(), earnings (+23 more)
 
-### Community 41 - "EmployeesClient.tsx"
-Cohesion: 0.16
-Nodes (11): ActiveEmployeesCard(), AssignedAssetsCard(), UpcomingShiftCard(), EmployeeForm, EmployeesClient(), submit(), emptyForm, messageForApiError() (+3 more)
+### Community 41 - "employees/service.ts"
+Cohesion: 0.05
+Nodes (58): ActiveEmployeesCard(), AssignedAssetsCard(), UpcomingShiftCard(), AssetsDevicesTab(), AttendanceSummaryTab(), EmployeeDetailsClient(), TabId, tabs (+50 more)
 
-### Community 42 - "policy-schemas.ts"
-Cohesion: 0.12
-Nodes (17): attendancePolicyIdSchema, AttendancePolicyInput, createAttendancePolicySchema, dateValue, DAY_NAMES, minutesAfterMidnight(), optionalTime, policyInput (+9 more)
+### Community 42 - "payroll-management/page.tsx"
+Cohesion: 0.21
+Nodes (17): CurrentPayrollBatchCards(), EmployeesAllCard(), NetPayCards(), PayrollBreakdownCards(), PayrollStatusCards(), PendingAdjustmentCards(), Batch, date() (+9 more)
 
-### Community 43 - "migrate-resolve.md"
-Cohesion: 0.32
-Nodes (7): Existing database baselining, Prisma migrate resolve, Failed migration recovery, Manually change migration state, Migration baselining, Mark migration as applied, Mark migration as rolled back
+### Community 43 - "formula-engine.ts"
+Cohesion: 0.19
+Nodes (16): ALLOWED_FORMULA_VARIABLES, ApprovedCalculationMethod, CalculationMethodParams, compileCalculationMethodToAst(), evaluateFormulaAst(), executeFormula(), FormulaAstNode, FormulaEvaluationError (+8 more)
 
-### Community 44 - "MongoDB cutover checklist"
-Cohesion: 0.22
-Nodes (10): MongoDB ObjectId mapping, Index parity, MongoDB server version floor, MongoDB schema contract mapping, MongoDB polymorphism, Prisma 8 MongoDB contract, Cutover rollback, MongoDB cutover checklist (+2 more)
+### Community 44 - "attendance-management/page.tsx"
+Cohesion: 0.14
+Nodes (16): AttendanceManagementPage(), DateRangePicker(), departments, donut, formatRange(), initials(), localDateKey(), Modal() (+8 more)
 
 ### Community 45 - "Prisma Composer Deployment"
 Cohesion: 0.22
@@ -473,13 +500,13 @@ Nodes (10): MongoDB collection-name addressing, Prisma 8 migration lifecycle, Mo
 Cohesion: 0.22
 Nodes (9): BSON scalar mappings, Collection-name addressing, MongoDB Schema-to-Contract Mapping, MongoDB contract environment requirements, MongoDB enum storage values, MongoDB polymorphism and discriminators, prisma6Schema compatibility path, Prisma 8 contract model (+1 more)
 
-### Community 48 - "MongoDB Cutover Verification Checklist"
+### Community 48 - "api-guard.server.ts"
 Cohesion: 0.22
-Nodes (9): Collection storage-name audit, Cutover and code rollback, Database-copy rehearsal, MongoDB Cutover Verification Checklist, Raw-call inventory, Read-only soak, Same-database staged migration, Transaction inventory (+1 more)
+Nodes (11): GET(), GET(), PATCH(), RouteParams, POST(), RouteParams, statusSchema, GET() (+3 more)
 
 ### Community 49 - "client-api.ts"
-Cohesion: 0.20
-Nodes (10): ComparisonData, ConfigReviewClient(), handleDecide(), DiffTable(), flattenConfig(), SimulationCard(), SimulationResult, ConfigReviewPage() (+2 more)
+Cohesion: 0.17
+Nodes (13): ComparisonData, ConfigReviewClient(), handleDecide(), DiffTable(), flattenConfig(), SimulationCard(), SimulationResult, ConfigReviewPage() (+5 more)
 
 ### Community 50 - "app-composer-setup.md"
 Cohesion: 0.10
@@ -490,8 +517,8 @@ Cohesion: 0.22
 Nodes (9): deploy, project, service, Deployment Workflow, GitHub Actions Workflow, Upgrade Decision Matrix, ORM Version Selection, Provisioning Options (+1 more)
 
 ### Community 52 - "payroll-results/service.ts"
-Cohesion: 0.13
-Nodes (41): createDisbursementHandoff(), updateDisbursementRecord(), getHrRecipients(), getSmtpTransport(), HrApprovalNotification, HrRejectedNotification, HrReturnedNotification, notifyHrPayrollApproval() (+33 more)
+Cohesion: 0.16
+Nodes (35): writeDomainAuditEvent(), createDisbursementHandoff(), updateDisbursementRecord(), PayrollValidationIssue, addDatabaseIssues(), createPayrollBatch(), createPayrollCorrectionVersion(), dateValue() (+27 more)
 
 ### Community 53 - "prisma.config.ts"
 Cohesion: 0.33
@@ -506,8 +533,8 @@ Cohesion: 0.18
 Nodes (10): Prisma ORM 6 MongoDB setup, MongoDB ObjectId fields, Prisma 6 MongoDB schema, Prisma db pull, 1. Install dependencies, 2. Add generator block, 3. Generate Prisma Client, 4. Instantiate Prisma Client (+2 more)
 
 ### Community 56 - "rules-service.server.ts"
-Cohesion: 0.22
-Nodes (12): jsonObjectSchema, PayrollRuleConfiguration, payrollRuleConfigurationSchema, PayrollRuleSetDraftInput, payrollRuleSetDraftInputSchema, createPayrollRuleSetDraft(), isUniqueConstraintError(), PayrollRuleSetServiceError (+4 more)
+Cohesion: 0.21
+Nodes (13): jsonObjectSchema, PayrollRuleConfiguration, payrollRuleConfigurationSchema, PayrollRuleSetDraftInput, payrollRuleSetDraftInputSchema, createPayrollRuleSetDraft(), getLatestPayrollRuleSet(), isUniqueConstraintError() (+5 more)
 
 ### Community 57 - "Compare two schema sources"
 Cohesion: 0.38
@@ -517,21 +544,21 @@ Nodes (7): prisma.config.ts datasource, Prisma db execute, Native SQL script exe
 Cohesion: 0.29
 Nodes (7): Aggregation: count aggregate groupBy, Create operations: create createMany createManyAndReturn, Delete operations: delete deleteMany, Prisma Model Queries, Model query return types, Read operations: findUnique findFirst findMany, Update operations: update updateMany updateManyAndReturn upsert
 
-### Community 59 - "MongoDB Migration Workflow Mapping"
-Cohesion: 0.29
-Nodes (7): MongoDB Migration Workflow Mapping, MongoDB migration marker storage, Non-transactional MongoDB DDL, Prisma 8 db update bootstrap, Prisma 8 db verify, Prisma 8 migration plan and migrate lifecycle, Prisma v6 MongoDB db push workflow
-
-### Community 60 - "MongoDB migrations mapping"
+### Community 59 - "MongoDB migrations mapping"
 Cohesion: 0.22
 Nodes (9): MongoDB contract validators, db migrate, db update, db verify, MongoDB migrations mapping, migration plan, Prisma v6 db push, Cutover rehearsal (+1 more)
+
+### Community 60 - "announcements/page.tsx"
+Cohesion: 0.16
+Nodes (15): AnnouncementsPage(), Attachment, Badge(), demo, empty, Form, formatDate(), initial (+7 more)
 
 ### Community 61 - "scripts"
 Cohesion: 0.29
 Nodes (7): scripts, build, dev, lint, provision:test-accounts, rotate:test-account-password, start
 
-### Community 62 - "disbursement/route.ts"
-Cohesion: 0.13
-Nodes (10): calculateBatchInputSchema, compensationInputSchema, decimalSchema, errorResponse(), POST(), quantitySchema, actor, prismaMock (+2 more)
+### Community 62 - "config-service.server.ts"
+Cohesion: 0.11
+Nodes (38): errorResponse(), POST(), errorResponse(), GET(), calculateBatchInputSchema, compensationInputSchema, decimalSchema, errorResponse() (+30 more)
 
 ### Community 63 - "prisma-compute"
 Cohesion: 0.33
@@ -541,9 +568,9 @@ Nodes (5): @prisma/composer/control operations, Compute automation REST and cont
 Cohesion: 0.40
 Nodes (5): Deprecated compatibility entry with no setup recipes, Deprecated prisma-database-setup compatibility entry, prisma-orm-setup replacement skill, Deprecated prisma-database-setup compatibility entry, prisma/skills repository
 
-### Community 65 - "employees/service.ts"
-Cohesion: 0.11
-Nodes (32): CreateEmployeeInput, createEmployeeSchema, effectiveDateSchema, employeeAccountLinkSchema, employeeIdSchema, employeeNumberSchema, EmployeeSummary, employeeSummarySchema (+24 more)
+### Community 65 - "Office3D.tsx"
+Cohesion: 0.22
+Nodes (10): Box(), CameraRig(), Office3D(), point(), Props, Scene(), SceneBoundary, Workstation() (+2 more)
 
 ### Community 66 - "prisma-orm-setup"
 Cohesion: 0.18
@@ -553,17 +580,17 @@ Nodes (11): Prisma ORM 6 MongoDB Setup, MongoDB db push and db pull, MongoDB Obj
 Cohesion: 0.33
 Nodes (6): Test accounts and persistent sessions, Test account non-production database safeguards, Persistent session lifecycle and revalidation behavior, Reserved Admin, HR, and Employee test identities, Protected local test credential storage, Opt-in test account provisioning and rotation policy
 
-### Community 68 - "eslint.config.mjs"
-Cohesion: 0.33
-Nodes (5): eslintConfig, eslint@^9, eslint-config-next@16.4.6, eslint, eslint-config-next
+### Community 68 - "payroll-results/schemas.ts"
+Cohesion: 0.10
+Nodes (18): adjustmentSchema, attendanceRecordSchema, dateSchema, dateTimeSchema, decimalSchema, deductionLineSchema, earningCategories, earningLineSchema (+10 more)
 
-### Community 69 - "admin/dashboard/page.tsx"
-Cohesion: 0.22
-Nodes (8): DashboardPage(), getDashboardPresentation(), Admin Dashboard Screenshot-Aligned Safe Slice Implementation Plan, Explicitly Deferred, Global Constraints, Review Focus, Task 2: Implement the Screenshot-Aligned Dashboard UI, Task 3: Reconcile Documentation and Verify the Slice
+### Community 69 - "payroll-end-to-end-lifecycle.test.ts"
+Cohesion: 0.27
+Nodes (7): PAYROLL_CALCULATION_ENGINE_VERSION, configDecisionInputSchema, createConfigDraftInputSchema, DEFAULT_FULL_PAYROLL_CONFIGURATION, UpdateDisbursementInput, updateDisbursementInputSchema, payrollDecisionInputSchema
 
 ### Community 70 - "jsonResponse"
-Cohesion: 0.10
-Nodes (36): POST(), RouteContext, GET(), PATCH(), RouteContext, GET(), RouteContext, GET() (+28 more)
+Cohesion: 0.11
+Nodes (35): POST(), RouteContext, GET(), PATCH(), RouteContext, GET(), RouteContext, GET() (+27 more)
 
 ### Community 71 - "debug.md"
 Cohesion: 0.50
@@ -573,25 +600,21 @@ Nodes (3): Prisma engine binaries, Prisma environment diagnostics, Version misma
 Cohesion: 0.50
 Nodes (3): Editor format-on-save integration, Adding missing relation fields and arguments, Prisma schema formatting
 
-### Community 73 - "dotenv"
-Cohesion: 0.40
-Nodes (4): dotenv@^18.0.10, prisma@7.10.0, dotenv, prisma
+### Community 73 - "policy-schemas.ts"
+Cohesion: 0.12
+Nodes (17): attendancePolicyIdSchema, AttendancePolicyInput, createAttendancePolicySchema, dateValue, DAY_NAMES, minutesAfterMidnight(), optionalTime, policyInput (+9 more)
 
 ### Community 74 - "FloorPlanClient.tsx"
-Cohesion: 0.14
-Nodes (19): links, Sidebar(), EmployeesPage(), Asset, assets, Desk, Employee, employees (+11 more)
+Cohesion: 0.18
+Nodes (15): Asset, assets, Desk, Employee, employees, firstNames, initialDesks, lastNames (+7 more)
 
 ### Community 75 - "Project README"
 Cohesion: 0.50
 Nodes (4): Project README, Next.js App Router page entry point, Next.js application bootstrap, Vercel deployment
 
-### Community 76 - "PayrollPreparationClient.tsx"
-Cohesion: 0.29
-Nodes (7): PayrollPage(), initialPayload, PayrollPreparationClient(), createDraft(), load(), requestError(), statusTabs
-
-### Community 77 - "[id]/decision/route.ts"
-Cohesion: 0.29
-Nodes (9): errorResponse(), POST(), errorResponse(), POST(), decideConfigurationVersion(), PayrollConfigServiceError, requireAdmin(), retireConfiguration() (+1 more)
+### Community 77 - "ADMIN-SETTINGS-PROMPT.md"
+Cohesion: 0.17
+Nodes (11): 12. IMPLEMENTATION STATUS TRACKING, 13. FINAL DEVELOPMENT REPORT, 1. PROJECT OBJECTIVE, 6. REMOVE THE TEAM COMPONENT, 7. ROLE RESPONSIBILITIES AND ACCESS CONTROL, ADMIN PORTAL – ORGANIZATION SETTINGS AND EMPLOYMENT STRUCTURE, Dependency inspection, FINAL IMPLEMENTATION DIRECTIVE (+3 more)
 
 ### Community 78 - "PAYROLL-RULES-AND-COMPENSATION.md"
 Cohesion: 0.13
@@ -601,69 +624,65 @@ Nodes (14): 15. IMPLEMENTATION STATUS TRACKING, 16. FINAL DEVELOPMENT REPORT, 1.
 Cohesion: 0.15
 Nodes (13): 7.10 Pause Program, 7.11 Retire or Remove, 7.1 Bonus List, 7.2 Search functionality, 7.3 Filters, 7.4 Add New Bonus or Incentive, 7.5 Calculation basis, 7.6 Target employee group (+5 more)
 
-### Community 80 - "withAdminSettingsAccess"
-Cohesion: 0.16
-Nodes (19): DELETE(), PATCH(), RouteContext, DELETE(), PATCH(), RouteContext, GET(), POST() (+11 more)
+### Community 80 - "4. EMPLOYMENT STATUS POLICY"
+Cohesion: 0.17
+Nodes (12): 4.1 Employment Status Policy List, 4.2 Create New Employment Status Policy, 4.3 Save New Policy Version, 4.4 Where Employment Status Policies Must Reflect, 4.5 Employment Status Policy History, 4.6 Employment Status Policy UI/UX, 4. EMPLOYMENT STATUS POLICY, Display Name (+4 more)
 
 ### Community 86 - "TASK 4 – IMPLEMENT ALLOWANCE LIST AND APIS"
 Cohesion: 0.17
 Nodes (12): 6.1 Required table fields, 6.2 Allowance search, 6.3 Filters, 6.4 Add New Allowance, 6.5 Dynamic eligibility selector, 6.6 Tax Treatment Review, 6.7 Allowance Details, 6.8 Edit Allowance (+4 more)
 
-### Community 87 - "hr/payroll/config/route.ts"
-Cohesion: 0.36
-Nodes (7): errorResponse(), GET(), errorResponse(), GET(), listQuerySchema, POST(), listConfigurationVersions()
-
 ### Community 91 - "TASK 6 – IMPLEMENT SALARY ADJUSTMENT REQUEST AND APPROVAL WORKFLOW"
 Cohesion: 0.17
 Nodes (12): 8.1 Responsibility model, 8.2 Salary Adjustment List, 8.3 Search and filters, 8.4 Create Salary Adjustment API, 8.5 Validation, 8.6 Supporting documents, 8.7 Salary Adjustment Details, 8.8 Approval Actions (+4 more)
 
-### Community 92 - "policy-resolution.ts"
-Cohesion: 0.31
-Nodes (6): AttendancePolicyCandidate, AttendancePolicyResolution, resolveAttendancePolicy(), scopeRank, utcDateKey(), date
+### Community 92 - "[code]/route.ts"
+Cohesion: 0.20
+Nodes (12): DELETE(), GET(), getPayrollRuleByCode(), PUT(), GET(), POST(), formulaAstSchema, getLatestPayrollRules() (+4 more)
 
 ### Community 93 - "TASK 3 – IMPLEMENT PAY GRADE LIST AND APIs"
 Cohesion: 0.18
 Nodes (11): 5.1 Required table columns, 5.2 Pay Grade List APIs, 5.3 Search functionality, 5.4 Filters, 5.5 Add New Pay Grade, 5.6 View Pay Grade Details, 5.7 Edit Pay Grade, 5.8 Employee Assignment Responsibility (+3 more)
 
 ### Community 94 - "_shared.ts"
-Cohesion: 0.19
-Nodes (18): OrganizationStructurePage(), GET(), POST(), GET(), POST(), readSettingsInput(), rejectSearchParams(), GET() (+10 more)
+Cohesion: 0.15
+Nodes (27): DELETE(), PATCH(), RouteContext, GET(), POST(), GET(), POST(), readSettingsInput() (+19 more)
 
 ### Community 95 - "users/service.ts"
-Cohesion: 0.09
-Nodes (37): effectivePermissions(), getEffectiveUserPermissions(), acceptInvitationSchema, CreateUserInvitationInput, createUserInvitationSchema, emailSchema, invitationTokenSchema, phoneNumberSchema (+29 more)
+Cohesion: 0.19
+Nodes (21): effectivePermissions(), hasPermission(), isPermission(), escapeSqlLike(), normalizeUserSearch(), rankUserSearch(), currentAssignment(), getUserDetails() (+13 more)
 
 ### Community 96 - "apiAuthorizationErrorResponse"
-Cohesion: 0.15
-Nodes (19): errorResponse(), GET(), auditQuerySchema, errorResponse(), GET(), errorResponse(), GET(), POST() (+11 more)
+Cohesion: 0.36
+Nodes (10): activateDeductionCategoryDraft(), categorySetSelect, createDeductionCategoryDraft(), DeductionCategoryServiceError, getActiveDeductionCategorySetForSubmission(), getDeductionCategorySets(), parseStoredDeductionCategoryNames(), presentCategorySet() (+2 more)
 
 ### Community 97 - "`User`"
 Cohesion: 0.09
 Nodes (38): `Branch`, `Department`, `DomainAuditEvent`, `EmploymentStatusDefinition`, `EmploymentStatusPolicy`, `OrganizationSettings`, `Team`, `Employee` (+30 more)
 
-### Community 98 - "requestPayrollApi"
+### Community 98 - "PayrollReviewClient.tsx"
 Cohesion: 0.13
-Nodes (31): AdjustmentStatusBadge(), employeeDetailError(), PayrollEmployeeDetailClient(), load(), valueOrUnavailable(), PayrollEmployeeList(), AdjustmentStatusBadge(), Decision (+23 more)
+Nodes (28): statusTabs, AdjustmentStatusBadge(), employeeDetailError(), PayrollEmployeeDetailClient(), load(), valueOrUnavailable(), AdjustmentStatusBadge(), Decision (+20 more)
 
 ### Community 99 - "organization-test-database.ts"
-Cohesion: 0.06
-Nodes (32): assignmentUpdateCount, branchCreate, branches, branchFindFirst, branchFindMany, branchUpdate, definitionCreateMany, departmentCreate (+24 more)
+Cohesion: 0.07
+Nodes (31): assignmentUpdateCount, branchCreate, branches, branchFindFirst, branchFindMany, branchUpdate, definitionCreateMany, departmentCreate (+23 more)
 
 ### Community 100 - "policy-service.server.ts"
-Cohesion: 0.15
-Nodes (31): asDate(), AttendancePolicyServiceError, createAttendancePolicy(), DAY_NAMES, getAssignedEmployees(), getAttendancePolicyDetails(), getAttendancePolicyOptions(), inputData() (+23 more)
+Cohesion: 0.16
+Nodes (29): asDate(), AttendancePolicyServiceError, createAttendancePolicy(), DAY_NAMES, getAssignedEmployees(), getAttendancePolicyDetails(), inputData(), isKnownPrismaError() (+21 more)
 
-### Community 108 - "[code]/route.ts"
-Cohesion: 0.22
-Nodes (11): DELETE(), GET(), getPayrollRuleByCode(), PUT(), GET(), POST(), getLatestPayrollRules(), getPayrollRuleByCode() (+3 more)
+### Community 108 - "departments/route.ts"
+Cohesion: 0.36
+Nodes (7): OrganizationStructurePage(), GET(), POST(), createDepartment(), getBranches(), getDepartments(), getOrganizationSettings()
 
 ### Community 110 - "TASK 14 – COMPREHENSIVE TESTING"
 Cohesion: 0.20
 Nodes (10): 13. TESTING AND ACCEPTANCE CRITERIA, A. Rule Document Editor, B. Pay Grades, C. Allowances, D. Bonuses and Incentives, E. Salary Adjustments, F. Role and Permission Tests, G. Audit Tests (+2 more)
 
-### Community 111 - "payroll-results/schemas.ts"
-Cohesion: 0.05
-Nodes (64): aggregatePayrollAdditionalEarningsByCategory(), aggregatePayrollDeductionLinesByCategory(), aggregatePayrollEarningsByCategory(), aggregatePayrollLinesByCategory(), fromUnits(), issue(), payrollBreakdownReconciles(), payrollDeductionCategoryIssues() (+56 more)
+### Community 111 - "xlsx.ts"
+Cohesion: 0.14
+Nodes (24): PayrollReviewResponse, payrollReviewResponseSchema, assertReportSize(), Cell, cellXml(), columnName(), crc32(), date() (+16 more)
 
 ### Community 112 - "Driver Adapters"
 Cohesion: 0.07
@@ -678,16 +697,16 @@ Cohesion: 0.15
 Nodes (11): PayrollRuleSet, payrollRuleSetDraftResponseSchema, payrollRuleSetResponseSchema, payrollRuleSetSchema, requestPayrollRulesApi(), API surface, Implemented, Payroll Approvals Implementation Status (+3 more)
 
 ### Community 115 - "invitations.server.ts"
-Cohesion: 0.13
-Nodes (26): errorResponse(), POST(), InvitationAcceptForm(), Props, AcceptInvitationPage(), instant, metadata, hashOpaqueToken() (+18 more)
+Cohesion: 0.14
+Nodes (24): InvitationAcceptForm(), Props, AcceptInvitationPage(), instant, metadata, hashOpaqueToken(), escapeHtml(), InvitationEmail (+16 more)
 
 ### Community 116 - "AdminAuditLogs.tsx"
 Cohesion: 0.13
 Nodes (19): AdminAuditLogs(), exportCsv(), cell(), date(), AdminAvatar(), initials(), ProfileContext, auditEvents (+11 more)
 
 ### Community 117 - "profile-image/route.ts"
-Cohesion: 0.18
-Nodes (19): GET(), IMAGE_TYPES, ImageType, isImageType(), matchesImageSignature(), PUT(), readImageBody(), RouteParams (+11 more)
+Cohesion: 0.17
+Nodes (20): GET(), IMAGE_TYPES, ImageType, isImageType(), matchesImageSignature(), PUT(), readImageBody(), RouteParams (+12 more)
 
 ### Community 118 - "Removed Features"
 Cohesion: 0.08
@@ -701,9 +720,13 @@ Nodes (22): ApiError, AttendancePolicies(), savePolicy(), transitionPolicy(), cs
 Cohesion: 0.08
 Nodes (23): Alternatives, Auto-generate after migrate, Auto-seed after migrate, Automatic Behaviors Removed, CLI Flags Removed, Client Middleware, Common Middleware Patterns, Custom counter with extensions (+15 more)
 
+### Community 121 - "decidePayrollBatch"
+Cohesion: 0.39
+Nodes (8): getHrRecipients(), getSmtpTransport(), HrApprovalNotification, HrRejectedNotification, HrReturnedNotification, notifyHrPayrollApproval(), notifyHrPayrollRejected(), notifyHrPayrollReturned()
+
 ### Community 122 - "views.ts"
 Cohesion: 0.11
-Nodes (19): statusTabs, employeeListError(), load(), payrollCompensationBasisSchema, nullableText, payrollAmount, payrollDate, payrollDateTime (+11 more)
+Nodes (18): employeeListError(), PayrollEmployeeList(), load(), payrollCompensationBasisSchema, nullableText, payrollAmount, payrollDate, payrollDateTime (+10 more)
 
 ### Community 123 - "PAYROLL-APPROVAL.md"
 Cohesion: 0.09
@@ -714,8 +737,8 @@ Cohesion: 0.12
 Nodes (19): PolicyDefinition, Props, SettingsMessage(), UnitList(), branchesResponseSchema, branchResponseSchema, departmentResponseSchema, departmentsResponseSchema (+11 more)
 
 ### Community 125 - "organization/service.ts"
-Cohesion: 0.14
-Nodes (21): BranchInput, branchInputSchema, DepartmentInput, departmentInputSchema, EmploymentStatusDefinition, employmentStatusDefinitionInputSchema, EmploymentStatusPolicyInput, employmentStatusPolicyInputSchema (+13 more)
+Cohesion: 0.17
+Nodes (18): BranchInput, branchInputSchema, DepartmentInput, departmentInputSchema, EmploymentStatusDefinition, employmentStatusDefinitionInputSchema, EmploymentStatusPolicyInput, employmentStatusPolicyInputSchema (+10 more)
 
 ### Community 126 - "prisma studio"
 Cohesion: 0.10
@@ -734,16 +757,16 @@ Cohesion: 0.11
 Nodes (17): 1. Install dotenv, 2. Import in prisma.config.ts, Application Code, Bun Users, CI/CD Considerations, Entry point, Environment Variables, Multiple .env Files (+9 more)
 
 ### Community 131 - "react"
-Cohesion: 0.10
-Nodes (22): AdminRequestLayout(), AdminShell(), AdminHeader(), AdminLayoutFallback(), AdminNotifications(), initial, Notice, AdminSidebar() (+14 more)
+Cohesion: 0.18
+Nodes (10): AdminShell(), AdminHeader(), AdminNotifications(), initial, Notice, AdminSidebar(), items, roleLabels (+2 more)
 
 ### Community 132 - "AdminSettingsSections.tsx"
 Cohesion: 0.22
 Nodes (10): useAdminProfile(), AdminProfileSettings(), IntegrationSettings(), SecuritySettings(), card, Discard(), input, Modal() (+2 more)
 
 ### Community 133 - "DeductionCategoriesClient.tsx"
-Cohesion: 0.22
-Nodes (11): AdminDeductionCategoriesClient(), activateDraft(), CategorySetCard(), draftResponseSchema, activateDeductionCategoryInputSchema, categorySchema, deductionCategoryDraftInputSchema, deductionCategoryNamesSchema (+3 more)
+Cohesion: 0.20
+Nodes (12): AdminDeductionCategoriesClient(), activateDraft(), CategorySetCard(), AdminDeductionCategoriesPage(), draftResponseSchema, activateDeductionCategoryInputSchema, categorySchema, deductionCategoryDraftInputSchema (+4 more)
 
 ### Community 134 - "requestSettingsApi"
 Cohesion: 0.24
@@ -761,17 +784,21 @@ Nodes (16): 1. Keep your Accelerate URL, 2. Install Accelerate extension, 3. Con
 Cohesion: 0.12
 Nodes (16): Browser-Safe Types, Bun, "Cannot use import statement outside a module", CommonJS Projects, "ERR_REQUIRE_ESM", ESM and CommonJS Support, ESM Projects, File Extensions (+8 more)
 
-### Community 138 - "users-roles/data.ts"
-Cohesion: 0.15
-Nodes (11): PermissionMatrix(), toggle(), RoleFormModal(), all, baseModules, departments, initialRoles, initialUsers (+3 more)
+### Community 138 - "announcements/[id]/page.tsx"
+Cohesion: 0.26
+Nodes (12): AnnouncementDetailsPage(), Attachment, dateLabel(), DetailRow(), fallback, InfoCard(), Metric(), plain() (+4 more)
 
-### Community 139 - "db.ts"
-Cohesion: 0.12
-Nodes (22): POST(), POST(), GET(), PUT(), GET(), POST(), DomainAuditInput, LegacyDomainAuditInput (+14 more)
+### Community 139 - "bonuses.server.ts"
+Cohesion: 0.16
+Nodes (19): POST(), POST(), POST(), schema, GET(), PUT(), GET(), POST() (+11 more)
 
 ### Community 140 - "UsersRolesClient"
-Cohesion: 0.32
-Nodes (14): apiRequest(), errorText(), RequestError, UsersRolesClient(), reloadUsers(), removeProfileImage(), resendOrRevoke(), saveRolePermissions() (+6 more)
+Cohesion: 0.16
+Nodes (24): apiRequest(), csrfToken(), errorText(), formatDate(), InvitationCandidate, ListResponse, permissionGroups(), ProfileAvatar() (+16 more)
+
+### Community 141 - "TASK 6 – IMPLEMENT AND VERIFY DATABASE STRUCTURES"
+Cohesion: 0.17
+Nodes (12): 8. DATABASE, API, AND DATA INTEGRITY, Branches, Departments, Employment Status Policy, Employment Status Policy, History and Audit, Organization Profile, Organization Profile (+4 more)
 
 ### Community 142 - "PostgreSQL Setup"
 Cohesion: 0.12
@@ -798,8 +825,8 @@ Cohesion: 0.12
 Nodes (15): 1. Provider name, 2. Output is required, 3. engineType changed, 4. moduleFormat is explicit when needed, After Schema Changes, Datasource Block, Example Output Paths, Generated Entrypoints (+7 more)
 
 ### Community 148 - "organization.test.ts"
-Cohesion: 0.17
-Nodes (14): reset(), reset(), reset(), admin, reset(), createdDefinitions, createdPolicy, definitionFindMany (+6 more)
+Cohesion: 0.16
+Nodes (15): reset(), reset(), reset(), admin, loadPolicy(), loadService(), reset(), createdDefinitions (+7 more)
 
 ### Community 149 - "debug-deploy-failures"
 Cohesion: 0.13
@@ -816,6 +843,10 @@ Nodes (9): Approval audit and compliance workflows, Company timezone and workDat
 ### Community 152 - "Workflow and approval matrix"
 Cohesion: 0.14
 Nodes (15): Authorization contract, Attendance correction workflow, Compensation change workflow, Workflow and approval matrix, Domain audit records, Employee concern workflow, Employee lifecycle workflow, Leave workflow (+7 more)
+
+### Community 153 - "http.ts"
+Cohesion: 0.14
+Nodes (23): DELETE(), POST(), RouteParams, POST(), errorResponse(), GET(), POST(), GET() (+15 more)
 
 ### Community 154 - "api-response-transform.server.ts"
 Cohesion: 0.48
@@ -845,9 +876,9 @@ Nodes (14): Exception resolution, HR-side behavior, Mandatory rules, PART 8 – 
 Cohesion: 0.29
 Nodes (7): Client lifecycle: $connect and $disconnect, Prisma Client Methods, Prisma event subscriptions: $on, Prisma extensions: $extends, Prisma transactions: $transaction, Raw query methods: $queryRaw and $executeRaw, Type-safe query fragments with satisfies
 
-### Community 161 - "PayrollRulesEditor.tsx"
-Cohesion: 0.24
-Nodes (8): PayrollRulesPage(), CALCULATION_BASIS_OPTIONS, ELIGIBILITY_OPTIONS, PayrollRule, PayrollRuleEditor(), PayrollRuleEditorProps, ROUNDING_METHODS, getLatestPayrollRuleSet()
+### Community 161 - "Data ownership and metric definitions"
+Cohesion: 0.17
+Nodes (12): Policy and data gates, Payroll preparation, Active headcount metric, Attendance classification, Data ownership and metric definitions, Metric contract, Overtime hours metric, Pending approvals metric (+4 more)
 
 ### Community 162 - "TASK 2 – REPLACE THE JSON TEXTAREA WITH STRUCTURED FORM FIELDS"
 Cohesion: 0.29
@@ -877,21 +908,29 @@ Nodes (12): 1. Schema Configuration, 2. Config Configuration, 3. Environment Var
 Cohesion: 0.15
 Nodes (13): Formatting requirements, Formatting requirements, PART 3 – PAYROLL OVERVIEW AND REPORT EXPORT, Recommended workbook structure, Recommended workbook structure, Required fields, Requirements, Security and reliability requirements (+5 more)
 
-### Community 169 - "summary.server.ts"
-Cohesion: 0.07
-Nodes (24): DashboardSnapshotFetcher, accountStatusValues, DashboardRole, DashboardSnapshot, dashboardSnapshotSchema, roles, statuses, File Map (+16 more)
+### Community 169 - "5. ORGANIZATION STRUCTURE"
+Cohesion: 0.18
+Nodes (11): 5.1 Branch and Site Management, 5.3 Branch and Department Detail Views, 5.4 Branch and Department Lifecycle Protection, 5. ORGANIZATION STRUCTURE, Add New Branch, Branch APIs, Branch details, Branch list (+3 more)
+
+### Community 170 - "policy-resolution.ts"
+Cohesion: 0.27
+Nodes (7): AttendancePolicyCandidate, AttendancePolicyResolution, resolveAttendancePolicy(), scopeRank, utcDateKey(), resolvePolicyForEmployee(), date
 
 ### Community 171 - "requestPayrollApi"
 Cohesion: 0.11
-Nodes (20): ACTION_LABELS, AuditEvent, AuditResponse, ConfigAuditClient(), handleFilterSubmit(), handleReset(), loadData(), AdminConfigAuditPage() (+12 more)
+Nodes (25): ACTION_LABELS, AuditEvent, AuditResponse, ConfigAuditClient(), handleFilterSubmit(), handleReset(), loadData(), AdminConfigAuditPage() (+17 more)
 
-### Community 173 - "UsersRolesClient.tsx"
-Cohesion: 0.18
-Nodes (11): Avatar(), csrfToken(), formatDate(), InvitationCandidate, ListResponse, permissionGroups(), ProfileAvatar(), RoleRecord (+3 more)
+### Community 172 - "AdminRequestLayout.tsx"
+Cohesion: 0.44
+Nodes (5): AdminRequestLayout(), AdminLayoutFallback(), AdminLayout(), instant, calls
 
-### Community 174 - "loadSecurityConfig"
-Cohesion: 0.08
-Nodes (23): getRecentDashboardActivities(), ACTIVITY_COPY, AdminDashboardActivity, SecurityAuditActivity, toAdminDashboardActivity(), getAdminDashboardSnapshot(), GET(), limitSchema (+15 more)
+### Community 173 - "PayrollApprovalClient.tsx"
+Cohesion: 0.33
+Nodes (4): Page(), PayrollApprovalClient(), load(), periodLabel()
+
+### Community 174 - "session.server.ts"
+Cohesion: 0.15
+Nodes (21): POST(), AuthCookieOptions, CSRF_COOKIE_NAME, csrfCookieOptions(), DEVELOPMENT_CSRF_COOKIE_NAME, DEVELOPMENT_MFA_CHALLENGE_COOKIE_NAME, DEVELOPMENT_SESSION_COOKIE_NAME, hasValidCsrfToken() (+13 more)
 
 ### Community 175 - "SQL Server Setup"
 Cohesion: 0.17
@@ -901,17 +940,17 @@ Nodes (11): 1. Schema Configuration, 2. Config Configuration, 3. Environment Var
 Cohesion: 0.17
 Nodes (12): A. Codebase Findings, B. Database Changes, C. API Implementation, D. Payroll Calculation and Reconciliation, E. Validation and Exception System, F. Approval Workflow, G. XLSX Report, H. Frontend Changes (+4 more)
 
-### Community 177 - "Data ownership and metric definitions"
-Cohesion: 0.17
-Nodes (12): Policy and data gates, Payroll preparation, Active headcount metric, Attendance classification, Data ownership and metric definitions, Metric contract, Overtime hours metric, Pending approvals metric (+4 more)
+### Community 177 - "next"
+Cohesion: 0.11
+Nodes (10): HrHeader(), links, Sidebar(), HrLayout(), HrRequestLayout(), geistMono, geistSans, metadata (+2 more)
 
 ### Community 178 - "api/employees.test.ts"
 Cohesion: 0.15
-Nodes (10): actor, requireApiPermission, TestApiAuthorizationError, departments, employeeAssignmentResults, employeeAssignments, employeeCreate, employeeFindMany (+2 more)
+Nodes (10): actor, requireApiPermission, TestApiAuthorizationError, departments, employeeAssignmentResults, employeeAssignments, employeeFindFirst, employeeFindMany (+2 more)
 
 ### Community 179 - "domain/employees.test.ts"
-Cohesion: 0.17
-Nodes (11): admin, createInput, hr, loadSchemas(), loadService(), employeeAccount, employeeAssignmentCreate, employeeAssignmentUpdateMany (+3 more)
+Cohesion: 0.15
+Nodes (12): admin, createInput, hr, loadSchemas(), loadService(), employeeAccount, employeeAssignmentCreate, employeeAssignmentUpdateMany (+4 more)
 
 ### Community 181 - "TASK 10 – REVIEW AND IMPROVE THE COMPENSATION PAGE"
 Cohesion: 0.50
@@ -938,8 +977,8 @@ Cohesion: 0.18
 Nodes (11): Calls for the implementation design, Dashboard/API behavior, Data and workflow boundaries, Decisions confirmed by the user, Goals, Intent, Live Admin Dashboard and Business Data Design, Non-goals and safeguards (+3 more)
 
 ### Community 187 - "organization-policy.test.ts"
-Cohesion: 0.25
-Nodes (6): request(), requireApiPermission, TestApiAuthorizationError, domainAuditCreate, organizationFindUnique, policyCreate
+Cohesion: 0.18
+Nodes (9): request(), requestBranches(), requestEmploymentStatuses(), requireApiPermission, TestApiAuthorizationError, domainAuditCreate, organizationFindUnique, organizationUpsert (+1 more)
 
 ### Community 188 - "12. SECURITY, VALIDATION, AND SCALABILITY"
 Cohesion: 0.50
@@ -965,6 +1004,10 @@ Nodes (10): Action Inputs and Outputs, Bad, Checking a Push, deploy-on-push, Goo
 Cohesion: 0.20
 Nodes (9): Bad, client-api-mapping, Good, Old call to new call, Priority, References, The client, The five differences (+1 more)
 
+### Community 194 - "login/route.ts"
+Cohesion: 0.35
+Nodes (10): POST(), COMMON_PASSWORDS, hashPassword(), isValidEmail(), normalizeEmail(), verifyPassword(), createMfaChallenge(), createSessionForUser() (+2 more)
+
 ### Community 196 - "2. MANDATORY DEVELOPMENT RULES"
 Cohesion: 0.50
 Nodes (4): 2.1 Required Skills, 2.2 Inspect Before Modifying, 2.3 Non-Negotiable Rules, 2. MANDATORY DEVELOPMENT RULES
@@ -988,6 +1031,14 @@ Nodes (9): Cursor pagination, distinct option, Query options, include option, om
 ### Community 202 - "verify-upgrade-checklist"
 Cohesion: 0.22
 Nodes (8): Bad, Checklist, Good, Priority, References, Rules, verify-upgrade-checklist, Why It Matters
+
+### Community 203 - "db.ts"
+Cohesion: 0.06
+Nodes (37): getRecentDashboardActivities(), ACTIVITY_COPY, AdminDashboardActivity, SecurityAuditActivity, toAdminDashboardActivity(), getAdminDashboardSnapshot(), roles, statuses (+29 more)
+
+### Community 204 - "eslint.config.mjs"
+Cohesion: 0.33
+Nodes (5): eslintConfig, eslint@^9, eslint-config-next@16.4.6, eslint, eslint-config-next
 
 ### Community 205 - "verify-upgrade-checklist"
 Cohesion: 0.22
@@ -1029,10 +1080,6 @@ Nodes (8): SQL injection prevention, Adapter error mapping, Raw queries, $execut
 Cohesion: 0.25
 Nodes (8): Standalone Prisma Postgres Provisioning, Management API provisioning, Prisma Platform CLI provisioning, Provisioning authentication and errors, Resource regions and asynchronous creation, Reuse existing Prisma Postgres resources, Secret storage for database credentials, Temporary create-db lifecycle
 
-### Community 215 - "Prisma Postgres on Vercel Marketplace"
-Cohesion: 0.25
-Nodes (8): Direct and pooled database endpoints, Prisma Postgres on Vercel Marketplace, First successful database request, Native Vercel Marketplace integration, Vercel integration environment variables, Vercel plan billing and backups, Vercel Prisma Postgres resource reuse, Vercel provisioning common errors
-
 ### Community 218 - "TASK 25: Implement Required Backend APIs"
 Cohesion: 0.25
 Nodes (8): PART 15 – API AND DATABASE ARCHITECTURE, Payroll Action APIs, Payroll Batch APIs, Payroll Validation APIs, Requirements, TASK 25: Implement Required Backend APIs, TASK 26: Database Schema and Relationship Verification, XLSX APIs
@@ -1046,8 +1093,8 @@ Cohesion: 0.20
 Nodes (11): prisma.config.ts migrations.seed, Prisma db seed, Configured database seed script, Idempotent seeding with upsert, Seed configuration in prisma.config.ts, prisma generate, prisma db seed, prisma/migrations files (+3 more)
 
 ### Community 221 - "writeDomainAuditEvent"
-Cohesion: 0.14
-Nodes (24): POST(), GET(), GET(), POST(), writeDomainAuditEvent(), authorizeEmployeeCompensationAccess(), CompensationAuthorizationError, filterSalaryAdjustmentForRole() (+16 more)
+Cohesion: 0.11
+Nodes (27): POST(), POST(), POST(), GET(), GET(), POST(), GET(), POST() (+19 more)
 
 ### Community 222 - "TASK 12 – HR PAYROLL CONFIGURATION PORTAL"
 Cohesion: 0.29
@@ -1065,13 +1112,9 @@ Nodes (7): Employee Deductions, Employee Salary Breakdown, Payable Breakdown, Pa
 Cohesion: 0.29
 Nodes (7): PART 4 – PAYROLL FINANCIAL SUMMARY, Reconciliation requirement, Summary Card 1 – Gross Payable, Summary Card 2 – Total Deductions, Summary Card 3 – Net Payable, Summary Card 4 – Included Employees, TASK 5: Implement Payroll Summary APIs
 
-### Community 226 - "Prisma Postgres operations"
-Cohesion: 0.33
-Nodes (6): Prisma Management API SDK, Database credentials, Prisma Postgres operations, OAuth token handling, Prisma Console, Prisma Management API
-
-### Community 227 - "app/layout.tsx"
-Cohesion: 0.33
-Nodes (3): geistMono, geistSans, metadata
+### Community 227 - "3. ORGANIZATION PROFILE"
+Cohesion: 0.22
+Nodes (9): 3.1 Organization Name, 3.2 Company Time Zone, 3.3 Organization Profile UI/UX, 3.4 Organization Profile Audit, 3. ORGANIZATION PROFILE, TASK 1 – IMPLEMENT ORGANIZATION PROFILE RETRIEVAL AND UPDATE APIS, Time zone behavior, Validation (+1 more)
 
 ### Community 228 - "TASK 19 – RETURN, REJECTION, APPROVAL, AND DISBURSEMENT"
 Cohesion: 0.33
@@ -1093,9 +1136,9 @@ Nodes (6): Historical view requirements, Interaction requirements, Main Payroll 
 Cohesion: 0.60
 Nodes (5): Prisma migrate deploy, Apply pending migrations in production and staging, _prisma_migrations table, Prisma migrate status, Applied, pending, missing, and failed migration status
 
-### Community 233 - "Prisma Postgres Console and Management Operations"
-Cohesion: 0.29
-Nodes (8): PostgreSQL Setup, Prisma Postgres with Prisma ORM 7, Credential handling and pagination, Prisma Postgres Console and Management Operations, OAuth token refresh and secure storage, Prisma Console resource inspection, Version-matched ORM migrations, Prisma Postgres Setup Skill
+### Community 233 - "domain-audit.ts"
+Cohesion: 0.28
+Nodes (5): DomainAuditInput, LegacyDomainAuditInput, Permission, SessionPrincipal, BatchTimelineEventInput
 
 ### Community 234 - "TASK 11 – CENTRALIZED PAYROLL RULES AND CALCULATION FOUNDATION"
 Cohesion: 0.40
@@ -1141,25 +1184,109 @@ Nodes (3): Admin Audit Interface, Audit protection, TASK 15 – ADMIN PAYROLL CO
 Cohesion: 0.67
 Nodes (3): Approved tab, Rejected/Returned tab, TASK 20 – APPROVED AND REJECTED/RETURNED PAYROLL HISTORY
 
+### Community 245 - "summary-schema.ts"
+Cohesion: 0.15
+Nodes (12): DashboardSnapshotFetcher, fetchDashboardSnapshot(), accountStatusValues, DashboardRole, DashboardSnapshot, dashboardSnapshotSchema, File Map, Task 1: Defer Admin Authentication to Request Rendering (+4 more)
+
+### Community 246 - "users/schemas.ts"
+Cohesion: 0.12
+Nodes (16): acceptInvitationSchema, CreateUserInvitationInput, createUserInvitationSchema, emailSchema, invitationTokenSchema, phoneNumberSchema, UpdateUserInput, updateUserPermissionDenialsSchema (+8 more)
+
+### Community 247 - "migrate-resolve.md"
+Cohesion: 0.32
+Nodes (7): Existing database baselining, Prisma migrate resolve, Failed migration recovery, Manually change migration state, Migration baselining, Mark migration as applied, Mark migration as rolled back
+
+### Community 248 - "AdminProfileMenu.tsx"
+Cohesion: 0.17
+Nodes (11): AccessPendingPage(), instant, EmployeeAccountPage(), instant, AdminProfileMenu(), signOut(), readCsrfCookie(), roleLabels (+3 more)
+
+### Community 249 - "admin/dashboard/page.tsx"
+Cohesion: 0.22
+Nodes (8): DashboardPage(), getDashboardPresentation(), Admin Dashboard Screenshot-Aligned Safe Slice Implementation Plan, Explicitly Deferred, Global Constraints, Review Focus, Task 2: Implement the Screenshot-Aligned Dashboard UI, Task 3: Reconcile Documentation and Verify the Slice
+
+### Community 250 - "payroll-api-integration.test.ts"
+Cohesion: 0.14
+Nodes (10): errorResponse(), GET(), auditQuerySchema, errorResponse(), GET(), getBatchTimeline(), actor, prismaMock (+2 more)
+
+### Community 251 - "TASK 9 – IMPLEMENT COMPREHENSIVE TESTS"
+Cohesion: 0.25
+Nodes (8): 10. TESTING AND VERIFICATION, A. Organization Profile Tests, B. Employment Status Policy Tests, C. Organization Structure Tests, D. Team Removal Tests, E. Security Tests, F. General Quality Checks, TASK 9 – IMPLEMENT COMPREHENSIVE TESTS
+
+### Community 252 - "MongoDB cutover checklist"
+Cohesion: 0.22
+Nodes (10): MongoDB ObjectId mapping, Index parity, MongoDB server version floor, MongoDB schema contract mapping, MongoDB polymorphism, Prisma 8 MongoDB contract, Cutover rollback, MongoDB cutover checklist (+2 more)
+
+### Community 253 - "MongoDB Cutover Verification Checklist"
+Cohesion: 0.22
+Nodes (9): Collection storage-name audit, Cutover and code rollback, Database-copy rehearsal, MongoDB Cutover Verification Checklist, Raw-call inventory, Read-only soak, Same-database staged migration, Transaction inventory (+1 more)
+
+### Community 254 - "Prisma Postgres on Vercel Marketplace"
+Cohesion: 0.25
+Nodes (8): Direct and pooled database endpoints, Prisma Postgres on Vercel Marketplace, First successful database request, Native Vercel Marketplace integration, Vercel integration environment variables, Vercel plan billing and backups, Vercel Prisma Postgres resource reuse, Vercel provisioning common errors
+
+### Community 255 - "MongoDB Migration Workflow Mapping"
+Cohesion: 0.29
+Nodes (7): MongoDB Migration Workflow Mapping, MongoDB migration marker storage, Non-transactional MongoDB DDL, Prisma 8 db update bootstrap, Prisma 8 db verify, Prisma 8 migration plan and migrate lifecycle, Prisma v6 MongoDB db push workflow
+
+### Community 256 - "Prisma Postgres operations"
+Cohesion: 0.33
+Nodes (6): Prisma Management API SDK, Database credentials, Prisma Postgres operations, OAuth token handling, Prisma Console, Prisma Management API
+
+### Community 258 - "PayrollRulesEditor.tsx"
+Cohesion: 0.20
+Nodes (10): PayrollRulesPage(), buildControlledFormula(), CALCULATION_BASIS_OPTIONS, ELIGIBILITY_OPTIONS, FORMULA_OPERATORS, FORMULA_VARIABLES, PayrollRule, PayrollRuleEditor() (+2 more)
+
+### Community 259 - "11. IMPLEMENTATION ORDER"
+Cohesion: 0.25
+Nodes (8): 11. IMPLEMENTATION ORDER, PHASE 1 – CODEBASE INSPECTION, PHASE 2 – ORGANIZATION PROFILE, PHASE 3 – EMPLOYMENT STATUS POLICY, PHASE 4 – BRANCH MANAGEMENT, PHASE 5 – DEPARTMENT MANAGEMENT, PHASE 6 – TEAM COMPONENT REMOVAL, PHASE 7 – FINAL INTEGRATION AND VERIFICATION
+
+### Community 260 - "Prisma Postgres Console and Management Operations"
+Cohesion: 0.29
+Nodes (8): PostgreSQL Setup, Prisma Postgres with Prisma ORM 7, Credential handling and pagination, Prisma Postgres Console and Management Operations, OAuth token refresh and secure storage, Prisma Console resource inspection, Version-matched ORM migrations, Prisma Postgres Setup Skill
+
+### Community 261 - "[roleId]/route.ts"
+Cohesion: 0.48
+Nodes (4): PATCH(), RouteParams, GET(), roleApiErrorResponse()
+
+### Community 262 - "login-policy.ts"
+Cohesion: 0.52
+Nodes (5): authenticateCredentials(), LoginAccountRecord, requiresMfa(), requiresMfaReauthentication(), activeAdmin
+
+### Community 263 - "TASK 8 – COMPLETE FRONTEND INTEGRATION"
+Cohesion: 0.33
+Nodes (6): 9. UI/UX IMPLEMENTATION, Employment Status Policy, Organization Profile, Organization Structure, TASK 8 – COMPLETE FRONTEND INTEGRATION, UX requirements
+
+### Community 264 - "[departmentId]/route.ts"
+Cohesion: 0.60
+Nodes (4): DELETE(), PATCH(), RouteContext, updateDepartment()
+
+### Community 265 - "5.2 Department Management"
+Cohesion: 0.40
+Nodes (5): 5.2 Department Management, Add New Department, Department Editing, Department list, Department-to-Branch Relationship
+
+### Community 266 - "2. MANDATORY DEVELOPMENT INSTRUCTIONS"
+Cohesion: 0.50
+Nodes (4): 2.1 Required Agent Skills, 2.2 Inspect the Existing Codebase First, 2.3 Non-Negotiable Implementation Rules, 2. MANDATORY DEVELOPMENT INSTRUCTIONS
+
 ## Knowledge Gaps
 - **343 isolated node(s):** `createdDefinitions`, `createdPolicy`, `Deprecated prisma-postgres compatibility name`, `Next.js agent rules`, `Deprecated Prisma Postgres compatibility skill` (+338 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1580 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1703 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `UsersTable.tsx`, `requirePagePermission`, `compensation/page.tsx`, `react`, `AdminSettingsSections.tsx`, `AdminDashboardClient.tsx`, `DeductionCategoriesClient.tsx`, `react-icons`, `company/data.ts`, `authorization.ts`, `package.json`, `CompanyBranches.tsx`, `dependencies`, `config-service.server.ts`, `PayrollRulesEditor.tsx`, `LoginClient.tsx`, `EmployeesClient.tsx`, `requestPayrollApi`, `UsersRolesClient.tsx`, `client-api.ts`, `FloorPlanClient.tsx`, `PayrollPreparationClient.tsx`, `requestPayrollApi`, `invitations.server.ts`, `AdminAuditLogs.tsx`, `AttendancePolicies.tsx`, `views.ts`, `settings-api.ts`?**
-  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+- **Why does `react` connect `react` to `UsersTable.tsx`, `compensation/page.tsx`, `react`, `AdminSettingsSections.tsx`, `AdminDashboardClient.tsx`, `DeductionCategoriesClient.tsx`, `PayrollRulesEditor.tsx`, `SessionRecoveryStatus`, `company/data.ts`, `announcements/[id]/page.tsx`, `react-icons`, `UsersRolesClient`, `leave-management/page.tsx`, `AttendanceDetailClient.tsx`, `package.json`, `CompanyBranches.tsx`, `dependencies`, `company-config.ts`, `LoginClient.tsx`, `PayrollBatchDetails.tsx`, `employees/service.ts`, `payroll-management/page.tsx`, `requestPayrollApi`, `AdminRequestLayout.tsx`, `attendance-management/page.tsx`, `client-api.ts`, `next`, `announcements/page.tsx`, `Office3D.tsx`, `FloorPlanClient.tsx`, `PayrollReviewClient.tsx`, `invitations.server.ts`, `AdminAuditLogs.tsx`, `AttendancePolicies.tsx`, `AdminProfileMenu.tsx`, `views.ts`, `settings-api.ts`?**
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **What connects `createdDefinitions`, `createdPolicy`, `Deprecated prisma-postgres compatibility name` to the rest of the system?**
   _343 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `requirePagePermission` be split into smaller, more focused modules?**
-  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
-- **Why does `zod` connect `jsonResponse` to `DeductionCategoriesClient.tsx`, `db.ts`, `authorization.ts`, `allowances-v2.server.ts`, `package.json`, `jsonResponse`, `calculator.ts`, `dependencies`, `config-service.server.ts`, `Authentication Input Schemas`, `http.ts`, `summary.server.ts`, `EmployeesClient.tsx`, `policy-schemas.ts`, `loadSecurityConfig`, `rules-service.server.ts`, `disbursement/route.ts`, `employees/service.ts`, `PayrollPreparationClient.tsx`, `[id]/decision/route.ts`, `hr/payroll/config/route.ts`, `writeDomainAuditEvent`, `_shared.ts`, `users/service.ts`, `apiAuthorizationErrorResponse`, `requestPayrollApi`, `payroll-results/schemas.ts`, `rules-api.ts`, `views.ts`, `settings-api.ts`, `organization/service.ts`?**
-  _High betweenness centrality (0.064) - this node is a cross-community bridge._
+- **Should `UsersTable.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.1076923076923077 - nodes in this community are weakly interconnected._
+- **Why does `next` connect `next` to `next`, `PayrollRulesEditor.tsx`, `react`, `AdminSettingsSections.tsx`, `DeductionCategoriesClient.tsx`, `SessionRecoveryStatus`, `announcements/[id]/page.tsx`, `UsersRolesClient`, `allowances-v2.server.ts`, `AttendanceDetailClient.tsx`, `package.json`, `dependencies`, `LoginClient.tsx`, `PayrollBatchDetails.tsx`, `employees/service.ts`, `payroll-management/page.tsx`, `requestPayrollApi`, `AdminRequestLayout.tsx`, `PayrollApprovalClient.tsx`, `attendance-management/page.tsx`, `session.server.ts`, `client-api.ts`, `announcements/page.tsx`, `FloorPlanClient.tsx`, `[code]/route.ts`, `PayrollReviewClient.tsx`, `departments/route.ts`, `invitations.server.ts`, `AdminProfileMenu.tsx`, `views.ts`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+- **Should `next` be split into smaller, more focused modules?**
+  _Cohesion score 0.10984848484848485 - nodes in this community are weakly interconnected._
+- **Why does `zod` connect `bonuses.server.ts` to `[roleId]/route.ts`, `DeductionCategoriesClient.tsx`, `authorization.ts`, `allowances-v2.server.ts`, `package.json`, `readJsonBody`, `http.ts`, `dependencies`, `company-config.ts`, `Authentication Input Schemas`, `employees/service.ts`, `formula-engine.ts`, `api-guard.server.ts`, `rules-service.server.ts`, `config-service.server.ts`, `payroll-results/schemas.ts`, `payroll-end-to-end-lifecycle.test.ts`, `jsonResponse`, `policy-schemas.ts`, `db.ts`, `writeDomainAuditEvent`, `_shared.ts`, `PayrollReviewClient.tsx`, `views.ts`, `rules-api.ts`, `summary-schema.ts`, `users/schemas.ts`, `payroll-api-integration.test.ts`, `settings-api.ts`, `organization/service.ts`?**
+  _High betweenness centrality (0.043) - this node is a cross-community bridge._
 - **Should `compensation/page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.05030643513789581 - nodes in this community are weakly interconnected._
-- **Why does `next` connect `requirePagePermission` to `compensation/page.tsx`, `react`, `AdminSettingsSections.tsx`, `react-icons`, `AdminProfileMenu`, `DeductionCategoriesClient.tsx`, `session.server.ts`, `authorization.ts`, `allowances-v2.server.ts`, `package.json`, `dependencies`, `PayrollRulesEditor.tsx`, `LoginClient.tsx`, `requestPayrollApi`, `UsersRolesClient.tsx`, `client-api.ts`, `FloorPlanClient.tsx`, `PayrollPreparationClient.tsx`, `_shared.ts`, `requestPayrollApi`, `app/layout.tsx`, `[code]/route.ts`, `invitations.server.ts`, `views.ts`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
-- **Should `Role and feature specification` be split into smaller, more focused modules?**
-  _Cohesion score 0.11594202898550725 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07616892911010557 - nodes in this community are weakly interconnected._

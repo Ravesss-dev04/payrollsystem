@@ -8,7 +8,7 @@ import {
 
 export async function GET(request: Request, { params }: { params: Promise<{ programId: string }> }) {
   try {
-    const actor = await requireApiPermission(request, "compensation:policy:manage");
+    const actor = await requireApiPermission(request, "compensation:read");
     const { programId } = await params;
     return Response.json({ program: await getBonusProgram(actor, programId) });
   } catch (error) {
