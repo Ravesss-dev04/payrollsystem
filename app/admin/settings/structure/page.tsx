@@ -5,16 +5,14 @@ import {
   getBranches,
   getDepartments,
   getOrganizationSettings,
-  getTeams,
 } from "../../../lib/organization/service";
 
 export default async function OrganizationStructurePage() {
   await requirePagePermission("company:manage");
-  const [organization, branches, departments, teams] = await Promise.all([
+  const [organization, branches, departments] = await Promise.all([
     getOrganizationSettings(),
     getBranches(),
     getDepartments(),
-    getTeams(),
   ]);
 
   return (
@@ -30,14 +28,13 @@ export default async function OrganizationStructurePage() {
           Organization structure
         </h1>
         <p className="mt-2 text-sm text-[#73718A]">
-          Maintain branches, departments, and teams. Records are deactivated
+          Maintain branches and departments. Records are deactivated
           rather than deleted so linked history can be retained.
         </p>
       </header>
       <OrganizationStructureForm
         initialBranches={branches}
         initialDepartments={departments}
-        initialTeams={teams}
         organizationConfigured={organization !== null}
       />
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { organizationSettingsInputSchema } from "../../lib/organization/policy";
+import { organizationSettingsInputSchema, supportedTimeZones } from "../../lib/organization/policy";
 import {
   organizationSettingsResponseSchema,
   requestSettingsApi,
@@ -93,10 +93,7 @@ export function OrganizationSettingsForm({
             className="w-full rounded-lg border border-[#D8D4E5] px-3 py-2 text-sm outline-none focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/20"
           />
           <datalist id="organization-time-zones">
-            <option value="Asia/Manila" />
-            <option value="UTC" />
-            <option value="America/New_York" />
-            <option value="Europe/London" />
+            {supportedTimeZones().map((zone) => <option key={zone} value={zone} />)}
           </datalist>
           <p className="text-xs text-[#73718A]">
             Enter an IANA time-zone name, such as Asia/Manila.

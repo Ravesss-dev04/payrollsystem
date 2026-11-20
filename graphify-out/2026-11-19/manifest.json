@@ -1,0 +1,3506 @@
+{
+  "app/layout.tsx": {
+    "mtime": 1794664922.3184042,
+    "seen": 1794732252.0029063,
+    "ast_hash": "5591e79149ae01db5781b7f68a56ca62",
+    "semantic_hash": "5591e79149ae01db5781b7f68a56ca62"
+  },
+  "app/page.tsx": {
+    "mtime": 1795091957.806683,
+    "seen": 1795094911.4914243,
+    "ast_hash": "2aaeaae66ab05c347979131639c950a6",
+    "semantic_hash": ""
+  },
+  "eslint.config.mjs": {
+    "mtime": 1794664922.3340304,
+    "seen": 1794732252.002962,
+    "ast_hash": "6c4307ffa009658f5c97f5629094c0c2",
+    "semantic_hash": "6c4307ffa009658f5c97f5629094c0c2"
+  },
+  "next.config.ts": {
+    "mtime": 1794664922.5432158,
+    "seen": 1794732252.0029645,
+    "ast_hash": "6eda143dde6397ac6cef220ea8df8f20",
+    "semantic_hash": "6eda143dde6397ac6cef220ea8df8f20"
+  },
+  "package.json": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4914482,
+    "ast_hash": "2d9030f6f01c32a883a31a2812ef3a7a",
+    "semantic_hash": ""
+  },
+  "prisma7.config.ts": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.788647,
+    "ast_hash": "ca10a2f723e0de0778793d5893a45b5f",
+    "semantic_hash": "ca10a2f723e0de0778793d5893a45b5f"
+  },
+  "skills-lock.json": {
+    "mtime": 1794664922.593556,
+    "seen": 1794732252.002976,
+    "ast_hash": "03cbca00fd9c69edc59ea329a91772a6",
+    "semantic_hash": "03cbca00fd9c69edc59ea329a91772a6"
+  },
+  "tsconfig.json": {
+    "mtime": 1795091958.8665466,
+    "seen": 1795094911.4919772,
+    "ast_hash": "e256e2a2252810a2599179fd64a28eea",
+    "semantic_hash": ""
+  },
+  ".agents/skills/prisma-cli/SKILL.md": {
+    "mtime": 1794664921.9263318,
+    "seen": 1794732420.4411345,
+    "ast_hash": "c83a2d8f25952af4d1c8d721fb62b000",
+    "semantic_hash": "c83a2d8f25952af4d1c8d721fb62b000"
+  },
+  ".agents/skills/prisma-cli/references/studio.md": {
+    "mtime": 1794664921.9683769,
+    "seen": 1794993226.6286993,
+    "ast_hash": "2026596659d5240e723e8aa2e08457cb",
+    "semantic_hash": "2026596659d5240e723e8aa2e08457cb"
+  },
+  ".agents/skills/prisma-cli/references/validate.md": {
+    "mtime": 1794664921.9693744,
+    "seen": 1794993226.6287053,
+    "ast_hash": "e55d15ed599ab1d5daa22b3dded2f3a6",
+    "semantic_hash": "e55d15ed599ab1d5daa22b3dded2f3a6"
+  },
+  ".agents/skills/prisma-client-api/SKILL.md": {
+    "mtime": 1794664921.971378,
+    "seen": 1794732420.44118,
+    "ast_hash": "33e8490da9422e0409a9d6720d738432",
+    "semantic_hash": "33e8490da9422e0409a9d6720d738432"
+  },
+  ".agents/skills/prisma-compute/SKILL.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794732420.4412005,
+    "ast_hash": "b62fd9443a5a7c8cfa7d00e500ad0c65",
+    "semantic_hash": "b62fd9443a5a7c8cfa7d00e500ad0c65"
+  },
+  ".agents/skills/prisma-compute/references/cli-command-map.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.6288047,
+    "ast_hash": "a894d8b9e171614f18b92cd243ac5ec3",
+    "semantic_hash": "a894d8b9e171614f18b92cd243ac5ec3"
+  },
+  ".agents/skills/prisma-compute/references/debug-deploy-failures.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.62881,
+    "ast_hash": "1cfedc0e0b5eace4a309cfd0dffc662b",
+    "semantic_hash": "1cfedc0e0b5eace4a309cfd0dffc662b"
+  },
+  ".agents/skills/prisma-compute/references/deploy-cli-and-ci.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.6288157,
+    "ast_hash": "b18f4b9af28acc2e1d6892cacba24b7d",
+    "semantic_hash": "b18f4b9af28acc2e1d6892cacba24b7d"
+  },
+  ".agents/skills/prisma-compute/references/deploy-existing-app.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.6288216,
+    "ast_hash": "1032d8d5c18242fd92c41edb9d92bf82",
+    "semantic_hash": "1032d8d5c18242fd92c41edb9d92bf82"
+  },
+  ".agents/skills/prisma-compute/references/deploy-on-push.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.6288269,
+    "ast_hash": "b298b7639ef19c4907d140741ae826c3",
+    "semantic_hash": "b298b7639ef19c4907d140741ae826c3"
+  },
+  ".agents/skills/prisma-compute/references/ops-services-and-config.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.6288326,
+    "ast_hash": "25b571dd5718e2e5591ab725cbb865e3",
+    "semantic_hash": "25b571dd5718e2e5591ab725cbb865e3"
+  },
+  ".agents/skills/prisma-compute/references/runtime-requirements.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794993226.6288383,
+    "ast_hash": "4b3e40e1635f815196d5dde8a636d7af",
+    "semantic_hash": "4b3e40e1635f815196d5dde8a636d7af"
+  },
+  ".agents/skills/prisma-driver-adapter-implementation/SKILL.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732420.4412165,
+    "ast_hash": "a34b8a6e8a68b25e2aca7a0388887839",
+    "semantic_hash": "a34b8a6e8a68b25e2aca7a0388887839"
+  },
+  ".agents/skills/prisma-mongodb-upgrade/SKILL.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732420.4412189,
+    "ast_hash": "026f3333ceae232e1be79d5054431209",
+    "semantic_hash": "026f3333ceae232e1be79d5054431209"
+  },
+  ".agents/skills/prisma-orm-setup/SKILL.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732420.441233,
+    "ast_hash": "91f20d650fb4d407b583155c61d3c6b2",
+    "semantic_hash": "91f20d650fb4d407b583155c61d3c6b2"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-client-setup.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732420.441237,
+    "ast_hash": "6a62a824bd294194030db1c6f259be17",
+    "semantic_hash": "6a62a824bd294194030db1c6f259be17"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-cockroachdb.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.441239,
+    "ast_hash": "73a3eebf9e617576d29100f43344eefd",
+    "semantic_hash": "73a3eebf9e617576d29100f43344eefd"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-mysql.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.441241,
+    "ast_hash": "b6dba5a49ce6f98fc0ceb7037ee9363f",
+    "semantic_hash": "b6dba5a49ce6f98fc0ceb7037ee9363f"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-postgresql.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.4412434,
+    "ast_hash": "d9dec8bc4121cd4724cceaf964bc11a5",
+    "semantic_hash": "d9dec8bc4121cd4724cceaf964bc11a5"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-prisma-postgres.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.441245,
+    "ast_hash": "7c42280c893efd9d40b23fb0c33c3e96",
+    "semantic_hash": "7c42280c893efd9d40b23fb0c33c3e96"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-sqlite.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.441247,
+    "ast_hash": "8e1832ba1a8eb9c13d05ed598d412e92",
+    "semantic_hash": "8e1832ba1a8eb9c13d05ed598d412e92"
+  },
+  ".agents/skills/prisma-orm-setup/references/v7-sqlserver.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.4412494,
+    "ast_hash": "8107de78d48933dd48fa5355eb6ea5ee",
+    "semantic_hash": "8107de78d48933dd48fa5355eb6ea5ee"
+  },
+  ".agents/skills/prisma-postgres-setup/SKILL.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732420.4412513,
+    "ast_hash": "994a75fced49e6d4581cb75a493a6048",
+    "semantic_hash": "994a75fced49e6d4581cb75a493a6048"
+  },
+  ".agents/skills/prisma-postgres-upgrade/SKILL.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794732420.4412608,
+    "ast_hash": "a99b3f112c892b10e4a00e0a61d7ea4d",
+    "semantic_hash": "a99b3f112c892b10e4a00e0a61d7ea4d"
+  },
+  ".agents/skills/prisma-postgres-upgrade/references/client-api-mapping.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794993226.6290042,
+    "ast_hash": "1b8b4fd5d0ee4f54bf544b91c9891d5e",
+    "semantic_hash": "1b8b4fd5d0ee4f54bf544b91c9891d5e"
+  },
+  ".agents/skills/prisma-postgres-upgrade/references/verify-upgrade-checklist.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794993226.6290102,
+    "ast_hash": "cfe9a66166ac81a343c99d82b01f1d9d",
+    "semantic_hash": "cfe9a66166ac81a343c99d82b01f1d9d"
+  },
+  ".agents/skills/prisma-upgrade-v7/SKILL.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794732420.4412675,
+    "ast_hash": "c27c17ab912f26e7def1a3056abd5854",
+    "semantic_hash": "c27c17ab912f26e7def1a3056abd5854"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/accelerate-users.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794993226.62903,
+    "ast_hash": "dabf06bdced251eff703585d8aa09a81",
+    "semantic_hash": "dabf06bdced251eff703585d8aa09a81"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/driver-adapters.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732420.4412694,
+    "ast_hash": "e5be89d424fdc219aa6af34e5f6e410e",
+    "semantic_hash": "e5be89d424fdc219aa6af34e5f6e410e"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/env-variables.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794993226.6290421,
+    "ast_hash": "248ff3c8a622636e45e132b1e8b5079e",
+    "semantic_hash": "248ff3c8a622636e45e132b1e8b5079e"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/esm-support.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794993226.6290479,
+    "ast_hash": "cff7f35c26c4bc52f4eab28e8f05997f",
+    "semantic_hash": "cff7f35c26c4bc52f4eab28e8f05997f"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/prisma-config.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732420.4412715,
+    "ast_hash": "195a2e920a8ac7ee65d06c7b5dc3f346",
+    "semantic_hash": "195a2e920a8ac7ee65d06c7b5dc3f346"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/removed-features.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794993226.6290598,
+    "ast_hash": "f915f82fffed7764d722c712004762b3",
+    "semantic_hash": "f915f82fffed7764d722c712004762b3"
+  },
+  ".agents/skills/prisma-upgrade-v7/references/schema-changes.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732420.4412737,
+    "ast_hash": "1b1e7daa4f6109c92c716e1cb33b023d",
+    "semantic_hash": "1b1e7daa4f6109c92c716e1cb33b023d"
+  },
+  ".claude/skills/prisma-cli/SKILL.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732420.4412754,
+    "ast_hash": "c83a2d8f25952af4d1c8d721fb62b000",
+    "semantic_hash": "c83a2d8f25952af4d1c8d721fb62b000"
+  },
+  ".claude/skills/prisma-cli/references/studio.md": {
+    "mtime": 1794664922.072186,
+    "seen": 1794993226.6291986,
+    "ast_hash": "2026596659d5240e723e8aa2e08457cb",
+    "semantic_hash": "2026596659d5240e723e8aa2e08457cb"
+  },
+  ".claude/skills/prisma-cli/references/validate.md": {
+    "mtime": 1794664922.0808668,
+    "seen": 1794993226.6292043,
+    "ast_hash": "e55d15ed599ab1d5daa22b3dded2f3a6",
+    "semantic_hash": "e55d15ed599ab1d5daa22b3dded2f3a6"
+  },
+  ".claude/skills/prisma-client-api/SKILL.md": {
+    "mtime": 1794664922.0828717,
+    "seen": 1794732420.4413214,
+    "ast_hash": "33e8490da9422e0409a9d6720d738432",
+    "semantic_hash": "33e8490da9422e0409a9d6720d738432"
+  },
+  ".claude/skills/prisma-compute/SKILL.md": {
+    "mtime": 1794664922.093871,
+    "seen": 1794732420.4413414,
+    "ast_hash": "b62fd9443a5a7c8cfa7d00e500ad0c65",
+    "semantic_hash": "b62fd9443a5a7c8cfa7d00e500ad0c65"
+  },
+  ".claude/skills/prisma-compute/references/cli-command-map.md": {
+    "mtime": 1794664922.1018777,
+    "seen": 1794732420.4413526,
+    "ast_hash": "a894d8b9e171614f18b92cd243ac5ec3",
+    "semantic_hash": "a894d8b9e171614f18b92cd243ac5ec3"
+  },
+  ".claude/skills/prisma-compute/references/debug-deploy-failures.md": {
+    "mtime": 1794664922.1028802,
+    "seen": 1794732420.4413545,
+    "ast_hash": "1cfedc0e0b5eace4a309cfd0dffc662b",
+    "semantic_hash": "1cfedc0e0b5eace4a309cfd0dffc662b"
+  },
+  ".claude/skills/prisma-compute/references/deploy-cli-and-ci.md": {
+    "mtime": 1794664922.1038778,
+    "seen": 1794732420.441357,
+    "ast_hash": "b18f4b9af28acc2e1d6892cacba24b7d",
+    "semantic_hash": "b18f4b9af28acc2e1d6892cacba24b7d"
+  },
+  ".claude/skills/prisma-compute/references/deploy-existing-app.md": {
+    "mtime": 1794664922.1048782,
+    "seen": 1794732420.4413588,
+    "ast_hash": "1032d8d5c18242fd92c41edb9d92bf82",
+    "semantic_hash": "1032d8d5c18242fd92c41edb9d92bf82"
+  },
+  ".claude/skills/prisma-compute/references/deploy-on-push.md": {
+    "mtime": 1794664922.105878,
+    "seen": 1794732420.4413607,
+    "ast_hash": "b298b7639ef19c4907d140741ae826c3",
+    "semantic_hash": "b298b7639ef19c4907d140741ae826c3"
+  },
+  ".claude/skills/prisma-compute/references/ops-services-and-config.md": {
+    "mtime": 1794664922.1068783,
+    "seen": 1794732420.4413626,
+    "ast_hash": "25b571dd5718e2e5591ab725cbb865e3",
+    "semantic_hash": "25b571dd5718e2e5591ab725cbb865e3"
+  },
+  ".claude/skills/prisma-compute/references/runtime-requirements.md": {
+    "mtime": 1794664922.1078784,
+    "seen": 1794732420.4413645,
+    "ast_hash": "4b3e40e1635f815196d5dde8a636d7af",
+    "semantic_hash": "4b3e40e1635f815196d5dde8a636d7af"
+  },
+  ".claude/skills/prisma-driver-adapter-implementation/SKILL.md": {
+    "mtime": 1794664922.1108806,
+    "seen": 1794993226.6293647,
+    "ast_hash": "a34b8a6e8a68b25e2aca7a0388887839",
+    "semantic_hash": "a34b8a6e8a68b25e2aca7a0388887839"
+  },
+  ".claude/skills/prisma-mongodb-upgrade/SKILL.md": {
+    "mtime": 1794664922.1128812,
+    "seen": 1794732420.4413686,
+    "ast_hash": "026f3333ceae232e1be79d5054431209",
+    "semantic_hash": "026f3333ceae232e1be79d5054431209"
+  },
+  ".claude/skills/prisma-orm-setup/SKILL.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794732420.441383,
+    "ast_hash": "91f20d650fb4d407b583155c61d3c6b2",
+    "semantic_hash": "91f20d650fb4d407b583155c61d3c6b2"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-client-setup.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794993226.629432,
+    "ast_hash": "6a62a824bd294194030db1c6f259be17",
+    "semantic_hash": "6a62a824bd294194030db1c6f259be17"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-cockroachdb.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794993226.6294384,
+    "ast_hash": "73a3eebf9e617576d29100f43344eefd",
+    "semantic_hash": "73a3eebf9e617576d29100f43344eefd"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-mysql.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794993226.6294448,
+    "ast_hash": "b6dba5a49ce6f98fc0ceb7037ee9363f",
+    "semantic_hash": "b6dba5a49ce6f98fc0ceb7037ee9363f"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-postgresql.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794993226.6294513,
+    "ast_hash": "d9dec8bc4121cd4724cceaf964bc11a5",
+    "semantic_hash": "d9dec8bc4121cd4724cceaf964bc11a5"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-prisma-postgres.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794993226.6294582,
+    "ast_hash": "7c42280c893efd9d40b23fb0c33c3e96",
+    "semantic_hash": "7c42280c893efd9d40b23fb0c33c3e96"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-sqlite.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794993226.6294649,
+    "ast_hash": "8e1832ba1a8eb9c13d05ed598d412e92",
+    "semantic_hash": "8e1832ba1a8eb9c13d05ed598d412e92"
+  },
+  ".claude/skills/prisma-orm-setup/references/v7-sqlserver.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794993226.6294713,
+    "ast_hash": "8107de78d48933dd48fa5355eb6ea5ee",
+    "semantic_hash": "8107de78d48933dd48fa5355eb6ea5ee"
+  },
+  ".claude/skills/prisma-postgres-setup/SKILL.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794732420.4413872,
+    "ast_hash": "994a75fced49e6d4581cb75a493a6048",
+    "semantic_hash": "994a75fced49e6d4581cb75a493a6048"
+  },
+  ".claude/skills/prisma-postgres-upgrade/SKILL.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794732420.4413962,
+    "ast_hash": "a99b3f112c892b10e4a00e0a61d7ea4d",
+    "semantic_hash": "a99b3f112c892b10e4a00e0a61d7ea4d"
+  },
+  ".claude/skills/prisma-postgres-upgrade/references/client-api-mapping.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794993226.6295214,
+    "ast_hash": "1b8b4fd5d0ee4f54bf544b91c9891d5e",
+    "semantic_hash": "1b8b4fd5d0ee4f54bf544b91c9891d5e"
+  },
+  ".claude/skills/prisma-postgres-upgrade/references/verify-upgrade-checklist.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295283,
+    "ast_hash": "cfe9a66166ac81a343c99d82b01f1d9d",
+    "semantic_hash": "cfe9a66166ac81a343c99d82b01f1d9d"
+  },
+  ".claude/skills/prisma-upgrade-v7/SKILL.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794732420.4414032,
+    "ast_hash": "c27c17ab912f26e7def1a3056abd5854",
+    "semantic_hash": "c27c17ab912f26e7def1a3056abd5854"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/accelerate-users.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295493,
+    "ast_hash": "dabf06bdced251eff703585d8aa09a81",
+    "semantic_hash": "dabf06bdced251eff703585d8aa09a81"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/driver-adapters.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295552,
+    "ast_hash": "e5be89d424fdc219aa6af34e5f6e410e",
+    "semantic_hash": "e5be89d424fdc219aa6af34e5f6e410e"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/env-variables.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295614,
+    "ast_hash": "248ff3c8a622636e45e132b1e8b5079e",
+    "semantic_hash": "248ff3c8a622636e45e132b1e8b5079e"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/esm-support.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295674,
+    "ast_hash": "cff7f35c26c4bc52f4eab28e8f05997f",
+    "semantic_hash": "cff7f35c26c4bc52f4eab28e8f05997f"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/prisma-config.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295738,
+    "ast_hash": "195a2e920a8ac7ee65d06c7b5dc3f346",
+    "semantic_hash": "195a2e920a8ac7ee65d06c7b5dc3f346"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/removed-features.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.6295798,
+    "ast_hash": "f915f82fffed7764d722c712004762b3",
+    "semantic_hash": "f915f82fffed7764d722c712004762b3"
+  },
+  ".claude/skills/prisma-upgrade-v7/references/schema-changes.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794993226.629586,
+    "ast_hash": "1b1e7daa4f6109c92c716e1cb33b023d",
+    "semantic_hash": "1b1e7daa4f6109c92c716e1cb33b023d"
+  },
+  "AGENTS.md": {
+    "mtime": 1795092091.9849076,
+    "seen": 1795094911.4928963,
+    "ast_hash": "3f874e69caf50dedc22aadcdc1461c4a",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1795091933.9293964,
+    "seen": 1795094911.492904,
+    "ast_hash": "799742091a6203ae28145e0f95945ca8",
+    "semantic_hash": ""
+  },
+  "app/account/page.tsx": {
+    "mtime": 1795009590.5458653,
+    "seen": 1795090246.7880535,
+    "ast_hash": "b5d66253cb71dd7d324fdf090783d1a5",
+    "semantic_hash": "b5d66253cb71dd7d324fdf090783d1a5"
+  },
+  "app/admin/AdminShell.tsx": {
+    "mtime": 1795009590.563122,
+    "seen": 1795090246.7880604,
+    "ast_hash": "258a8b35e2dfda6a4bdb33febb0d1bd6",
+    "semantic_hash": ""
+  },
+  "app/admin/SessionRecoveryStatus.tsx": {
+    "mtime": 1795009590.563122,
+    "seen": 1795090246.7880633,
+    "ast_hash": "51f54dda5e0ff8ebdbec28843c28e251",
+    "semantic_hash": "51f54dda5e0ff8ebdbec28843c28e251"
+  },
+  "app/admin/company/CompanyClient.tsx": {
+    "mtime": 1795009590.563122,
+    "seen": 1795090246.7880719,
+    "ast_hash": "26b8fb3e7a07e71f8066dc7954e322cd",
+    "semantic_hash": "26b8fb3e7a07e71f8066dc7954e322cd"
+  },
+  "app/admin/company/data.ts": {
+    "mtime": 1794714436.8305542,
+    "seen": 1794732252.0028107,
+    "ast_hash": "f2b5a221c8ab6db87a505c4e9bc9760f",
+    "semantic_hash": "f2b5a221c8ab6db87a505c4e9bc9760f"
+  },
+  "app/admin/company/types.ts": {
+    "mtime": 1794714436.833598,
+    "seen": 1794732252.0028148,
+    "ast_hash": "ba6eb8a0b7b7e49eff7a8d7bef240ab3",
+    "semantic_hash": "ba6eb8a0b7b7e49eff7a8d7bef240ab3"
+  },
+  "app/admin/compensation/data.ts": {
+    "mtime": 1795095982.0208366,
+    "seen": 1795096261.5575616,
+    "ast_hash": "de8ef688861e97aa42477a00770b7718",
+    "semantic_hash": ""
+  },
+  "app/admin/compensation/page.tsx": {
+    "mtime": 1795096276.4409146,
+    "seen": 1795096349.003415,
+    "ast_hash": "c5d0dd5b252dfad54b331b029e3928eb",
+    "semantic_hash": ""
+  },
+  "app/admin/compensation/types.ts": {
+    "mtime": 1795095982.0208366,
+    "seen": 1795096261.557567,
+    "ast_hash": "0857fef5ab1f6c25cca7e2f9cf4f1855",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminHeader.tsx": {
+    "mtime": 1795009590.563122,
+    "seen": 1795090246.7880914,
+    "ast_hash": "14d3e99fc7014e0470da0386c6869f9c",
+    "semantic_hash": "14d3e99fc7014e0470da0386c6869f9c"
+  },
+  "app/admin/components/AdminNotifications.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028243,
+    "ast_hash": "7c6bd38aafedb0c2f5859a4e00691d8c",
+    "semantic_hash": "7c6bd38aafedb0c2f5859a4e00691d8c"
+  },
+  "app/admin/components/AdminProfileMenu.tsx": {
+    "mtime": 1795091933.9293964,
+    "seen": 1795094911.4896073,
+    "ast_hash": "347e3f744e229ee50f7df84e44376b87",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminSidebar.tsx": {
+    "mtime": 1795091933.9293964,
+    "seen": 1795094911.4896274,
+    "ast_hash": "41ddd69b46f2158c4e34f7ceb90d6921",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AttendancePolicies.tsx": {
+    "mtime": 1795091933.9414768,
+    "seen": 1795094911.4896343,
+    "ast_hash": "2a20b706d072ce309dede0457cbc9652",
+    "semantic_hash": ""
+  },
+  "app/admin/components/CompanyBranches.tsx": {
+    "mtime": 1794752125.6530485,
+    "seen": 1794993226.626993,
+    "ast_hash": "7eabb63893562ae7f96b135a8418e154",
+    "semantic_hash": ""
+  },
+  "app/admin/components/CompanyDepartments.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028334,
+    "ast_hash": "1454df3aa9711fc44d0470c827787274",
+    "semantic_hash": "1454df3aa9711fc44d0470c827787274"
+  },
+  "app/admin/components/CompanyHolidayCalendar.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028353,
+    "ast_hash": "0d0adb9943e49645b84eeb68f7840d7e",
+    "semantic_hash": "0d0adb9943e49645b84eeb68f7840d7e"
+  },
+  "app/admin/components/CompanyProfile.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028367,
+    "ast_hash": "e4f731f35555682ee70de4de64ac6c2e",
+    "semantic_hash": "e4f731f35555682ee70de4de64ac6c2e"
+  },
+  "app/admin/components/DemoDataNotice.tsx": {
+    "mtime": 1795009590.5832646,
+    "seen": 1795090246.7881246,
+    "ast_hash": "1af431c9d2c7d838faaf359c42a8b471",
+    "semantic_hash": "1af431c9d2c7d838faaf359c42a8b471"
+  },
+  "app/admin/components/PayrollBatchDetails.tsx": {
+    "mtime": 1795009590.5842645,
+    "seen": 1795090246.7881274,
+    "ast_hash": "a5ea6b226f7e1609013d050b7bea6e24",
+    "semantic_hash": "a5ea6b226f7e1609013d050b7bea6e24"
+  },
+  "app/admin/components/PermissionMatrix.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028427,
+    "ast_hash": "6c74b2d7188afc39d3bf27dc1c871495",
+    "semantic_hash": "6c74b2d7188afc39d3bf27dc1c871495"
+  },
+  "app/admin/components/ProjectPayrol.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028446,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "app/admin/components/RoleFormModal.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028465,
+    "ast_hash": "d1efebbde4b5ca83d28cd45b44d5a0e1",
+    "semantic_hash": "d1efebbde4b5ca83d28cd45b44d5a0e1"
+  },
+  "app/admin/components/RolesPermissions.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028481,
+    "ast_hash": "9fd7e10ce7b22293fb6cff5ffea684e8",
+    "semantic_hash": "9fd7e10ce7b22293fb6cff5ffea684e8"
+  },
+  "app/admin/components/SalaryAdjustmentDetails.tsx": {
+    "mtime": 1794714436.8434138,
+    "seen": 1794732252.00285,
+    "ast_hash": "dbe7f1c645ef4e9ecd82dcb4653fc4e4",
+    "semantic_hash": "dbe7f1c645ef4e9ecd82dcb4653fc4e4"
+  },
+  "app/admin/components/UserFormModal.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028517,
+    "ast_hash": "6f62cfb3b97675f46f6d850804dc1f7c",
+    "semantic_hash": "6f62cfb3b97675f46f6d850804dc1f7c"
+  },
+  "app/admin/components/UsersTable.tsx": {
+    "mtime": 1794664922.287156,
+    "seen": 1794732252.0028536,
+    "ast_hash": "ab362d13cd764aacb69cf6ea7268290d",
+    "semantic_hash": "ab362d13cd764aacb69cf6ea7268290d"
+  },
+  "app/admin/components/dashboard/AttendanceSummaryChart.tsx": {
+    "mtime": 1795009590.5862644,
+    "seen": 1795090246.788146,
+    "ast_hash": "6b0b7645070268d82fad5b2c80c6e289",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/DashboardUnavailableState.tsx": {
+    "mtime": 1795009590.5883336,
+    "seen": 1795090246.7881508,
+    "ast_hash": "949bcf2f7a772fa3011de31047101925",
+    "semantic_hash": "949bcf2f7a772fa3011de31047101925"
+  },
+  "app/admin/components/dashboard/DepartmentsCard.tsx": {
+    "mtime": 1795009590.589775,
+    "seen": 1795090246.788153,
+    "ast_hash": "62a51ef6e23f0fb8fac2403e2754477d",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/PayrollExpenseChart.tsx": {
+    "mtime": 1795009590.5914738,
+    "seen": 1795090246.788155,
+    "ast_hash": "e38992bca9d41286ddb61887deb8e839",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/PendingApprovalsCard.tsx": {
+    "mtime": 1795009590.592828,
+    "seen": 1795090246.7881572,
+    "ast_hash": "c5eabe6c3be7e79486b95011296bea82",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/PendingApprovalsList.tsx": {
+    "mtime": 1795009590.5937457,
+    "seen": 1795090246.7881591,
+    "ast_hash": "a3ce2a3aaf22ba8fa40f90c8a19083fb",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/ProjectedPayrollCard.tsx": {
+    "mtime": 1795009590.59586,
+    "seen": 1795090246.7881613,
+    "ast_hash": "68f04957b8e88df11816e10e7884eace",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/RecentActivities.tsx": {
+    "mtime": 1795009590.5976684,
+    "seen": 1795090246.7881632,
+    "ast_hash": "223131173769d82979f5937b22d3c079",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/TotalEmployeesCard.tsx": {
+    "mtime": 1795009590.5988555,
+    "seen": 1795090246.7881656,
+    "ast_hash": "12b18c898473fb0e759890acc119712e",
+    "semantic_hash": ""
+  },
+  "app/admin/dashboard/page.tsx": {
+    "mtime": 1795009590.6042562,
+    "seen": 1795090246.7881744,
+    "ast_hash": "6407dcadef941d5c0511ce8085c59b93",
+    "semantic_hash": "6407dcadef941d5c0511ce8085c59b93"
+  },
+  "app/admin/dashboard/presentation.ts": {
+    "mtime": 1795009590.6069467,
+    "seen": 1795090246.7881787,
+    "ast_hash": "91d260b17cd71a9d6e86d8953efebd0e",
+    "semantic_hash": "91d260b17cd71a9d6e86d8953efebd0e"
+  },
+  "app/admin/error.tsx": {
+    "mtime": 1795009590.6116679,
+    "seen": 1795090246.788187,
+    "ast_hash": "86aa6a80e211d9beed08bc4f6c39eb2c",
+    "semantic_hash": "86aa6a80e211d9beed08bc4f6c39eb2c"
+  },
+  "app/admin/layout.tsx": {
+    "mtime": 1795009590.6137056,
+    "seen": 1795090246.7881892,
+    "ast_hash": "27fe038593d4cb1991a77baa1190b6ac",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/[batchId]/page.tsx": {
+    "mtime": 1795091933.9554749,
+    "seen": 1795094911.489884,
+    "ast_hash": "b545f37a72e27c782ffc1311a27287fe",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/data.ts": {
+    "mtime": 1794714436.846647,
+    "seen": 1794732252.002881,
+    "ast_hash": "d795fdefe901c687451a6b6d9bac4276",
+    "semantic_hash": "d795fdefe901c687451a6b6d9bac4276"
+  },
+  "app/admin/payapprove/page.tsx": {
+    "mtime": 1795091933.9681938,
+    "seen": 1795094911.489937,
+    "ast_hash": "c48d7f7a0d64e6f3fc22636343cce275",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/types.ts": {
+    "mtime": 1794714436.8497264,
+    "seen": 1794732252.0028846,
+    "ast_hash": "dbf28f412b90901a62f146be0ccb4409",
+    "semantic_hash": "dbf28f412b90901a62f146be0ccb4409"
+  },
+  "app/admin/users-roles/UsersRolesClient.tsx": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.4900343,
+    "ast_hash": "439a8d01a09fe01e97d501d73319d473",
+    "semantic_hash": ""
+  },
+  "app/admin/users-roles/data.ts": {
+    "mtime": 1794664922.3184042,
+    "seen": 1794732252.0028882,
+    "ast_hash": "06f970a9aecb554351d376611acbf0ec",
+    "semantic_hash": "06f970a9aecb554351d376611acbf0ec"
+  },
+  "app/admin/users-roles/page.tsx": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.4900448,
+    "ast_hash": "37a0e5b85c39eaa3be7833214bd0e11e",
+    "semantic_hash": ""
+  },
+  "app/admin/users-roles/types.ts": {
+    "mtime": 1794664922.3184042,
+    "seen": 1794732252.0028915,
+    "ast_hash": "e03de3fbf310b06c478533c34e133e96",
+    "semantic_hash": "e03de3fbf310b06c478533c34e133e96"
+  },
+  "app/api/auth/login/route.ts": {
+    "mtime": 1795009590.666378,
+    "seen": 1795090246.7883742,
+    "ast_hash": "fc944a560c7548035bd2e15010d1d4c3",
+    "semantic_hash": ""
+  },
+  "app/api/auth/logout/route.ts": {
+    "mtime": 1795009590.6683774,
+    "seen": 1795090246.7883763,
+    "ast_hash": "0735e3b99f9f171fa3a9ce2253d8e2af",
+    "semantic_hash": "0735e3b99f9f171fa3a9ce2253d8e2af"
+  },
+  "app/api/auth/mfa/setup/route.ts": {
+    "mtime": 1795091956.9654863,
+    "seen": 1795094911.490415,
+    "ast_hash": "e3dbb6040ca7dfb995f9ad016868fe51",
+    "semantic_hash": ""
+  },
+  "app/api/auth/mfa/verify/route.ts": {
+    "mtime": 1795091956.9998543,
+    "seen": 1795094911.4904187,
+    "ast_hash": "b0b2d5ec827f5526dce25931b18de6be",
+    "semantic_hash": ""
+  },
+  "app/api/auth/session/route.ts": {
+    "mtime": 1795009590.685243,
+    "seen": 1795090246.7883828,
+    "ast_hash": "4a92e7870fdc1fae88416533f1362436",
+    "semantic_hash": "4a92e7870fdc1fae88416533f1362436"
+  },
+  "app/error.tsx": {
+    "mtime": 1795009590.6916504,
+    "seen": 1795090246.7884169,
+    "ast_hash": "a352bc4ada32284d9bb9a0663faf1873",
+    "semantic_hash": "a352bc4ada32284d9bb9a0663faf1873"
+  },
+  "app/lib/auth/api-guard.server.ts": {
+    "mtime": 1795091957.6503963,
+    "seen": 1795094911.4910114,
+    "ast_hash": "cf7b48296e7d2746f1f9b76e47ef7b93",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/audit.ts": {
+    "mtime": 1795009590.7292273,
+    "seen": 1795090246.788492,
+    "ast_hash": "43784b5ddddf08608e00e2da32e9922c",
+    "semantic_hash": "43784b5ddddf08608e00e2da32e9922c"
+  },
+  "app/lib/auth/authorization.ts": {
+    "mtime": 1795095829.2492964,
+    "seen": 1795096261.5581746,
+    "ast_hash": "4faf3c56d99cc914f6cb8085894ad21f",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/cookies.ts": {
+    "mtime": 1795009590.7292273,
+    "seen": 1795090246.788497,
+    "ast_hash": "34b3f2f04ac6c221b087da0429be1574",
+    "semantic_hash": "34b3f2f04ac6c221b087da0429be1574"
+  },
+  "app/lib/auth/database-rate-limit.ts": {
+    "mtime": 1795009590.7292273,
+    "seen": 1795090246.788501,
+    "ast_hash": "14e1fda240cb823adbb665e0124dff62",
+    "semantic_hash": "14e1fda240cb823adbb665e0124dff62"
+  },
+  "app/lib/auth/http.ts": {
+    "mtime": 1795091957.6570406,
+    "seen": 1795094911.4910429,
+    "ast_hash": "ac74ec931af17ace8f6aba1a1bd95913",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/login-policy.ts": {
+    "mtime": 1795009590.7292273,
+    "seen": 1795090246.788505,
+    "ast_hash": "a92644b109dd54191bfb623db779c23b",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/page-guard.server.ts": {
+    "mtime": 1795091957.6590378,
+    "seen": 1795094911.4910529,
+    "ast_hash": "8dcca8bf95662d0e37a62feae6dcf281",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/password.ts": {
+    "mtime": 1795009590.7292273,
+    "seen": 1795090246.7885091,
+    "ast_hash": "201dfb07b50796a0ca1d91ec69a0ecd8",
+    "semantic_hash": "201dfb07b50796a0ca1d91ec69a0ecd8"
+  },
+  "app/lib/auth/rate-limit.ts": {
+    "mtime": 1795009590.7445953,
+    "seen": 1795090246.7885113,
+    "ast_hash": "73b959ae88974c270e1aa9ec1a19d4d4",
+    "semantic_hash": "73b959ae88974c270e1aa9ec1a19d4d4"
+  },
+  "app/lib/auth/request-context.ts": {
+    "mtime": 1795009590.7459104,
+    "seen": 1795090246.7885132,
+    "ast_hash": "afd4f2057434d6658163c2b943c971eb",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/schemas.ts": {
+    "mtime": 1795009590.7459104,
+    "seen": 1795090246.7885156,
+    "ast_hash": "d8ebe21740ee5062f405b26efe7ab69b",
+    "semantic_hash": "d8ebe21740ee5062f405b26efe7ab69b"
+  },
+  "app/lib/auth/secret-encryption.ts": {
+    "mtime": 1795009590.7459104,
+    "seen": 1795090246.7885177,
+    "ast_hash": "eef6e90925e83dd4910d9622ac8c7d8d",
+    "semantic_hash": "eef6e90925e83dd4910d9622ac8c7d8d"
+  },
+  "app/lib/auth/security-config.ts": {
+    "mtime": 1795091957.6610377,
+    "seen": 1795094911.4910948,
+    "ast_hash": "816e2e748422e66a897bce0c2b16a613",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/session-policy.ts": {
+    "mtime": 1795091957.663414,
+    "seen": 1795094911.4910989,
+    "ast_hash": "37994ebf50a216dc332e6c418e50a760",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/session-recovery.ts": {
+    "mtime": 1795009590.7459104,
+    "seen": 1795090246.7885237,
+    "ast_hash": "80f55b25c2bd42daa3ade3538805ca03",
+    "semantic_hash": "80f55b25c2bd42daa3ade3538805ca03"
+  },
+  "app/lib/auth/session-store.ts": {
+    "mtime": 1795009590.7525373,
+    "seen": 1795090246.7885258,
+    "ast_hash": "8ebed0ce4bf22aa606a9ce3431b516d8",
+    "semantic_hash": "8ebed0ce4bf22aa606a9ce3431b516d8"
+  },
+  "app/lib/auth/session.server.ts": {
+    "mtime": 1795091957.6654155,
+    "seen": 1795094911.4911156,
+    "ast_hash": "ae507cd315ed63b4b126835c85e33278",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/tokens.ts": {
+    "mtime": 1795009590.7562613,
+    "seen": 1795090246.78853,
+    "ast_hash": "f37d9c3f9fddc5bae1bf84138e57c39c",
+    "semantic_hash": "f37d9c3f9fddc5bae1bf84138e57c39c"
+  },
+  "app/lib/auth/totp.ts": {
+    "mtime": 1795009590.7562613,
+    "seen": 1795090246.7885323,
+    "ast_hash": "d870deb451ce5b38f7f14ffb025731da",
+    "semantic_hash": "d870deb451ce5b38f7f14ffb025731da"
+  },
+  "app/lib/db.ts": {
+    "mtime": 1795009590.7562613,
+    "seen": 1795090246.7885475,
+    "ast_hash": "2d97b074a688cf6715fea7c6647555cd",
+    "semantic_hash": "2d97b074a688cf6715fea7c6647555cd"
+  },
+  "app/lib/mysql-adapter-config.ts": {
+    "mtime": 1795009590.7628272,
+    "seen": 1795090246.788556,
+    "ast_hash": "6f6dab23d0907832fe9fcca67e3e0df7",
+    "semantic_hash": "6f6dab23d0907832fe9fcca67e3e0df7"
+  },
+  "app/login/LoginClient.tsx": {
+    "mtime": 1795091957.7995489,
+    "seen": 1795094911.49141,
+    "ast_hash": "921e9110e8c99ab89cae16d26a8ed195",
+    "semantic_hash": ""
+  },
+  "app/login/mfa-verification.ts": {
+    "mtime": 1795009590.7628272,
+    "seen": 1795090246.788633,
+    "ast_hash": "a3d16b023eb0dc09efc990a915b3b38a",
+    "semantic_hash": "a3d16b023eb0dc09efc990a915b3b38a"
+  },
+  "app/login/page.tsx": {
+    "mtime": 1795091957.8046885,
+    "seen": 1795094911.4914188,
+    "ast_hash": "ec5ffd83d631f411d98d5c9e56db6e08",
+    "semantic_hash": ""
+  },
+  "prisma/provision-test-accounts.ts": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.7886622,
+    "ast_hash": "a31c65c0973605b6a9b63aa384b51e7b",
+    "semantic_hash": "a31c65c0973605b6a9b63aa384b51e7b"
+  },
+  "prisma/rotate-test-account-password.ts": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.7886643,
+    "ast_hash": "0bc2f25cdd0b7684500eff639e24a273",
+    "semantic_hash": "0bc2f25cdd0b7684500eff639e24a273"
+  },
+  "prisma/test-account-policy.ts": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.7886667,
+    "ast_hash": "332c96e756a576f0b4a27881c276672b",
+    "semantic_hash": "332c96e756a576f0b4a27881c276672b"
+  },
+  "tests/admin/dashboard-presentation.test.ts": {
+    "mtime": 1795009591.6375587,
+    "seen": 1795090246.7886841,
+    "ast_hash": "cbbbbb006cc64ef0cfc93500f333c50c",
+    "semantic_hash": "cbbbbb006cc64ef0cfc93500f333c50c"
+  },
+  "tests/admin/dashboard-unavailable.test.tsx": {
+    "mtime": 1795009591.6542907,
+    "seen": 1795090246.7886922,
+    "ast_hash": "c1234d168637aa3b0bf2e9341dca91f2",
+    "semantic_hash": "c1234d168637aa3b0bf2e9341dca91f2"
+  },
+  "tests/admin/demo-data-notice.test.tsx": {
+    "mtime": 1795009591.6542907,
+    "seen": 1795090246.7886944,
+    "ast_hash": "05a0839233b06029abc1e04ea2344842",
+    "semantic_hash": "05a0839233b06029abc1e04ea2344842"
+  },
+  "tests/auth/authorization.test.ts": {
+    "mtime": 1795091958.7301974,
+    "seen": 1795094911.4916604,
+    "ast_hash": "ae0c673e2f27048c014a42fbe7a7e48f",
+    "semantic_hash": ""
+  },
+  "tests/auth/crypto-mfa.test.ts": {
+    "mtime": 1795009591.696976,
+    "seen": 1795090246.7887075,
+    "ast_hash": "5de6bb66dfb6020ec8bee5b7d4e1cd6b",
+    "semantic_hash": "5de6bb66dfb6020ec8bee5b7d4e1cd6b"
+  },
+  "tests/auth/csrf.test.ts": {
+    "mtime": 1795009591.7068317,
+    "seen": 1795090246.7887099,
+    "ast_hash": "a190062eb6dc8658b8742bd41b7f8459",
+    "semantic_hash": "a190062eb6dc8658b8742bd41b7f8459"
+  },
+  "tests/auth/http.test.ts": {
+    "mtime": 1795009591.7908075,
+    "seen": 1795090246.788712,
+    "ast_hash": "593792f9585a7f1f80c37148ed4513fd",
+    "semantic_hash": "593792f9585a7f1f80c37148ed4513fd"
+  },
+  "tests/auth/login-policy.test.ts": {
+    "mtime": 1795091958.7321994,
+    "seen": 1795094911.4916859,
+    "ast_hash": "d51a022c033db228b4258b2fe9e8ec67",
+    "semantic_hash": ""
+  },
+  "tests/auth/mfa-verification.test.ts": {
+    "mtime": 1795009591.8002088,
+    "seen": 1795090246.788716,
+    "ast_hash": "15a61fa3688e3155e1bd58bf52851f04",
+    "semantic_hash": "15a61fa3688e3155e1bd58bf52851f04"
+  },
+  "tests/auth/mysql-adapter-config.test.ts": {
+    "mtime": 1795009591.8034828,
+    "seen": 1795090246.7887177,
+    "ast_hash": "57de800661a75024cefab43a8dfd5bbe",
+    "semantic_hash": "57de800661a75024cefab43a8dfd5bbe"
+  },
+  "tests/auth/password.test.ts": {
+    "mtime": 1795009591.8034828,
+    "seen": 1795090246.7887201,
+    "ast_hash": "8efaadf125e30bd33ae5f95835c305e0",
+    "semantic_hash": "8efaadf125e30bd33ae5f95835c305e0"
+  },
+  "tests/auth/provisioning-errors.test.ts": {
+    "mtime": 1795009591.8034828,
+    "seen": 1795090246.7887223,
+    "ast_hash": "6eba1f8b62d335ce2572ea5a34b1f10f",
+    "semantic_hash": "6eba1f8b62d335ce2572ea5a34b1f10f"
+  },
+  "tests/auth/rate-limit.test.ts": {
+    "mtime": 1795009591.8417792,
+    "seen": 1795090246.7887242,
+    "ast_hash": "4e3995d710f8c17ec9f4bb93dc22431b",
+    "semantic_hash": "4e3995d710f8c17ec9f4bb93dc22431b"
+  },
+  "tests/auth/request-context.test.ts": {
+    "mtime": 1795009591.8423045,
+    "seen": 1795090246.7887263,
+    "ast_hash": "d3e41906ee31e35696cad9c8ba3a636d",
+    "semantic_hash": ""
+  },
+  "tests/auth/schemas.test.ts": {
+    "mtime": 1795009591.856092,
+    "seen": 1795090246.7887282,
+    "ast_hash": "7acb0742108843ce03064384709968db",
+    "semantic_hash": "7acb0742108843ce03064384709968db"
+  },
+  "tests/auth/security-config.test.ts": {
+    "mtime": 1795009591.856092,
+    "seen": 1795090246.7887304,
+    "ast_hash": "a1a5163fcb5963f5f36c2a5f4f81a3c8",
+    "semantic_hash": "a1a5163fcb5963f5f36c2a5f4f81a3c8"
+  },
+  "tests/auth/session-policy.test.ts": {
+    "mtime": 1795009591.8639889,
+    "seen": 1795090246.7887325,
+    "ast_hash": "111a6269134be532925fbfef7c3bf29c",
+    "semantic_hash": "111a6269134be532925fbfef7c3bf29c"
+  },
+  "tests/auth/session-recovery.test.ts": {
+    "mtime": 1795009591.8639889,
+    "seen": 1795090246.7887347,
+    "ast_hash": "23a9b492de1d784564e75b9c9f455fa3",
+    "semantic_hash": "23a9b492de1d784564e75b9c9f455fa3"
+  },
+  "tests/auth/session-store.test.ts": {
+    "mtime": 1795009591.8639889,
+    "seen": 1795090246.7887366,
+    "ast_hash": "0f23667acda2efd46351345b03cfa921",
+    "semantic_hash": "0f23667acda2efd46351345b03cfa921"
+  },
+  "tests/auth/test-account-policy.test.ts": {
+    "mtime": 1795009591.8717656,
+    "seen": 1795090246.7887387,
+    "ast_hash": "5e72ee23315187a06b5c72232939d21f",
+    "semantic_hash": "5e72ee23315187a06b5c72232939d21f"
+  },
+  "tests/auth/tokens.test.ts": {
+    "mtime": 1795009591.9589255,
+    "seen": 1795090246.7887409,
+    "ast_hash": "28363f8de3ff44baf9a2739892a31dfb",
+    "semantic_hash": "28363f8de3ff44baf9a2739892a31dfb"
+  },
+  ".agents/skills/prisma-cli/references/agent-safety.md": {
+    "mtime": 1794664921.941954,
+    "seen": 1794732252.0030165,
+    "ast_hash": "b13fb6d46dbfe7db9c2433202d412bd5",
+    "semantic_hash": "b13fb6d46dbfe7db9c2433202d412bd5"
+  },
+  ".agents/skills/prisma-cli/references/complete.md": {
+    "mtime": 1794664921.941954,
+    "seen": 1794732252.003018,
+    "ast_hash": "827d26a9f01251d2ae9d3ec295f5f8cd",
+    "semantic_hash": "827d26a9f01251d2ae9d3ec295f5f8cd"
+  },
+  ".agents/skills/prisma-cli/references/db-execute.md": {
+    "mtime": 1794664921.948821,
+    "seen": 1794732252.0030198,
+    "ast_hash": "fa456e36f9700329b4c1a8093e7ae92a",
+    "semantic_hash": "fa456e36f9700329b4c1a8093e7ae92a"
+  },
+  ".agents/skills/prisma-cli/references/db-pull.md": {
+    "mtime": 1794664921.9528184,
+    "seen": 1794732252.0030215,
+    "ast_hash": "112e9c49afcd099c98a39801ecfe8f64",
+    "semantic_hash": "112e9c49afcd099c98a39801ecfe8f64"
+  },
+  ".agents/skills/prisma-cli/references/db-push.md": {
+    "mtime": 1794664921.953819,
+    "seen": 1794732252.0030231,
+    "ast_hash": "9d5b2231c9a0cc01b7a56eb0dbe04b3c",
+    "semantic_hash": "9d5b2231c9a0cc01b7a56eb0dbe04b3c"
+  },
+  ".agents/skills/prisma-cli/references/db-seed.md": {
+    "mtime": 1794664921.9548194,
+    "seen": 1794732252.0030248,
+    "ast_hash": "6b49790f9fc526c3bf9f9e465b20abf1",
+    "semantic_hash": "6b49790f9fc526c3bf9f9e465b20abf1"
+  },
+  ".agents/skills/prisma-cli/references/debug.md": {
+    "mtime": 1794664921.955819,
+    "seen": 1794732252.0030267,
+    "ast_hash": "efc540e515df61fb409d2b0f33b3f236",
+    "semantic_hash": "efc540e515df61fb409d2b0f33b3f236"
+  },
+  ".agents/skills/prisma-cli/references/dev.md": {
+    "mtime": 1794664921.9568188,
+    "seen": 1794732252.0030282,
+    "ast_hash": "633c1f65ae2e3ac43e9b0f7f328f049f",
+    "semantic_hash": "633c1f65ae2e3ac43e9b0f7f328f049f"
+  },
+  ".agents/skills/prisma-cli/references/format.md": {
+    "mtime": 1794664921.9578214,
+    "seen": 1794732252.00303,
+    "ast_hash": "7f9480c36e8fb8fd39e4aa2b466e734d",
+    "semantic_hash": "7f9480c36e8fb8fd39e4aa2b466e734d"
+  },
+  ".agents/skills/prisma-cli/references/generate.md": {
+    "mtime": 1794664921.9588294,
+    "seen": 1794732252.003032,
+    "ast_hash": "6a346f0ccc80b0087320071ffdb31ab6",
+    "semantic_hash": "6a346f0ccc80b0087320071ffdb31ab6"
+  },
+  ".agents/skills/prisma-cli/references/init.md": {
+    "mtime": 1794664921.959819,
+    "seen": 1794732252.0030339,
+    "ast_hash": "47825b9e05d1c08daf5458e1b4b0c37a",
+    "semantic_hash": "47825b9e05d1c08daf5458e1b4b0c37a"
+  },
+  ".agents/skills/prisma-cli/references/mcp.md": {
+    "mtime": 1794664921.9608223,
+    "seen": 1794732252.0030353,
+    "ast_hash": "110546680b397c48425aae80a5441010",
+    "semantic_hash": "110546680b397c48425aae80a5441010"
+  },
+  ".agents/skills/prisma-cli/references/migrate-deploy.md": {
+    "mtime": 1794664921.9618206,
+    "seen": 1794732252.0030372,
+    "ast_hash": "ad5b33f62e3ca6762f18ccbf7c3e1e02",
+    "semantic_hash": "ad5b33f62e3ca6762f18ccbf7c3e1e02"
+  },
+  ".agents/skills/prisma-cli/references/migrate-dev.md": {
+    "mtime": 1794664921.9628198,
+    "seen": 1794732252.0030386,
+    "ast_hash": "137ecc3c185e9ec765d633c1c53fd205",
+    "semantic_hash": "137ecc3c185e9ec765d633c1c53fd205"
+  },
+  ".agents/skills/prisma-cli/references/migrate-diff.md": {
+    "mtime": 1794664921.9643729,
+    "seen": 1794732252.0030406,
+    "ast_hash": "171192cdeeb27614abc384f8520c828a",
+    "semantic_hash": "171192cdeeb27614abc384f8520c828a"
+  },
+  ".agents/skills/prisma-cli/references/migrate-reset.md": {
+    "mtime": 1794664921.9653747,
+    "seen": 1794732252.0030422,
+    "ast_hash": "29135da6cff321263989e49825eb303b",
+    "semantic_hash": "29135da6cff321263989e49825eb303b"
+  },
+  ".agents/skills/prisma-cli/references/migrate-resolve.md": {
+    "mtime": 1794664921.9663744,
+    "seen": 1794732252.003044,
+    "ast_hash": "bd96262ad456e74b111c1b9f7f6990d5",
+    "semantic_hash": "bd96262ad456e74b111c1b9f7f6990d5"
+  },
+  ".agents/skills/prisma-cli/references/migrate-status.md": {
+    "mtime": 1794664921.9673738,
+    "seen": 1794732252.0030456,
+    "ast_hash": "6cbb214b8dfd4484e938f8714d1c1787",
+    "semantic_hash": "6cbb214b8dfd4484e938f8714d1c1787"
+  },
+  ".agents/skills/prisma-client-api/references/client-methods.md": {
+    "mtime": 1794664921.9733737,
+    "seen": 1794732252.0030475,
+    "ast_hash": "415a45ea5ddf1995a14c1d70694868ed",
+    "semantic_hash": "415a45ea5ddf1995a14c1d70694868ed"
+  },
+  ".agents/skills/prisma-client-api/references/constructor.md": {
+    "mtime": 1794664921.9743743,
+    "seen": 1794732252.0030491,
+    "ast_hash": "266f293805dcec719babe5827701c354",
+    "semantic_hash": "266f293805dcec719babe5827701c354"
+  },
+  ".agents/skills/prisma-client-api/references/filters.md": {
+    "mtime": 1794664921.9753747,
+    "seen": 1794732252.003051,
+    "ast_hash": "44a7456d7ea6cb8d8f4ccc6a20b16814",
+    "semantic_hash": "44a7456d7ea6cb8d8f4ccc6a20b16814"
+  },
+  ".agents/skills/prisma-client-api/references/model-queries.md": {
+    "mtime": 1794664921.9763756,
+    "seen": 1794732252.0030527,
+    "ast_hash": "2bb53c933e4baf20076d713e13151091",
+    "semantic_hash": "2bb53c933e4baf20076d713e13151091"
+  },
+  ".agents/skills/prisma-client-api/references/query-options.md": {
+    "mtime": 1794664921.9773746,
+    "seen": 1794732252.0030546,
+    "ast_hash": "30e889e6586befa4d524469e9110b989",
+    "semantic_hash": "30e889e6586befa4d524469e9110b989"
+  },
+  ".agents/skills/prisma-client-api/references/raw-queries.md": {
+    "mtime": 1794664921.9783738,
+    "seen": 1794732252.0030563,
+    "ast_hash": "ac6abaf987e38d31ecb67bd7b29043b6",
+    "semantic_hash": "ac6abaf987e38d31ecb67bd7b29043b6"
+  },
+  ".agents/skills/prisma-client-api/references/relations.md": {
+    "mtime": 1794664921.9793756,
+    "seen": 1794732252.003058,
+    "ast_hash": "2c822b05319d89528354ada1d09dc241",
+    "semantic_hash": "2c822b05319d89528354ada1d09dc241"
+  },
+  ".agents/skills/prisma-client-api/references/transactions.md": {
+    "mtime": 1794664921.980374,
+    "seen": 1794732252.0030599,
+    "ast_hash": "b63ef1dd624c20c22a028f28a9e8a705",
+    "semantic_hash": "b63ef1dd624c20c22a028f28a9e8a705"
+  },
+  ".agents/skills/prisma-compute/references/app-composer-setup.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794732252.0030618,
+    "ast_hash": "7c41123391320169d6ab10953f123105",
+    "semantic_hash": "7c41123391320169d6ab10953f123105"
+  },
+  ".agents/skills/prisma-compute/references/app-framework-builds.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794732252.0030634,
+    "ast_hash": "ef9d6de61fb833a4de5d86bdd7e4ccc8",
+    "semantic_hash": "ef9d6de61fb833a4de5d86bdd7e4ccc8"
+  },
+  ".agents/skills/prisma-compute/references/automation-create-prisma.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794732252.003065,
+    "ast_hash": "80e72d1e148ea446dae869da246ccc15",
+    "semantic_hash": "80e72d1e148ea446dae869da246ccc15"
+  },
+  ".agents/skills/prisma-compute/references/automation-rest-api.md": {
+    "mtime": 1794664921.981425,
+    "seen": 1794732252.0030668,
+    "ast_hash": "b9e54ed9ff0f8a780f9e52affe23021a",
+    "semantic_hash": "b9e54ed9ff0f8a780f9e52affe23021a"
+  },
+  ".agents/skills/prisma-database-setup/SKILL.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.0030687,
+    "ast_hash": "7694ea8b0a9a2a4751cf63a6e241f29f",
+    "semantic_hash": "7694ea8b0a9a2a4751cf63a6e241f29f"
+  },
+  ".agents/skills/prisma-mongodb-upgrade/references/client-api-mapping.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.00307,
+    "ast_hash": "241c889046711441144f54f443e5c518",
+    "semantic_hash": "241c889046711441144f54f443e5c518"
+  },
+  ".agents/skills/prisma-mongodb-upgrade/references/decision-stay-or-migrate.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.003072,
+    "ast_hash": "73080f0d9cb0eb1f35a8a38d353aa126",
+    "semantic_hash": "73080f0d9cb0eb1f35a8a38d353aa126"
+  },
+  ".agents/skills/prisma-mongodb-upgrade/references/migrations-mapping.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.0030737,
+    "ast_hash": "6a35b24785c7c4261567e1ac9de71ec3",
+    "semantic_hash": "6a35b24785c7c4261567e1ac9de71ec3"
+  },
+  ".agents/skills/prisma-mongodb-upgrade/references/schema-contract-mapping.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.0030756,
+    "ast_hash": "a3daaccb14fb9e94cb7f2ce697b6b2de",
+    "semantic_hash": "a3daaccb14fb9e94cb7f2ce697b6b2de"
+  },
+  ".agents/skills/prisma-mongodb-upgrade/references/verify-cutover-checklist.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.003077,
+    "ast_hash": "ae5e1c7e16f3b46188760820902a8a68",
+    "semantic_hash": "ae5e1c7e16f3b46188760820902a8a68"
+  },
+  ".agents/skills/prisma-orm-setup/references/v6-mongodb.md": {
+    "mtime": 1794664921.99705,
+    "seen": 1794732252.0030792,
+    "ast_hash": "89fe66b13db15a1233bb6fa031244c24",
+    "semantic_hash": "89fe66b13db15a1233bb6fa031244c24"
+  },
+  ".agents/skills/prisma-postgres-setup/references/operations.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732252.0030813,
+    "ast_hash": "b22f9638689a89667f9d3af30e8eea7a",
+    "semantic_hash": "b22f9638689a89667f9d3af30e8eea7a"
+  },
+  ".agents/skills/prisma-postgres-setup/references/provisioning.md": {
+    "mtime": 1794664922.0126748,
+    "seen": 1794732252.0030828,
+    "ast_hash": "ff71be8e6d626ba62560cc316b536f9f",
+    "semantic_hash": "ff71be8e6d626ba62560cc316b536f9f"
+  },
+  ".agents/skills/prisma-postgres-setup/references/vercel-marketplace.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794732252.0030847,
+    "ast_hash": "c815767b6f8bddb729a6458821c65b70",
+    "semantic_hash": "c815767b6f8bddb729a6458821c65b70"
+  },
+  ".agents/skills/prisma-postgres-upgrade/references/adopt-schema-and-migrations.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794732252.003086,
+    "ast_hash": "fad2b77671dbbe49103f482e997f564c",
+    "semantic_hash": "fad2b77671dbbe49103f482e997f564c"
+  },
+  ".agents/skills/prisma-postgres/SKILL.md": {
+    "mtime": 1794664922.0283012,
+    "seen": 1794732252.0030878,
+    "ast_hash": "d6729304ea5b6811e5b11210aaf72081",
+    "semantic_hash": "d6729304ea5b6811e5b11210aaf72081"
+  },
+  ".claude/skills/prisma-cli/references/agent-safety.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732252.00309,
+    "ast_hash": "b13fb6d46dbfe7db9c2433202d412bd5",
+    "semantic_hash": "b13fb6d46dbfe7db9c2433202d412bd5"
+  },
+  ".claude/skills/prisma-cli/references/complete.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732252.0030918,
+    "ast_hash": "827d26a9f01251d2ae9d3ec295f5f8cd",
+    "semantic_hash": "827d26a9f01251d2ae9d3ec295f5f8cd"
+  },
+  ".claude/skills/prisma-cli/references/db-execute.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732252.0030935,
+    "ast_hash": "fa456e36f9700329b4c1a8093e7ae92a",
+    "semantic_hash": "fa456e36f9700329b4c1a8093e7ae92a"
+  },
+  ".claude/skills/prisma-cli/references/db-pull.md": {
+    "mtime": 1794664922.0439267,
+    "seen": 1794732252.0030954,
+    "ast_hash": "112e9c49afcd099c98a39801ecfe8f64",
+    "semantic_hash": "112e9c49afcd099c98a39801ecfe8f64"
+  },
+  ".claude/skills/prisma-cli/references/db-push.md": {
+    "mtime": 1794664922.0595515,
+    "seen": 1794732252.0030968,
+    "ast_hash": "9d5b2231c9a0cc01b7a56eb0dbe04b3c",
+    "semantic_hash": "9d5b2231c9a0cc01b7a56eb0dbe04b3c"
+  },
+  ".claude/skills/prisma-cli/references/db-seed.md": {
+    "mtime": 1794664922.0602329,
+    "seen": 1794732252.0030987,
+    "ast_hash": "6b49790f9fc526c3bf9f9e465b20abf1",
+    "semantic_hash": "6b49790f9fc526c3bf9f9e465b20abf1"
+  },
+  ".claude/skills/prisma-cli/references/debug.md": {
+    "mtime": 1794664922.0612323,
+    "seen": 1794732252.0031004,
+    "ast_hash": "efc540e515df61fb409d2b0f33b3f236",
+    "semantic_hash": "efc540e515df61fb409d2b0f33b3f236"
+  },
+  ".claude/skills/prisma-cli/references/dev.md": {
+    "mtime": 1794664922.0622346,
+    "seen": 1794732252.003102,
+    "ast_hash": "633c1f65ae2e3ac43e9b0f7f328f049f",
+    "semantic_hash": "633c1f65ae2e3ac43e9b0f7f328f049f"
+  },
+  ".claude/skills/prisma-cli/references/format.md": {
+    "mtime": 1794664922.064093,
+    "seen": 1794732252.0031037,
+    "ast_hash": "7f9480c36e8fb8fd39e4aa2b466e734d",
+    "semantic_hash": "7f9480c36e8fb8fd39e4aa2b466e734d"
+  },
+  ".claude/skills/prisma-cli/references/generate.md": {
+    "mtime": 1794664922.0682244,
+    "seen": 1794732252.0031052,
+    "ast_hash": "6a346f0ccc80b0087320071ffdb31ab6",
+    "semantic_hash": "6a346f0ccc80b0087320071ffdb31ab6"
+  },
+  ".claude/skills/prisma-cli/references/init.md": {
+    "mtime": 1794664922.0692267,
+    "seen": 1794732252.003107,
+    "ast_hash": "47825b9e05d1c08daf5458e1b4b0c37a",
+    "semantic_hash": "47825b9e05d1c08daf5458e1b4b0c37a"
+  },
+  ".claude/skills/prisma-cli/references/mcp.md": {
+    "mtime": 1794664922.0708344,
+    "seen": 1794732252.003109,
+    "ast_hash": "110546680b397c48425aae80a5441010",
+    "semantic_hash": "110546680b397c48425aae80a5441010"
+  },
+  ".claude/skills/prisma-cli/references/migrate-deploy.md": {
+    "mtime": 1794664922.0714755,
+    "seen": 1794732252.0031104,
+    "ast_hash": "ad5b33f62e3ca6762f18ccbf7c3e1e02",
+    "semantic_hash": "ad5b33f62e3ca6762f18ccbf7c3e1e02"
+  },
+  ".claude/skills/prisma-cli/references/migrate-dev.md": {
+    "mtime": 1794664922.072186,
+    "seen": 1794732252.003112,
+    "ast_hash": "137ecc3c185e9ec765d633c1c53fd205",
+    "semantic_hash": "137ecc3c185e9ec765d633c1c53fd205"
+  },
+  ".claude/skills/prisma-cli/references/migrate-diff.md": {
+    "mtime": 1794664922.072186,
+    "seen": 1794732252.0031137,
+    "ast_hash": "171192cdeeb27614abc384f8520c828a",
+    "semantic_hash": "171192cdeeb27614abc384f8520c828a"
+  },
+  ".claude/skills/prisma-cli/references/migrate-reset.md": {
+    "mtime": 1794664922.072186,
+    "seen": 1794732252.0031154,
+    "ast_hash": "29135da6cff321263989e49825eb303b",
+    "semantic_hash": "29135da6cff321263989e49825eb303b"
+  },
+  ".claude/skills/prisma-cli/references/migrate-resolve.md": {
+    "mtime": 1794664922.072186,
+    "seen": 1794732252.0031173,
+    "ast_hash": "bd96262ad456e74b111c1b9f7f6990d5",
+    "semantic_hash": "bd96262ad456e74b111c1b9f7f6990d5"
+  },
+  ".claude/skills/prisma-cli/references/migrate-status.md": {
+    "mtime": 1794664922.072186,
+    "seen": 1794732252.0031188,
+    "ast_hash": "6cbb214b8dfd4484e938f8714d1c1787",
+    "semantic_hash": "6cbb214b8dfd4484e938f8714d1c1787"
+  },
+  ".claude/skills/prisma-client-api/references/client-methods.md": {
+    "mtime": 1794664922.0838697,
+    "seen": 1794732252.0031207,
+    "ast_hash": "415a45ea5ddf1995a14c1d70694868ed",
+    "semantic_hash": "415a45ea5ddf1995a14c1d70694868ed"
+  },
+  ".claude/skills/prisma-client-api/references/constructor.md": {
+    "mtime": 1794664922.0848708,
+    "seen": 1794732252.003122,
+    "ast_hash": "266f293805dcec719babe5827701c354",
+    "semantic_hash": "266f293805dcec719babe5827701c354"
+  },
+  ".claude/skills/prisma-client-api/references/filters.md": {
+    "mtime": 1794664922.085871,
+    "seen": 1794732252.003124,
+    "ast_hash": "44a7456d7ea6cb8d8f4ccc6a20b16814",
+    "semantic_hash": "44a7456d7ea6cb8d8f4ccc6a20b16814"
+  },
+  ".claude/skills/prisma-client-api/references/model-queries.md": {
+    "mtime": 1794664922.087872,
+    "seen": 1794732252.0031257,
+    "ast_hash": "2bb53c933e4baf20076d713e13151091",
+    "semantic_hash": "2bb53c933e4baf20076d713e13151091"
+  },
+  ".claude/skills/prisma-client-api/references/query-options.md": {
+    "mtime": 1794664922.0888689,
+    "seen": 1794732252.0031276,
+    "ast_hash": "30e889e6586befa4d524469e9110b989",
+    "semantic_hash": "30e889e6586befa4d524469e9110b989"
+  },
+  ".claude/skills/prisma-client-api/references/raw-queries.md": {
+    "mtime": 1794664922.0898705,
+    "seen": 1794732252.003129,
+    "ast_hash": "ac6abaf987e38d31ecb67bd7b29043b6",
+    "semantic_hash": "ac6abaf987e38d31ecb67bd7b29043b6"
+  },
+  ".claude/skills/prisma-client-api/references/relations.md": {
+    "mtime": 1794664922.0908697,
+    "seen": 1794732252.003131,
+    "ast_hash": "2c822b05319d89528354ada1d09dc241",
+    "semantic_hash": "2c822b05319d89528354ada1d09dc241"
+  },
+  ".claude/skills/prisma-client-api/references/transactions.md": {
+    "mtime": 1794664922.0918696,
+    "seen": 1794732252.0031326,
+    "ast_hash": "b63ef1dd624c20c22a028f28a9e8a705",
+    "semantic_hash": "b63ef1dd624c20c22a028f28a9e8a705"
+  },
+  ".claude/skills/prisma-compute/references/app-composer-setup.md": {
+    "mtime": 1794664922.094869,
+    "seen": 1794732252.0031343,
+    "ast_hash": "7c41123391320169d6ab10953f123105",
+    "semantic_hash": "7c41123391320169d6ab10953f123105"
+  },
+  ".claude/skills/prisma-compute/references/app-framework-builds.md": {
+    "mtime": 1794664922.097875,
+    "seen": 1794732252.003136,
+    "ast_hash": "ef9d6de61fb833a4de5d86bdd7e4ccc8",
+    "semantic_hash": "ef9d6de61fb833a4de5d86bdd7e4ccc8"
+  },
+  ".claude/skills/prisma-compute/references/automation-create-prisma.md": {
+    "mtime": 1794664922.0998785,
+    "seen": 1794732252.0031378,
+    "ast_hash": "80e72d1e148ea446dae869da246ccc15",
+    "semantic_hash": "80e72d1e148ea446dae869da246ccc15"
+  },
+  ".claude/skills/prisma-compute/references/automation-rest-api.md": {
+    "mtime": 1794664922.1008947,
+    "seen": 1794732252.0031393,
+    "ast_hash": "b9e54ed9ff0f8a780f9e52affe23021a",
+    "semantic_hash": "b9e54ed9ff0f8a780f9e52affe23021a"
+  },
+  ".claude/skills/prisma-database-setup/SKILL.md": {
+    "mtime": 1794664922.108896,
+    "seen": 1794732252.0031412,
+    "ast_hash": "7694ea8b0a9a2a4751cf63a6e241f29f",
+    "semantic_hash": "7694ea8b0a9a2a4751cf63a6e241f29f"
+  },
+  ".claude/skills/prisma-mongodb-upgrade/references/client-api-mapping.md": {
+    "mtime": 1794664922.114228,
+    "seen": 1794732252.0031426,
+    "ast_hash": "241c889046711441144f54f443e5c518",
+    "semantic_hash": "241c889046711441144f54f443e5c518"
+  },
+  ".claude/skills/prisma-mongodb-upgrade/references/decision-stay-or-migrate.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794732252.0031445,
+    "ast_hash": "73080f0d9cb0eb1f35a8a38d353aa126",
+    "semantic_hash": "73080f0d9cb0eb1f35a8a38d353aa126"
+  },
+  ".claude/skills/prisma-mongodb-upgrade/references/migrations-mapping.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794732252.0031462,
+    "ast_hash": "6a35b24785c7c4261567e1ac9de71ec3",
+    "semantic_hash": "6a35b24785c7c4261567e1ac9de71ec3"
+  },
+  ".claude/skills/prisma-mongodb-upgrade/references/schema-contract-mapping.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794732252.003148,
+    "ast_hash": "a3daaccb14fb9e94cb7f2ce697b6b2de",
+    "semantic_hash": "a3daaccb14fb9e94cb7f2ce697b6b2de"
+  },
+  ".claude/skills/prisma-mongodb-upgrade/references/verify-cutover-checklist.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794732252.0031497,
+    "ast_hash": "ae5e1c7e16f3b46188760820902a8a68",
+    "semantic_hash": "ae5e1c7e16f3b46188760820902a8a68"
+  },
+  ".claude/skills/prisma-orm-setup/references/v6-mongodb.md": {
+    "mtime": 1794664922.115279,
+    "seen": 1794732252.0031514,
+    "ast_hash": "89fe66b13db15a1233bb6fa031244c24",
+    "semantic_hash": "89fe66b13db15a1233bb6fa031244c24"
+  },
+  ".claude/skills/prisma-postgres-setup/references/operations.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794732252.0031528,
+    "ast_hash": "b22f9638689a89667f9d3af30e8eea7a",
+    "semantic_hash": "b22f9638689a89667f9d3af30e8eea7a"
+  },
+  ".claude/skills/prisma-postgres-setup/references/provisioning.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794732252.0031548,
+    "ast_hash": "ff71be8e6d626ba62560cc316b536f9f",
+    "semantic_hash": "ff71be8e6d626ba62560cc316b536f9f"
+  },
+  ".claude/skills/prisma-postgres-setup/references/vercel-marketplace.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794732252.0031564,
+    "ast_hash": "c815767b6f8bddb729a6458821c65b70",
+    "semantic_hash": "c815767b6f8bddb729a6458821c65b70"
+  },
+  ".claude/skills/prisma-postgres-upgrade/references/adopt-schema-and-migrations.md": {
+    "mtime": 1794664922.1309085,
+    "seen": 1794732252.0031583,
+    "ast_hash": "fad2b77671dbbe49103f482e997f564c",
+    "semantic_hash": "fad2b77671dbbe49103f482e997f564c"
+  },
+  ".claude/skills/prisma-postgres/SKILL.md": {
+    "mtime": 1794664922.1465342,
+    "seen": 1794732252.0031598,
+    "ast_hash": "d6729304ea5b6811e5b11210aaf72081",
+    "semantic_hash": "d6729304ea5b6811e5b11210aaf72081"
+  },
+  "docs/superpowers/plans/2026-11-15-admin-dashboard-safe-slice.md": {
+    "mtime": 1795009590.780591,
+    "seen": 1795090246.789166,
+    "ast_hash": "1ee466bb30306390c363f4c10d4718d1",
+    "semantic_hash": "1ee466bb30306390c363f4c10d4718d1"
+  },
+  "docs/superpowers/plans/2026-11-15-payroll-hr-domain-workflows.md": {
+    "mtime": 1795009590.7960994,
+    "seen": 1795090246.7891777,
+    "ast_hash": "90b5007f0aaca98a425ae9a897c91dea",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-11-15-enterprise-admin-dashboard-design.md": {
+    "mtime": 1795009590.8005502,
+    "seen": 1795090246.7891817,
+    "ast_hash": "ecd33995cf9baaccca84891d059acab0",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/01-ROLE-AND-FEATURE-SPECIFICATION.md": {
+    "mtime": 1795091957.8189955,
+    "seen": 1795094911.4929879,
+    "ast_hash": "1bbdee5905336175f52e589c86b5c039",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/02-RBAC-AND-PERMISSION-MATRIX.md": {
+    "mtime": 1795091957.8200629,
+    "seen": 1795094911.4929938,
+    "ast_hash": "be4454a210801c6a82dc30f00445b124",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/03-WORKFLOW-AND-APPROVAL-MATRIX.md": {
+    "mtime": 1795091957.8200629,
+    "seen": 1795094911.4930007,
+    "ast_hash": "346fa730fc2f6feff2230128885476ba",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/04-DATA-OWNERSHIP-AND-METRIC-DEFINITIONS.md": {
+    "mtime": 1795091957.8200629,
+    "seen": 1795094911.4930077,
+    "ast_hash": "dec89e28176e4095cead858bd4cce91b",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/05-NAVIGATION-AND-UI-SPECIFICATION.md": {
+    "mtime": 1795091957.8200629,
+    "seen": 1795094911.4930146,
+    "ast_hash": "fd6e3ebd09081a476a2f439c79e96fee",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/06-IMPLEMENTATION-AND-TRACEABILITY-PLAN.md": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4930222,
+    "ast_hash": "d2d0196a3183bc763799cdfae9be4e2b",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/07-ACCEPTANCE-AND-SECURITY-TEST-PLAN.md": {
+    "mtime": 1795091957.832416,
+    "seen": 1795094911.4930282,
+    "ast_hash": "08580485b6ff449c0adb22566b3ca206",
+    "semantic_hash": ""
+  },
+  "docs/system-specification/08-IMPLEMENTATION-STATUS.md": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4930325,
+    "ast_hash": "2d50f8a5697cc6a67d7268bc699a6a02",
+    "semantic_hash": ""
+  },
+  "docs/test-accounts-and-sessions.md": {
+    "mtime": 1795009590.8125906,
+    "seen": 1795090246.7892032,
+    "ast_hash": "9d8267cf1749f4556546219f6eec4007",
+    "semantic_hash": ""
+  },
+  "app/admin/components/dashboard/DashboardPanel.tsx": {
+    "mtime": 1795009590.5872233,
+    "seen": 1795090246.7881484,
+    "ast_hash": "e2754ac70adbde5d8bba433baa1747a4",
+    "semantic_hash": "e2754ac70adbde5d8bba433baa1747a4"
+  },
+  "app/admin/dashboard/AdminDashboardClient.tsx": {
+    "mtime": 1795091933.9434757,
+    "seen": 1795094911.4897861,
+    "ast_hash": "2ae7b43c360304b2061854a82ad4d351",
+    "semantic_hash": ""
+  },
+  "app/admin/dashboard/activities.server.ts": {
+    "mtime": 1795009590.601434,
+    "seen": 1795090246.7881696,
+    "ast_hash": "ed87b6f6631ddbda9958b2017a54b407",
+    "semantic_hash": "ed87b6f6631ddbda9958b2017a54b407"
+  },
+  "app/admin/dashboard/activity-presentation.ts": {
+    "mtime": 1795009590.6027067,
+    "seen": 1795090246.788172,
+    "ast_hash": "5ec3620f3fef6f9b66411a6fcb161d0a",
+    "semantic_hash": "5ec3620f3fef6f9b66411a6fcb161d0a"
+  },
+  "app/api/admin/dashboard/activities/route.ts": {
+    "mtime": 1795009590.6375916,
+    "seen": 1795090246.7882965,
+    "ast_hash": "db31844cefd9aed1d101572ce36de4a4",
+    "semantic_hash": "db31844cefd9aed1d101572ce36de4a4"
+  },
+  "tests/admin/dashboard-activities-ui.test.tsx": {
+    "mtime": 1795091958.712882,
+    "seen": 1795094911.4915507,
+    "ast_hash": "dd0e03675408f095936e332e21d193ec",
+    "semantic_hash": ""
+  },
+  "tests/admin/dashboard-activities.test.ts": {
+    "mtime": 1795009591.6135356,
+    "seen": 1795090246.788678,
+    "ast_hash": "e20c2960e973f493f9f1d2c869eab818",
+    "semantic_hash": "e20c2960e973f493f9f1d2c869eab818"
+  },
+  "tests/admin/dashboard-layout.test.tsx": {
+    "mtime": 1795009591.6135356,
+    "seen": 1795090246.7886798,
+    "ast_hash": "e08f7087935d422df2035d11806d5d00",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-15-admin-dashboard-screenshot-safe-slice.md": {
+    "mtime": 1795009590.780591,
+    "seen": 1795090246.7891686,
+    "ast_hash": "6c399b668013369911760f2fa9a58a26",
+    "semantic_hash": ""
+  },
+  "app/access-pending/page.tsx": {
+    "mtime": 1795091933.9293964,
+    "seen": 1795094911.4894686,
+    "ast_hash": "3e5dece21a194782c02aa890ebedf344",
+    "semantic_hash": ""
+  },
+  "app/admin/AdminRequestLayout.tsx": {
+    "mtime": 1795009590.561496,
+    "seen": 1795090246.7880573,
+    "ast_hash": "2909780aa340e64c5b385139c4a78e83",
+    "semantic_hash": ""
+  },
+  "app/admin/_company/page.tsx": {
+    "mtime": 1795009590.563122,
+    "seen": 1795090246.788066,
+    "ast_hash": "aeb3c9731e9ce9ebc294efb0ab1a73e3",
+    "semantic_hash": ""
+  },
+  "app/admin/audit-logs/page.tsx": {
+    "mtime": 1794752125.638531,
+    "seen": 1794993226.6268384,
+    "ast_hash": "ec07ada2fac123f872966f0e9399cf84",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminAuditLogs.tsx": {
+    "mtime": 1794752125.6435647,
+    "seen": 1794993226.6269186,
+    "ast_hash": "b4946dc2a64b367228b4278b09e012c3",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminLayoutFallback.tsx": {
+    "mtime": 1795009590.563122,
+    "seen": 1795090246.7880938,
+    "ast_hash": "35ce4d7511d5c6e28f6cfacdc1b19dbb",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminProfileContext.tsx": {
+    "mtime": 1794752125.644804,
+    "seen": 1794993226.6269455,
+    "ast_hash": "16638a57dc67097968ebb861d25d6ea5",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminProfileSettings.tsx": {
+    "mtime": 1794752125.6474354,
+    "seen": 1794993226.6269586,
+    "ast_hash": "2990126d3ee38a375baceced0fa1d54f",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminSettingsSections.tsx": {
+    "mtime": 1795009590.5802648,
+    "seen": 1795090246.7881062,
+    "ast_hash": "c9230412c1a2bfde3da713033d3baf64",
+    "semantic_hash": ""
+  },
+  "app/admin/components/AdminSettingsUI.tsx": {
+    "mtime": 1794752125.6498923,
+    "seen": 1794993226.6269708,
+    "ast_hash": "79b4f5f550a34eeea09b93c845350d43",
+    "semantic_hash": ""
+  },
+  "app/admin/dashboard/polling.ts": {
+    "mtime": 1795009590.6054175,
+    "seen": 1795090246.7881763,
+    "ast_hash": "7b86ba41bdec3511002249581c2498d3",
+    "semantic_hash": ""
+  },
+  "app/admin/dashboard/snapshot-client.ts": {
+    "mtime": 1795009590.6080778,
+    "seen": 1795090246.788181,
+    "ast_hash": "c6bf7f457a4d17fa3d3ca2de1b176f5c",
+    "semantic_hash": ""
+  },
+  "app/admin/dashboard/summary-schema.ts": {
+    "mtime": 1795091933.9444757,
+    "seen": 1795094911.4898307,
+    "ast_hash": "47cc4bb33aae1e29ebcd1ffefd493c7e",
+    "semantic_hash": ""
+  },
+  "app/admin/dashboard/summary.server.ts": {
+    "mtime": 1795009590.6098847,
+    "seen": 1795090246.788185,
+    "ast_hash": "8ca79b59bf1a2a8f902707a8d54a8f6b",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/PayrollApprovalClient.tsx": {
+    "mtime": 1795091933.946474,
+    "seen": 1795094911.4898596,
+    "ast_hash": "8732f4385aa141b0a41c218c4491ce7b",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/PayrollEmployeeDetailClient.tsx": {
+    "mtime": 1795091933.947478,
+    "seen": 1795094911.4898667,
+    "ast_hash": "9c1c1d72ec2086a2620a8ab5589b43aa",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/PayrollEmployeeList.tsx": {
+    "mtime": 1795091933.9494753,
+    "seen": 1795094911.489871,
+    "ast_hash": "9e5d08f1fa8a6dcf439cd50d7adc423e",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/PayrollReviewClient.tsx": {
+    "mtime": 1795091933.9514751,
+    "seen": 1795094911.4898758,
+    "ast_hash": "a87216f5f4a62e7164622e3ef9859570",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/[batchId]/employees/[employeeId]/page.tsx": {
+    "mtime": 1795091933.9544737,
+    "seen": 1795094911.48988,
+    "ast_hash": "ffa8fd6ec006f303cf893fec137a7619",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/deduction-categories/AdminDeductionCategoriesClient.tsx": {
+    "mtime": 1795091933.9651916,
+    "seen": 1795094911.4899287,
+    "ast_hash": "c4f05170cd0cfadd334eca33bbae0281",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/deduction-categories/page.tsx": {
+    "mtime": 1795091933.9671924,
+    "seen": 1795094911.4899333,
+    "ast_hash": "8b337054f10a7420489d2a4d58de1961",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/rules/PayrollRulesEditor.tsx": {
+    "mtime": 1795095584.1250782,
+    "seen": 1795095690.721402,
+    "ast_hash": "de9e3977baf48bd7185540dcdae1cc3c",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/rules/page.tsx": {
+    "mtime": 1795092091.9909053,
+    "seen": 1795094911.4899504,
+    "ast_hash": "4e281be768011bf2890a3ff938ebf407",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/rules/rules-api.ts": {
+    "mtime": 1795091933.9731927,
+    "seen": 1795094911.4899573,
+    "ast_hash": "2bda2529d0f6c874558fbdcb91785445",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/EmploymentStatusPolicyForm.tsx": {
+    "mtime": 1795009590.6179757,
+    "seen": 1795090246.7882333,
+    "ast_hash": "cad7eade2c49b7ba8e48cdad15c0bf8f",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/OrganizationSettingsForm.tsx": {
+    "mtime": 1795009590.6179757,
+    "seen": 1795090246.7882354,
+    "ast_hash": "650ecef63c505f628fef57dc7dc5192a",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/OrganizationStructureForm.tsx": {
+    "mtime": 1795009590.6179757,
+    "seen": 1795090246.7882378,
+    "ast_hash": "cc165eace59498b2c6959242f96b7989",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/data.ts": {
+    "mtime": 1794752125.6561654,
+    "seen": 1794993226.6273415,
+    "ast_hash": "f432b66a89467942ce15bf588f3356b2",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/employment-statuses/page.tsx": {
+    "mtime": 1795009590.6179757,
+    "seen": 1795090246.7882423,
+    "ast_hash": "553bbe006e4447ea6478ce292a7063ab",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/organization/page.tsx": {
+    "mtime": 1795009590.6179757,
+    "seen": 1795090246.7882445,
+    "ast_hash": "ed82e29c535ac5c9940ed10c603e6bb7",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/page.tsx": {
+    "mtime": 1795009590.6179757,
+    "seen": 1795090246.7882466,
+    "ast_hash": "da809368baf8c559bce2c7ead3637401",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/settings-api.ts": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.4900188,
+    "ast_hash": "08dc762617e941c53f6508604c04901e",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/structure/page.tsx": {
+    "mtime": 1795009590.629914,
+    "seen": 1795090246.7882507,
+    "ast_hash": "c7f0c16cf99991c194827e060efbf8b7",
+    "semantic_hash": ""
+  },
+  "app/admin/settings/types.ts": {
+    "mtime": 1794752125.6613934,
+    "seen": 1794993226.6273913,
+    "ast_hash": "b3052950b0f3ebc79dab0f48647052e5",
+    "semantic_hash": ""
+  },
+  "app/api/_shared/attendance-policy-errors.ts": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.4900606,
+    "ast_hash": "fda991feb1ac04354b410f0627835d0e",
+    "semantic_hash": ""
+  },
+  "app/api/_shared/employee-errors.ts": {
+    "mtime": 1795009590.6349125,
+    "seen": 1795090246.7882664,
+    "ast_hash": "9a4e3119303c19b89d8c0a36ae86bb82",
+    "semantic_hash": ""
+  },
+  "app/api/_shared/payroll-errors.ts": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.490075,
+    "ast_hash": "5b0613e2f5082db0303bb98d78568b81",
+    "semantic_hash": ""
+  },
+  "app/api/_shared/role-errors.ts": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.4900796,
+    "ast_hash": "6929a308a6f99cfddae222d3d1a2e16a",
+    "semantic_hash": ""
+  },
+  "app/api/_shared/user-errors.ts": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.490084,
+    "ast_hash": "8a6a197968bf50c4cd5e9a6563a53f32",
+    "semantic_hash": ""
+  },
+  "app/api/admin/attendance-policies/[policyId]/route.ts": {
+    "mtime": 1795091933.9742415,
+    "seen": 1795094911.4900877,
+    "ast_hash": "174bc1e5efc4bb3b87509b5745fb7823",
+    "semantic_hash": ""
+  },
+  "app/api/admin/attendance-policies/[policyId]/status/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4900918,
+    "ast_hash": "0eb5c0c97e46e4a9950fb41b49a69a70",
+    "semantic_hash": ""
+  },
+  "app/api/admin/attendance-policies/options/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4900987,
+    "ast_hash": "4cc54d999a86549e3ac77ad70dd843b8",
+    "semantic_hash": ""
+  },
+  "app/api/admin/attendance-policies/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4901056,
+    "ast_hash": "147606f55c1bc532556bd8a027535481",
+    "semantic_hash": ""
+  },
+  "app/api/admin/dashboard/summary/route.ts": {
+    "mtime": 1795009590.6391215,
+    "seen": 1795090246.7882986,
+    "ast_hash": "67a7f475c39221450e3a98ebe1a6082c",
+    "semantic_hash": ""
+  },
+  "app/api/admin/invitations/[invitationId]/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4902186,
+    "ast_hash": "0e0783c22c39f91fa705a194f1af9382",
+    "semantic_hash": ""
+  },
+  "app/api/admin/invitations/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4902263,
+    "ast_hash": "5310c7f64357c9840900438e79548c4d",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/decision/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.490234,
+    "ast_hash": "33162b43fa27c933dda59892e3780a49",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/disbursement/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4902403,
+    "ast_hash": "a4544b45a6973fc91a9878402968ee64",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/employees/[employeeId]/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4902475,
+    "ast_hash": "5b32fd1786367e9ef3cd08497770bf40",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/employees/route.ts": {
+    "mtime": 1795091933.9898677,
+    "seen": 1795094911.4902527,
+    "ast_hash": "6a3e5efe7ec2dd9a3171d983bccfd6da",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/report/route.ts": {
+    "mtime": 1795091934.0054963,
+    "seen": 1795094911.4902573,
+    "ast_hash": "4a513bde2299463a12eff832a2208453",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/route.ts": {
+    "mtime": 1795091934.0054963,
+    "seen": 1795094911.4902613,
+    "ast_hash": "9c2324c30bc1db13d3e4f97b8ec67a80",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/[batchId]/timeline/route.ts": {
+    "mtime": 1795091934.0054963,
+    "seen": 1795094911.4902658,
+    "ast_hash": "4bc51faf2dc1a9048ec50492d2ca96c7",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/config/[id]/decision/route.ts": {
+    "mtime": 1795091934.0054963,
+    "seen": 1795094911.490272,
+    "ast_hash": "8574e0477ddaf4b819a343947c765d7a",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/config/audit/route.ts": {
+    "mtime": 1795091934.0054963,
+    "seen": 1795094911.4902794,
+    "ast_hash": "52a9061f5a658cb798a18abd4b79d38e",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/config/route.ts": {
+    "mtime": 1795091934.0054963,
+    "seen": 1795094911.4902866,
+    "ast_hash": "4f28e1cfdd93961591b3086843a46c5a",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/deduction-categories/route.ts": {
+    "mtime": 1795091934.0211227,
+    "seen": 1795094911.4902935,
+    "ast_hash": "d83e89412faab59a3f7ebf92843ee159",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/history/route.ts": {
+    "mtime": 1795091956.848571,
+    "seen": 1795094911.490301,
+    "ast_hash": "fc08cdcf2184ba6fc9f4ef08cd8fc16e",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/route.ts": {
+    "mtime": 1795091956.8793643,
+    "seen": 1795094911.490306,
+    "ast_hash": "fed0949126fb17fba27ca45b173df670",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/rules/route.ts": {
+    "mtime": 1795092092.0607774,
+    "seen": 1795094911.490314,
+    "ast_hash": "b56af3c45aa148553c8333bc62b7ce11",
+    "semantic_hash": ""
+  },
+  "app/api/admin/roles/[roleId]/route.ts": {
+    "mtime": 1795091956.9105928,
+    "seen": 1795094911.490318,
+    "ast_hash": "cc786a0ab170ff5b13397fbe9b0c8bcc",
+    "semantic_hash": ""
+  },
+  "app/api/admin/roles/route.ts": {
+    "mtime": 1795091956.917107,
+    "seen": 1795094911.4903247,
+    "ast_hash": "ef97282ffac136438a2961cb9a54185a",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/_shared.ts": {
+    "mtime": 1795009590.6415548,
+    "seen": 1795090246.7883406,
+    "ast_hash": "4512d5b1cb08e9fc0ef27613053385fd",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/branches/[branchId]/route.ts": {
+    "mtime": 1795009590.6465955,
+    "seen": 1795090246.7883427,
+    "ast_hash": "2d092c06a8451081d2ad3e7fe0d96046",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/branches/route.ts": {
+    "mtime": 1795009590.6465955,
+    "seen": 1795090246.788345,
+    "ast_hash": "c1ae4bc4a56808667038078abc39475d",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/departments/[departmentId]/route.ts": {
+    "mtime": 1795009590.6508145,
+    "seen": 1795090246.7883475,
+    "ast_hash": "b0cc7c755c46722d2342442c9a31efd2",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/departments/route.ts": {
+    "mtime": 1795009590.6508145,
+    "seen": 1795090246.7883494,
+    "ast_hash": "e5ce88ec47d0ad60edbb6dc27e455664",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/employee-account-links/route.ts": {
+    "mtime": 1795009590.6508145,
+    "seen": 1795090246.7883515,
+    "ast_hash": "ae262ac4967fae153ab706f40b6cce9f",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/employment-statuses/route.ts": {
+    "mtime": 1795009590.6508145,
+    "seen": 1795090246.7883534,
+    "ast_hash": "9e4f105d03cfecadad800a15e0f63a4d",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/organization/route.ts": {
+    "mtime": 1795009590.6508145,
+    "seen": 1795090246.7883556,
+    "ast_hash": "8ef8bd3f083460cf1b5ad4a628e91269",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/teams/[teamId]/route.ts": {
+    "mtime": 1795009590.6623785,
+    "seen": 1795090246.7883577,
+    "ast_hash": "72e7569db5e98e0bb9927a520e2f4ae9",
+    "semantic_hash": ""
+  },
+  "app/api/admin/settings/teams/route.ts": {
+    "mtime": 1795009590.6633754,
+    "seen": 1795090246.7883596,
+    "ast_hash": "5c645e31c34714b86ab9a0ea10b86225",
+    "semantic_hash": ""
+  },
+  "app/api/admin/users/[userId]/permissions/route.ts": {
+    "mtime": 1795091956.917107,
+    "seen": 1795094911.4903831,
+    "ast_hash": "526dd494413a1bcf14e5beda276649b0",
+    "semantic_hash": ""
+  },
+  "app/api/admin/users/[userId]/profile-image/route.ts": {
+    "mtime": 1795091956.917107,
+    "seen": 1795094911.4903867,
+    "ast_hash": "212257445f1eab176ca62ac746f9f134",
+    "semantic_hash": ""
+  },
+  "app/api/admin/users/[userId]/route.ts": {
+    "mtime": 1795091956.9323702,
+    "seen": 1795094911.4903903,
+    "ast_hash": "dd8aa0e5336a3f105e6dc43c48f829a7",
+    "semantic_hash": ""
+  },
+  "app/api/admin/users/[userId]/status/route.ts": {
+    "mtime": 1795091956.9484134,
+    "seen": 1795094911.490394,
+    "ast_hash": "bc9219552d26054f21b53ad816ba8324",
+    "semantic_hash": ""
+  },
+  "app/api/admin/users/invitation-candidates/route.ts": {
+    "mtime": 1795091956.9484134,
+    "seen": 1795094911.4903977,
+    "ast_hash": "dbdc6edd8d743f07c299fb7e99750b1a",
+    "semantic_hash": ""
+  },
+  "app/api/admin/users/route.ts": {
+    "mtime": 1795091956.9640403,
+    "seen": 1795094911.490402,
+    "ast_hash": "99eec0bad7cf33ce7e2f9a20f00f41d3",
+    "semantic_hash": ""
+  },
+  "app/api/hr/employees/[employeeId]/route.ts": {
+    "mtime": 1795092097.6600854,
+    "seen": 1795094911.4904275,
+    "ast_hash": "82dcb97233cde68dda9b57eeef6dd380",
+    "semantic_hash": ""
+  },
+  "app/api/hr/employees/route.ts": {
+    "mtime": 1795009590.6896338,
+    "seen": 1795090246.7883868,
+    "ast_hash": "61e598ff39902f773b7444231f9b196d",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/[batchId]/route.ts": {
+    "mtime": 1795091957.0980847,
+    "seen": 1795094911.4904382,
+    "ast_hash": "fd2d8ba9e9d27d047b7fa813f8c966e5",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/[batchId]/versions/[version]/route.ts": {
+    "mtime": 1795091957.0980847,
+    "seen": 1795094911.4904437,
+    "ast_hash": "a586c4ffe71d4f54856e677f8d0faaf8",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/[batchId]/versions/[version]/submit/route.ts": {
+    "mtime": 1795091957.0980847,
+    "seen": 1795094911.4904478,
+    "ast_hash": "f58fadb9c6fe7a2657472094f05437f6",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/[batchId]/versions/route.ts": {
+    "mtime": 1795091957.0980847,
+    "seen": 1795094911.4904535,
+    "ast_hash": "715e3c0e8dd9d1510a372dff56846f87",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/calculate/route.ts": {
+    "mtime": 1795091957.108799,
+    "seen": 1795094911.4904604,
+    "ast_hash": "be886764724238d3d8a4b75d4d0f7cb9",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/config/[id]/route.ts": {
+    "mtime": 1795091957.1113124,
+    "seen": 1795094911.4904673,
+    "ast_hash": "f974c9d504324926a6160593d4abff7c",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/config/[id]/submit/route.ts": {
+    "mtime": 1795091957.1182718,
+    "seen": 1795094911.4904742,
+    "ast_hash": "a5e6d072fc3e4673634a650ecd4d7b46",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/config/route.ts": {
+    "mtime": 1795091957.1192718,
+    "seen": 1795094911.4904814,
+    "ast_hash": "6215d9c87146a929405cf8d5a177d2ed",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/config/simulate/route.ts": {
+    "mtime": 1795091957.1212711,
+    "seen": 1795094911.4904878,
+    "ast_hash": "f99769f4f4d1fe3c90135ab6701647fc",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/deduction-categories/route.ts": {
+    "mtime": 1795091957.1333928,
+    "seen": 1795094911.4904947,
+    "ast_hash": "b221807272a3bb98ea73436359e4c16a",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/route.ts": {
+    "mtime": 1795091957.1498501,
+    "seen": 1795094911.4905014,
+    "ast_hash": "52897fee7764d1a7bb58ebc4856e7b78",
+    "semantic_hash": ""
+  },
+  "app/api/invitations/accept/route.ts": {
+    "mtime": 1795091957.1498501,
+    "seen": 1795094911.4905152,
+    "ast_hash": "e5d855eeba8093bdae0e4cdeaf785726",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/EmployeesClient.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907994,
+    "ast_hash": "b13f1c2da1ab0328da168b7f34b66a1a",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/page.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.490857,
+    "ast_hash": "fdf281c417c6b6d445ac603058da7f58",
+    "semantic_hash": ""
+  },
+  "app/hr/layout.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.4908917,
+    "ast_hash": "68d11d3dba52b965ac2d65685016640f",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/PayrollPreparationClient.tsx": {
+    "mtime": 1795091957.6125627,
+    "seen": 1795094911.4909313,
+    "ast_hash": "913742496e273c9bf6df9696a6ae3843",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/[batchId]/page.tsx": {
+    "mtime": 1795091957.6155627,
+    "seen": 1795094911.4909387,
+    "ast_hash": "2a75863d9eab9aec426fd9cf9eac0645",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/deduction-categories/DeductionCategoriesClient.tsx": {
+    "mtime": 1795091957.6257646,
+    "seen": 1795094911.490952,
+    "ast_hash": "6058ece9b0c7f43e9fa0c04f1105d227",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/deduction-categories/page.tsx": {
+    "mtime": 1795091957.6267633,
+    "seen": 1795094911.4909556,
+    "ast_hash": "6c2b574c71ffc7a2166fca89bfb36d17",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/page.tsx": {
+    "mtime": 1795091957.627759,
+    "seen": 1795094911.49096,
+    "ast_hash": "f591d1b17c7646ee48cb7c8f894ce325",
+    "semantic_hash": ""
+  },
+  "app/invite/accept/InvitationAcceptForm.tsx": {
+    "mtime": 1795091957.6338437,
+    "seen": 1795094911.4909678,
+    "ast_hash": "aeef3d906cefa570e23b92cbef087e15",
+    "semantic_hash": ""
+  },
+  "app/invite/accept/page.tsx": {
+    "mtime": 1795091957.635449,
+    "seen": 1795094911.4909725,
+    "ast_hash": "418dc68dd929909a988ead0e3878c72f",
+    "semantic_hash": ""
+  },
+  "app/lib/attendance/policy-resolution.ts": {
+    "mtime": 1795091957.6405108,
+    "seen": 1795094911.4909837,
+    "ast_hash": "f8835fabd57b33e245ed94b3350a7878",
+    "semantic_hash": ""
+  },
+  "app/lib/attendance/policy-schemas.ts": {
+    "mtime": 1795091957.641512,
+    "seen": 1795094911.4909904,
+    "ast_hash": "bca35388efc6ea41b6e3a25b50ea2a7c",
+    "semantic_hash": ""
+  },
+  "app/lib/attendance/policy-service.server.ts": {
+    "mtime": 1795091957.6435113,
+    "seen": 1795094911.4909973,
+    "ast_hash": "dd709b10b35e5323b208cee4c376cea3",
+    "semantic_hash": ""
+  },
+  "app/lib/audit/domain-audit.ts": {
+    "mtime": 1795092092.1109095,
+    "seen": 1795094911.491004,
+    "ast_hash": "7ecbeb511d45c254811db7f8e9839095",
+    "semantic_hash": ""
+  },
+  "app/lib/auth/csrf.ts": {
+    "mtime": 1795091957.6560385,
+    "seen": 1795094911.4910343,
+    "ast_hash": "ae2d8eb92a91dcc9ce0eec73e2571bb6",
+    "semantic_hash": ""
+  },
+  "app/lib/email/smtp.server.ts": {
+    "mtime": 1795091957.668671,
+    "seen": 1795094911.4911835,
+    "ast_hash": "47e60f45800bc444d1751165e8b22cfa",
+    "semantic_hash": ""
+  },
+  "app/lib/employees/schemas.ts": {
+    "mtime": 1795009590.7562613,
+    "seen": 1795090246.788552,
+    "ast_hash": "4e97eb076bde984337b30f2f79e0224e",
+    "semantic_hash": ""
+  },
+  "app/lib/employees/service.ts": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4911969,
+    "ast_hash": "274408f0652fa5f54dbd08349e5e11a5",
+    "semantic_hash": ""
+  },
+  "app/lib/organization/policy.ts": {
+    "mtime": 1795009590.7628272,
+    "seen": 1795090246.788558,
+    "ast_hash": "382b3e7fca0de4f4b04ad9084c03c708",
+    "semantic_hash": ""
+  },
+  "app/lib/organization/service.ts": {
+    "mtime": 1795009590.7628272,
+    "seen": 1795090246.78856,
+    "ast_hash": "99cf7e0e2a2df2b0341894bce6cf93d7",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/client-api.ts": {
+    "mtime": 1795091957.6742094,
+    "seen": 1795094911.4912145,
+    "ast_hash": "fc7fe65718651e2a0f18529f02c62f52",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/disbursement-schemas.ts": {
+    "mtime": 1795091957.6762094,
+    "seen": 1795094911.491222,
+    "ast_hash": "53605245619fa5f40a175c1e2e1170e6",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/disbursement-service.server.ts": {
+    "mtime": 1795091957.68014,
+    "seen": 1795094911.4912286,
+    "ast_hash": "beffef54878a67bbf92265106f77c24e",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/format.ts": {
+    "mtime": 1795091957.6821463,
+    "seen": 1795094911.4912353,
+    "ast_hash": "50167330a4def5a0b9179e39b0a13590",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/reconciliation.ts": {
+    "mtime": 1795091957.688512,
+    "seen": 1795094911.4912488,
+    "ast_hash": "3853f0e356b6e21535dc7307e5d3a567",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/schemas.ts": {
+    "mtime": 1795091957.6905107,
+    "seen": 1795094911.4912527,
+    "ast_hash": "c227e5408b0f57ffdf9d7b800a8c5b17",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/service.ts": {
+    "mtime": 1795091957.692511,
+    "seen": 1795094911.4912567,
+    "ast_hash": "3be1f6e589b19a469e3e49c171c97c01",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/timeline-service.server.ts": {
+    "mtime": 1795091957.7051485,
+    "seen": 1795094911.4912617,
+    "ast_hash": "0ce6743456d298537a2625de87fa8a36",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/views.ts": {
+    "mtime": 1795091957.7051485,
+    "seen": 1795094911.4912653,
+    "ast_hash": "2b2aa4cf128edd01a91a9231d2990132",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/xlsx.ts": {
+    "mtime": 1795091957.7051485,
+    "seen": 1795094911.4912717,
+    "ast_hash": "c95dfac5463e6d0a730f1b06408206a4",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/calculator.ts": {
+    "mtime": 1795091957.7166088,
+    "seen": 1795094911.491279,
+    "ast_hash": "231a41ff3df19ebfeba5f8196a51a3fe",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/company-config.ts": {
+    "mtime": 1795091957.7254953,
+    "seen": 1795094911.491286,
+    "ast_hash": "769ee1260fe34879008c2dfc5d1a909a",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/config-service.server.ts": {
+    "mtime": 1795091957.7264948,
+    "seen": 1795094911.4912925,
+    "ast_hash": "ba27beb6e471d0a5df78872023e23e80",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/config/types.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.4912992,
+    "ast_hash": "48c73f43f8a8bb3f4cd8eeb89d21a15c",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/deduction-categories-service.server.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.491304,
+    "ast_hash": "433c7152b15255eb4ad21b13f27e4f0e",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/deduction-categories.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.4913082,
+    "ast_hash": "b28ab652bfa4995d40e58e4e31af6cea",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/formula-engine.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.491312,
+    "ast_hash": "accf902fbeb59e473a0ce9577d77497c",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/policy-resolver.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.4913206,
+    "ast_hash": "90b1ace48ed44758c801e3dd15eb4415",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/rounding.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.491328,
+    "ast_hash": "6280bed7ed4916b56ccbb486ea331edd",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/rules-service.server.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.491342,
+    "ast_hash": "4351f53f3eaa7e111e263ea2a9126b67",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/rules.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.4913485,
+    "ast_hash": "bc39404e3b5397523c8a165bd75b9be4",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/simulation.ts": {
+    "mtime": 1795091957.7648535,
+    "seen": 1795094911.4913552,
+    "ast_hash": "92beb3338051e06f7219affd3bea4fb5",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/statutory-ph.ts": {
+    "mtime": 1795091957.768853,
+    "seen": 1795094911.491359,
+    "ast_hash": "a8ee0f9bb6933d651f4cea455caeea2b",
+    "semantic_hash": ""
+  },
+  "app/lib/roles/schemas.ts": {
+    "mtime": 1795091957.7708547,
+    "seen": 1795094911.4913628,
+    "ast_hash": "95f052b91650dd6f8cabc93bbfa55082",
+    "semantic_hash": ""
+  },
+  "app/lib/roles/service.ts": {
+    "mtime": 1795091957.771855,
+    "seen": 1795094911.4913669,
+    "ast_hash": "9f735758c12771c729966c9b4c872104",
+    "semantic_hash": ""
+  },
+  "app/lib/users/invitations.server.ts": {
+    "mtime": 1795091957.7762651,
+    "seen": 1795094911.4913712,
+    "ast_hash": "080d9f09d6ee2305681c7bacf99231cf",
+    "semantic_hash": ""
+  },
+  "app/lib/users/profile-image-storage.server.ts": {
+    "mtime": 1795091957.7797613,
+    "seen": 1795094911.4913778,
+    "ast_hash": "6c8def76e7027141bf37af4a782810c2",
+    "semantic_hash": ""
+  },
+  "app/lib/users/r2-config.ts": {
+    "mtime": 1795091957.7911265,
+    "seen": 1795094911.491385,
+    "ast_hash": "412af701dc85b6978d54d8edcd51abb6",
+    "semantic_hash": ""
+  },
+  "app/lib/users/schemas.ts": {
+    "mtime": 1795091957.7911265,
+    "seen": 1795094911.4913914,
+    "ast_hash": "e7852a35eaa85c7fd0ba7b3bc0481ca9",
+    "semantic_hash": ""
+  },
+  "app/lib/users/search.ts": {
+    "mtime": 1795091957.7955482,
+    "seen": 1795094911.4913986,
+    "ast_hash": "f25c770b087739b9f83d5bc534964b72",
+    "semantic_hash": ""
+  },
+  "app/lib/users/service.ts": {
+    "mtime": 1795091957.7975502,
+    "seen": 1795094911.4914052,
+    "ast_hash": "e98beee92cb55d881ba03ee9c9b3a2c5",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261116000000_organization_foundation/migration.sql": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.7886493,
+    "ast_hash": "f96bd42c9be80893ce188bf98710825b",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261117000000_employee_lifecycle/migration.sql": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.7886512,
+    "ast_hash": "dbc0ebb58172b88fb75d3e9eb95551ac",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261118000000_users_roles_attendance_policies/migration.sql": {
+    "mtime": 1795091958.332157,
+    "seen": 1795094911.491471,
+    "ast_hash": "807eba47f07bad262b4f4a516839e240",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261119000000_payroll_rule_sets/migration.sql": {
+    "mtime": 1795091958.3399887,
+    "seen": 1795094911.4914765,
+    "ast_hash": "c829f58e9d5e45aa38362641f06aabf2",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261120000000_payroll_results_and_approvals/migration.sql": {
+    "mtime": 1795091958.428264,
+    "seen": 1795094911.4914842,
+    "ast_hash": "b058c953258e358556464e16285588ff",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261121000000_payroll_extended_governance/migration.sql": {
+    "mtime": 1795091958.637688,
+    "seen": 1795094911.4914908,
+    "ast_hash": "ae3b550f87dac5c78aff50443f7b5280",
+    "semantic_hash": ""
+  },
+  "tests/admin/admin-layout.test.tsx": {
+    "mtime": 1795009591.6029563,
+    "seen": 1795090246.7886715,
+    "ast_hash": "e21634afc2d14377e6a935dad459e7b5",
+    "semantic_hash": ""
+  },
+  "tests/admin/company-route-visibility.test.ts": {
+    "mtime": 1795009591.6094513,
+    "seen": 1795090246.7886739,
+    "ast_hash": "92dc2bb13983a766644c99322f287d20",
+    "semantic_hash": ""
+  },
+  "tests/admin/dashboard-polling.test.ts": {
+    "mtime": 1795009591.6135356,
+    "seen": 1795090246.788682,
+    "ast_hash": "630dbfff8648b4571e04f9359ed802ac",
+    "semantic_hash": ""
+  },
+  "tests/admin/dashboard-snapshot-client.test.ts": {
+    "mtime": 1795091958.716202,
+    "seen": 1795094911.491602,
+    "ast_hash": "8a6550def2164ae3056154141e782c62",
+    "semantic_hash": ""
+  },
+  "tests/admin/dashboard-summary-schema.test.ts": {
+    "mtime": 1795009591.6512394,
+    "seen": 1795090246.7886884,
+    "ast_hash": "1861deb225d3b5696621389b8185ea86",
+    "semantic_hash": ""
+  },
+  "tests/admin/dashboard-summary.test.ts": {
+    "mtime": 1795091958.718201,
+    "seen": 1795094911.4916165,
+    "ast_hash": "5b4f60d2fcf2fead006449ce8bea7c88",
+    "semantic_hash": ""
+  },
+  "tests/admin/settings-forms.test.tsx": {
+    "mtime": 1795009591.6542907,
+    "seen": 1795090246.7886965,
+    "ast_hash": "3656e1c33a65cad7b3a7a754ed309a5e",
+    "semantic_hash": ""
+  },
+  "tests/admin/settings-navigation.test.tsx": {
+    "mtime": 1795009591.6542907,
+    "seen": 1795090246.788699,
+    "ast_hash": "73844c208007210c10ffcf0393046b2c",
+    "semantic_hash": ""
+  },
+  "tests/api/employees.test.ts": {
+    "mtime": 1795092097.7850857,
+    "seen": 1795094911.4916441,
+    "ast_hash": "b0432591d54ad18ceff0cf0f4868d17a",
+    "semantic_hash": ""
+  },
+  "tests/api/organization-policy.test.ts": {
+    "mtime": 1795009591.696976,
+    "seen": 1795090246.7887032,
+    "ast_hash": "e18471975ff60f71da1b5f970423ef59",
+    "semantic_hash": ""
+  },
+  "tests/domain/attendance-policy-resolution.test.ts": {
+    "mtime": 1795091958.7493734,
+    "seen": 1795094911.4917686,
+    "ast_hash": "603df6b10ddf4dd6048b0c20e9e469fc",
+    "semantic_hash": ""
+  },
+  "tests/domain/attendance-policy-schemas.test.ts": {
+    "mtime": 1795091958.751594,
+    "seen": 1795094911.4917762,
+    "ast_hash": "574742cf2099c74bf2ff173c45399838",
+    "semantic_hash": ""
+  },
+  "tests/domain/deduction-categories.test.ts": {
+    "mtime": 1795091958.7665288,
+    "seen": 1795094911.491791,
+    "ast_hash": "6cd229712112b977c63d3616f4e19dd2",
+    "semantic_hash": ""
+  },
+  "tests/domain/employees.test.ts": {
+    "mtime": 1795009591.9609325,
+    "seen": 1795090246.7887516,
+    "ast_hash": "e38d973962ae1616c3f1a665bcd1ae49",
+    "semantic_hash": ""
+  },
+  "tests/domain/organization.test.ts": {
+    "mtime": 1795009591.962758,
+    "seen": 1795090246.7887537,
+    "ast_hash": "25edccd214b3af5370a99b45a57a3b14",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-api-integration.test.ts": {
+    "mtime": 1795091958.7695308,
+    "seen": 1795094911.4918058,
+    "ast_hash": "ef5c5c2be810432d0ce5948943a4d666",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-calculator.test.ts": {
+    "mtime": 1795091958.771577,
+    "seen": 1795094911.4918163,
+    "ast_hash": "7fbd77fb4e0155cc96f8715e42d04e6e",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-governance.test.ts": {
+    "mtime": 1795091958.8016932,
+    "seen": 1795094911.4918554,
+    "ast_hash": "e8c56ad268efd454466ae30fc56e82df",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-results.test.ts": {
+    "mtime": 1795091958.8122044,
+    "seen": 1795094911.491862,
+    "ast_hash": "51e69ebd865590465e7b1d992e9b8a28",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-rules.test.ts": {
+    "mtime": 1795091958.8186572,
+    "seen": 1795094911.491869,
+    "ast_hash": "bef690c252709d49737d4d7051eecc1e",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-xlsx.test.ts": {
+    "mtime": 1795091958.8337278,
+    "seen": 1795094911.491877,
+    "ast_hash": "4a23a17a25375ac8a12fd0628dc0008c",
+    "semantic_hash": ""
+  },
+  "tests/domain/r2-config.test.ts": {
+    "mtime": 1795091958.8355045,
+    "seen": 1795094911.4918835,
+    "ast_hash": "a8ace93accd5ec5a8f08ecb61dae0b91",
+    "semantic_hash": ""
+  },
+  "tests/domain/users-search.test.ts": {
+    "mtime": 1795091958.8569348,
+    "seen": 1795094911.4919062,
+    "ast_hash": "f49354929d01b3409ccbf7c27d6ec5f1",
+    "semantic_hash": ""
+  },
+  "tests/hr/employee-workspace.test.tsx": {
+    "mtime": 1795092097.7850857,
+    "seen": 1795094911.4919193,
+    "ast_hash": "4d9906fd61c96dd1c38a7573432e7a9a",
+    "semantic_hash": ""
+  },
+  "tests/hr/hr-layout.test.tsx": {
+    "mtime": 1795009591.9677064,
+    "seen": 1795090246.7887828,
+    "ast_hash": "0f47c51a4097d7d699093ee85812c2ad",
+    "semantic_hash": ""
+  },
+  "tests/support/organization-test-database.ts": {
+    "mtime": 1795009591.9696674,
+    "seen": 1795090246.788787,
+    "ast_hash": "fb497daefdc19c9bf223cdfe6974c901",
+    "semantic_hash": ""
+  },
+  "docs/EXTENDED-OVERULED-PAYROLL-APPROVAL.md": {
+    "mtime": 1795091957.8097467,
+    "seen": 1795094911.4929118,
+    "ast_hash": "a6cdedbd91fed94d8d0adc621650029f",
+    "semantic_hash": ""
+  },
+  "docs/PAYROLL-APPROVAL.md": {
+    "mtime": 1795091957.8155303,
+    "seen": 1795094911.4929192,
+    "ast_hash": "e1519785fc63f003b6a74915ad4eb1a5",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-15-live-admin-dashboard-foundation.md": {
+    "mtime": 1795009590.780591,
+    "seen": 1795090246.789171,
+    "ast_hash": "d8281152767f94346237e626785af087",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-15-organization-and-employee-records.md": {
+    "mtime": 1795009590.780591,
+    "seen": 1795090246.7891734,
+    "ast_hash": "cdf4422c720f345db4e5e8f928434cb2",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-15-payroll-and-compliance-workflows.md": {
+    "mtime": 1795009590.7956102,
+    "seen": 1795090246.7891753,
+    "ast_hash": "d9d4f352a175691244a28a64dfe726d8",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-15-workforce-operations.md": {
+    "mtime": 1795009590.7960994,
+    "seen": 1795090246.7891796,
+    "ast_hash": "e95e4fb061c643f5478d8d5f4e925a0a",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-11-15-live-admin-dashboard-design.md": {
+    "mtime": 1795009590.8010628,
+    "seen": 1795090246.789184,
+    "ast_hash": "11c77dedd845bbb80504c31583443f83",
+    "semantic_hash": ""
+  },
+  "reports/payroll-approvals-implementation-status.md": {
+    "mtime": 1795091958.6549175,
+    "seen": 1795094911.4930408,
+    "ast_hash": "e1eeed9ad5b951307ee37b08fdf39c16",
+    "semantic_hash": ""
+  },
+  ".codex/hooks.json": {
+    "mtime": 1795092091.9829078,
+    "seen": 1795094911.489447,
+    "ast_hash": "59e5482878fcb62638cb2979a4ec5afc",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/config/[id]/ConfigReviewClient.tsx": {
+    "mtime": 1795091933.9581914,
+    "seen": 1795094911.489891,
+    "ast_hash": "e9d3399b75c11161ef27489dedd4a3f4",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/config/[id]/page.tsx": {
+    "mtime": 1795091933.959191,
+    "seen": 1795094911.4898982,
+    "ast_hash": "d357c721e22febf33dbc3259e38a0442",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/config/audit/ConfigAuditClient.tsx": {
+    "mtime": 1795091933.961191,
+    "seen": 1795094911.489905,
+    "ast_hash": "6d5d869d2df4da6ac5ba9d834797d82c",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/config/audit/page.tsx": {
+    "mtime": 1795091933.9621904,
+    "seen": 1795094911.4899123,
+    "ast_hash": "9c9b80d3f9a59b47b129c4b77e81b1b0",
+    "semantic_hash": ""
+  },
+  "app/admin/payapprove/config/page.tsx": {
+    "mtime": 1795091933.963191,
+    "seen": 1795094911.4899197,
+    "ast_hash": "fa5db020f318ca2004b99a396289466b",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/allowances/[id]/route.ts": {
+    "mtime": 1795095258.8041933,
+    "seen": 1795095374.3069623,
+    "ast_hash": "4e1db76a1443e14e6ed9422e6496fe60",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/allowances/route.ts": {
+    "mtime": 1795092092.0132403,
+    "seen": 1795094911.4901478,
+    "ast_hash": "0e73624bbb76596d3eae492f7d6ba4cc",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/pay-grades/[id]/employees/route.ts": {
+    "mtime": 1795095836.9475057,
+    "seen": 1795096261.5578249,
+    "ast_hash": "ad3fd67f6de487cb3ddcd6b807698ad8",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/pay-grades/[id]/history/route.ts": {
+    "mtime": 1795095836.9505026,
+    "seen": 1795096261.5578268,
+    "ast_hash": "acbb64b44acd7f645c4a0b174a174dff",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/pay-grades/[id]/route.ts": {
+    "mtime": 1795095836.9465034,
+    "seen": 1795096261.5578291,
+    "ast_hash": "2a71f249b7d2a4dad435649f2dc1723f",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/pay-grades/route.ts": {
+    "mtime": 1795095893.393181,
+    "seen": 1795096261.5578315,
+    "ast_hash": "8619c94703f522a7291cfbf49a464f91",
+    "semantic_hash": ""
+  },
+  "app/api/admin/payroll/rules/[code]/route.ts": {
+    "mtime": 1795092092.05949,
+    "seen": 1795094911.4903097,
+    "ast_hash": "a95107765d64b1ab74a3e4cc262a27d1",
+    "semantic_hash": ""
+  },
+  "app/api/hr/payroll/rules/route.ts": {
+    "mtime": 1795091957.1498501,
+    "seen": 1795094911.4905088,
+    "ast_hash": "701081f26b589994ff500ae24846c060",
+    "semantic_hash": ""
+  },
+  "app/hr/components/ActiveEmployeesCard.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.7884188,
+    "ast_hash": "96fcb27807e68ac40c79d4352e6efa25",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AssignAssetsCards.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.788421,
+    "ast_hash": "1ce4e838b52c29e1ae43a4f274c52eeb",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceRate.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.7884226,
+    "ast_hash": "f5cdfcc0a08f1282ea5b307b8031dd14",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceTrend.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.490671,
+    "ast_hash": "567705c35032c65df780bdbb5d5acccd",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveRequest.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.788426,
+    "ast_hash": "a76ab42702848bbab0eb0f1131fdbe5d",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PayrollStatus.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.788428,
+    "ast_hash": "370f07b0d6faab8b522d7eb4a5f01899",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PendingPayrollTask.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.7884297,
+    "ast_hash": "be0fa12067efc5ac62ea4658c4dbf682",
+    "semantic_hash": ""
+  },
+  "app/hr/components/RecentAnnouncement.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.7884321,
+    "ast_hash": "cdc822a3801acfeba8a4a1feefb6e8be",
+    "semantic_hash": ""
+  },
+  "app/hr/components/Sidebar.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907675,
+    "ast_hash": "f4d1b36341cea2031c2031761a4fceb8",
+    "semantic_hash": ""
+  },
+  "app/hr/components/TotalEmployees.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.490771,
+    "ast_hash": "bb8afe10e91a48146b90d8608c192cb7",
+    "semantic_hash": ""
+  },
+  "app/hr/components/UpcomingScheduleCard.tsx": {
+    "mtime": 1795009624.9246368,
+    "seen": 1795090246.7884376,
+    "ast_hash": "47a9d132726277fd2c1d11ac33b8ff71",
+    "semantic_hash": ""
+  },
+  "app/hr/components/UpcomingShiftCards.tsx": {
+    "mtime": 1795009624.9394536,
+    "seen": 1795090246.7884393,
+    "ast_hash": "a98a1c8c3cb9b67a9e857c2dd6b49f48",
+    "semantic_hash": ""
+  },
+  "app/hr/components/WorkforceAnalytics.tsx": {
+    "mtime": 1795009624.941453,
+    "seen": 1795090246.788441,
+    "ast_hash": "2b2c7ac19cbd8d2a35546f241b90bd7d",
+    "semantic_hash": ""
+  },
+  "app/hr/dashboard/page.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.490795,
+    "ast_hash": "8b67cc3fc54849c165fc9a8b2046a213",
+    "semantic_hash": ""
+  },
+  "app/hr/floor-plan/FloorPlanClient.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.4908633,
+    "ast_hash": "456906b695f933c44800a32b48e954e3",
+    "semantic_hash": ""
+  },
+  "app/hr/floor-plan/data.ts": {
+    "mtime": 1795009624.941624,
+    "seen": 1795090246.7884507,
+    "ast_hash": "cfd1c537a1630597d62d0bb60add63d8",
+    "semantic_hash": ""
+  },
+  "app/hr/floor-plan/page.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.490885,
+    "ast_hash": "643c2fd1c0e49ed7b47421594d038ccd",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/config/PayrollConfigPortalClient.tsx": {
+    "mtime": 1795091957.6171374,
+    "seen": 1795094911.4909427,
+    "ast_hash": "38ad08d1aae0bc5358c696a92131eb9b",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll/config/page.tsx": {
+    "mtime": 1795091957.6171374,
+    "seen": 1795094911.4909484,
+    "ast_hash": "2f47da8be81c3435a7be62b154916a72",
+    "semantic_hash": ""
+  },
+  "app/hr/settings/page.tsx": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4909637,
+    "ast_hash": "26f2702eba691603a4bec6b08f51899c",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/allowances-v2.server.ts": {
+    "mtime": 1795095218.5383868,
+    "seen": 1795095374.308046,
+    "ast_hash": "73cb729d8ec2ac0545093d23447c574b",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/api-response-transform.server.ts": {
+    "mtime": 1795092092.1238158,
+    "seen": 1795094911.4911447,
+    "ast_hash": "815d07db3d5209192d79b72c59437ee9",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/authorization.server.ts": {
+    "mtime": 1795092092.1370943,
+    "seen": 1795094911.4911485,
+    "ast_hash": "bee9f6277284a05d4087c315315db2d0",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/bonuses.server.ts": {
+    "mtime": 1795092092.1370943,
+    "seen": 1795094911.4911525,
+    "ast_hash": "431b90f52b33528f0043c166c2075c67",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/money.ts": {
+    "mtime": 1795092092.1370943,
+    "seen": 1795094911.4911575,
+    "ast_hash": "ca694e8ba10b3d4f562736ef8f68dbbc",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/pay-grades-v2.server.ts": {
+    "mtime": 1795096183.8024018,
+    "seen": 1795096261.5582318,
+    "ast_hash": "54b2c97189b22b0573e8cbcda0ec7dfc",
+    "semantic_hash": ""
+  },
+  "app/lib/compensation/salary-adjustments.server.ts": {
+    "mtime": 1795095168.1997385,
+    "seen": 1795095374.3080878,
+    "ast_hash": "88fe13ac4c68d81cfae5799b47465ccf",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll-results/payroll-notifications.server.ts": {
+    "mtime": 1795091957.684617,
+    "seen": 1795094911.491242,
+    "ast_hash": "3ecb369787693b390cd4a3cbba2bbe2b",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/ph-reference-fixture.ts": {
+    "mtime": 1795091957.750346,
+    "seen": 1795094911.4913163,
+    "ast_hash": "274809c886941c35ae90bfe467135c56",
+    "semantic_hash": ""
+  },
+  "app/lib/payroll/rule-service.server.ts": {
+    "mtime": 1795095596.6186762,
+    "seen": 1795095690.7228575,
+    "ast_hash": "43a234c91362e384ad9d076c698c6a5c",
+    "semantic_hash": ""
+  },
+  "tests/domain/controlled-formula-engine.test.ts": {
+    "mtime": 1795091958.75413,
+    "seen": 1795094911.491784,
+    "ast_hash": "da4ef2967f08fe227e272da4d6a13853",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-boundaries.test.ts": {
+    "mtime": 1795091958.7695308,
+    "seen": 1795094911.49181,
+    "ast_hash": "926a20d53ba0ef9287e93e1a31a4bfe6",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-config-versioning.test.ts": {
+    "mtime": 1795091958.7966876,
+    "seen": 1795094911.4918363,
+    "ast_hash": "7fc61ba0a682686bbda3e5d4e492b72f",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-end-to-end-lifecycle.test.ts": {
+    "mtime": 1795091958.797692,
+    "seen": 1795094911.4918487,
+    "ast_hash": "d4039426df3931f11eda45d0528014e2",
+    "semantic_hash": ""
+  },
+  "tests/domain/payroll-validation-engine.test.ts": {
+    "mtime": 1795091958.8206604,
+    "seen": 1795094911.4918723,
+    "ast_hash": "d31c7955739779e4b66b8a6a85d88af0",
+    "semantic_hash": ""
+  },
+  "tests/hr/payroll-config-portal.test.tsx": {
+    "mtime": 1795091958.8637795,
+    "seen": 1795094911.4919336,
+    "ast_hash": "c2740a717286508fbdb99f438c776e05",
+    "semantic_hash": ""
+  },
+  "docs/PAYROLL-RULES-AND-COMPENSATION.md": {
+    "mtime": 1795092092.3985233,
+    "seen": 1795094911.4929252,
+    "ast_hash": "259583542d4d223d8d72df07dae72813",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/_auth.ts": {
+    "mtime": 1795095817.337209,
+    "seen": 1795096261.5577898,
+    "ast_hash": "a16967cd987b1b3e79d9500e020ea074",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/approve/route.ts": {
+    "mtime": 1795095180.4561553,
+    "seen": 1795095374.3069293,
+    "ast_hash": "2eaa5424154c98992ed00b478f97c87e",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/reject/route.ts": {
+    "mtime": 1795095180.4561553,
+    "seen": 1795095374.3069363,
+    "ast_hash": "4dbee17d807c41e5a1464722f1384e9f",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/return/route.ts": {
+    "mtime": 1795095180.4717839,
+    "seen": 1795095374.3069415,
+    "ast_hash": "cf2cfdda995b0880474c2df490186763",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/[adjustmentId]/route.ts": {
+    "mtime": 1795092092.0065901,
+    "seen": 1795094911.4901326,
+    "ast_hash": "3449bb47a9b99a48c59b3caf40e9dba9",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/route.ts": {
+    "mtime": 1795092092.0075893,
+    "seen": 1795094911.4901397,
+    "ast_hash": "9c2198a2758cfce6a216cff4e5244fdc",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/[programId]/awards/route.ts": {
+    "mtime": 1795092092.0172415,
+    "seen": 1795094911.490152,
+    "ast_hash": "d9cab7fe0f696f07100a7dcafdcdf920",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/[programId]/route.ts": {
+    "mtime": 1795092092.0299072,
+    "seen": 1795094911.490156,
+    "ast_hash": "60ef3e481d7bcc0bccd4fde24e8ac07f",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/awards/[awardId]/approve/route.ts": {
+    "mtime": 1795092092.0409245,
+    "seen": 1795094911.4901626,
+    "ast_hash": "a634f4831ae454cfa7988dec78909c23",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/awards/[awardId]/reject/route.ts": {
+    "mtime": 1795092092.0433717,
+    "seen": 1795094911.4901698,
+    "ast_hash": "837a31da3f4cdc67664040ec9104f095",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/bonuses/route.ts": {
+    "mtime": 1795092092.0442936,
+    "seen": 1795094911.4901774,
+    "ast_hash": "02a6151716adfb5090be08fe20a1c2e6",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261122000000_add_compensation_models/migration.sql": {
+    "mtime": 1795094016.1681626,
+    "seen": 1795094911.4914982,
+    "ast_hash": "0c574f48c4bb792e87b9385363d3b828",
+    "semantic_hash": ""
+  },
+  "app/hr/announcements/[id]/page.tsx": {
+    "mtime": 1795092097.6600854,
+    "seen": 1795094911.4905303,
+    "ast_hash": "ff72b06f791c624ab38c4a5637c1a992",
+    "semantic_hash": ""
+  },
+  "app/hr/announcements/page.tsx": {
+    "mtime": 1795092097.6600854,
+    "seen": 1795094911.4905374,
+    "ast_hash": "fe191ae5690e136c440f603147b42720",
+    "semantic_hash": ""
+  },
+  "app/hr/attendance-management/[employeeId]/AttendanceDetailClient.tsx": {
+    "mtime": 1795092097.6600854,
+    "seen": 1795094911.4905446,
+    "ast_hash": "8b369ae45e4b86d20cd77ad0fc7c455b",
+    "semantic_hash": ""
+  },
+  "app/hr/attendance-management/[employeeId]/page.tsx": {
+    "mtime": 1795092097.6600854,
+    "seen": 1795094911.4905481,
+    "ast_hash": "e380d23f1bcc1d81da386f23b3ffb649",
+    "semantic_hash": ""
+  },
+  "app/hr/attendance-management/detail-data.ts": {
+    "mtime": 1795092097.6600854,
+    "seen": 1795094911.490552,
+    "ast_hash": "565f012a354a04332add4d9d77830bec",
+    "semantic_hash": ""
+  },
+  "app/hr/attendance-management/page.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4905548,
+    "ast_hash": "2ec677a05e1f0cd8eaba91e335ca4c65",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceCorrectionRequests.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.490586,
+    "ast_hash": "cf09670402cbbd710338782768c09ed9",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceEmployeeProfile.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906378,
+    "ast_hash": "cd859b2c44d90a88f4fe6d06581dd6c6",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceFlagsExceptions.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.490649,
+    "ast_hash": "72978a609e6f9e38a4588be06d64b1db",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceRateCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906602,
+    "ast_hash": "27ff553e9d567adf709d0436dbf73142",
+    "semantic_hash": ""
+  },
+  "app/hr/components/AttendanceTimeLogs.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906647,
+    "ast_hash": "4c7e33bac2e64d3de10fa26a5f3280cb",
+    "semantic_hash": ""
+  },
+  "app/hr/components/CurrentPayrollBatchCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906774,
+    "ast_hash": "b83bdc0ccfb593bebc417082ba3a7ca8",
+    "semantic_hash": ""
+  },
+  "app/hr/components/EmployeesAllCard.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906812,
+    "ast_hash": "62c3ca7387c3750c6653282ad6a07eb4",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveApproveCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.490685,
+    "ast_hash": "f1cc621d3362bab2336f1d2870ff83c8",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveBalanceCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906893,
+    "ast_hash": "e1c57b0ef335dcc97d75c30b8c178c11",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveCalendarCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4906988,
+    "ast_hash": "3cfac9ed21b22b1a669f8f288bff4f56",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveDistributionCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4907029,
+    "ast_hash": "6a955d2853c1851bafc7091ad4b8f893",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeavePendingRequestCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4907086,
+    "ast_hash": "e44d7ca239dd308802454fcd58548a94",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveRequestsCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.4907198,
+    "ast_hash": "cd4296f21207636f65464050323eb083",
+    "semantic_hash": ""
+  },
+  "app/hr/components/LeaveUpcomingCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.490724,
+    "ast_hash": "fc58f28265841170f8f7cc3c35a8fbce",
+    "semantic_hash": ""
+  },
+  "app/hr/components/MissingPunchesCards.tsx": {
+    "mtime": 1795092097.6757102,
+    "seen": 1795094911.490728,
+    "ast_hash": "7eaabf148b3825966c51ffe9d245d513",
+    "semantic_hash": ""
+  },
+  "app/hr/components/NetPayCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.490731,
+    "ast_hash": "b06e6286156bf32340cc8fb37f9267d0",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PayrollBatchesCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907339,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PayrollBreakdownCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907374,
+    "ast_hash": "c89bdfc60c70732798133b0dec15b886",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PayrollStatusCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907455,
+    "ast_hash": "c1f3408b0df6c83e6b30d199568affc7",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PendingAdjustmentCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.490749,
+    "ast_hash": "ef2c0dfddcc2921e04b27383018b4536",
+    "semantic_hash": ""
+  },
+  "app/hr/components/PresentTodayCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907556,
+    "ast_hash": "7eaabf148b3825966c51ffe9d245d513",
+    "semantic_hash": ""
+  },
+  "app/hr/components/RequestOtCards.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907634,
+    "ast_hash": "7eaabf148b3825966c51ffe9d245d513",
+    "semantic_hash": ""
+  },
+  "app/hr/components/WeeklyAttendanceSummary.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907827,
+    "ast_hash": "b221d420f9eef03c616ac76edd4638f8",
+    "semantic_hash": ""
+  },
+  "app/hr/components/WeeklyAttendanceTimeline.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4907863,
+    "ast_hash": "cbb90bfd8b3596eaff48587133538a90",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/AssetsDevicesTab.tsx": {
+    "mtime": 1795092097.6913362,
+    "seen": 1795094911.4908044,
+    "ast_hash": "67b6bf70620347341b6369ccbe19b9ab",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/AttendanceSummaryTab.tsx": {
+    "mtime": 1795092097.7069633,
+    "seen": 1795094911.4908078,
+    "ast_hash": "c2c2f4f4051f9921989c65cd5121832d",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/EmployeeDetailsClient.tsx": {
+    "mtime": 1795092097.738408,
+    "seen": 1795094911.4908128,
+    "ast_hash": "8840270bc3e262b2b4dfd56951c5c256",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/EmployeeDetailsHeader.tsx": {
+    "mtime": 1795092097.738408,
+    "seen": 1795094911.4908164,
+    "ast_hash": "176fb7592c1f5a052c243a94ec4949c5",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/ProfileTab.tsx": {
+    "mtime": 1795092097.738408,
+    "seen": 1795094911.4908206,
+    "ast_hash": "d265c4480d037a1e87e0738bc62cf6b6",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/ShiftScheduleTab.tsx": {
+    "mtime": 1795092097.738408,
+    "seen": 1795094911.4908266,
+    "ast_hash": "d52add6d9e42cb53e8e84ac90013d492",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/error.tsx": {
+    "mtime": 1795092097.738408,
+    "seen": 1795094911.4908323,
+    "ast_hash": "eec231e8564958f75a4f46ca4b7dd8ae",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/loading.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.4908385,
+    "ast_hash": "fc31c70d452edc3903dcb6f8ef285ceb",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/not-found.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.4908445,
+    "ast_hash": "b11f639c961d532be863e685ef8522af",
+    "semantic_hash": ""
+  },
+  "app/hr/employees/[employeeId]/page.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.4908502,
+    "ast_hash": "56fdb9b1a0f206e893dc24f7ae0bb2e5",
+    "semantic_hash": ""
+  },
+  "app/hr/floor-plan/Office3D.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.4908702,
+    "ast_hash": "17dcd4dd24017399e4cbb007d52d9f3e",
+    "semantic_hash": ""
+  },
+  "app/hr/leave-management/leave-data.ts": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.490898,
+    "ast_hash": "98ec58c0261c3046498b11366b5d2b0d",
+    "semantic_hash": ""
+  },
+  "app/hr/leave-management/page.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.490904,
+    "ast_hash": "d147e48fda32e8d07108f0681d84d4d0",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll-management/[batchId]/PayrollBatchDetailsClient.tsx": {
+    "mtime": 1795092097.7538352,
+    "seen": 1795094911.490908,
+    "ast_hash": "e99983d610056415ece4dc1b213cba78",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll-management/[batchId]/loading.tsx": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4909105,
+    "ast_hash": "3d6bf9347cbc5ecf5a7aab19be572130",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll-management/[batchId]/page.tsx": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.490915,
+    "ast_hash": "faf67bfead233e1b7ff4f85385428003",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll-management/batch-data.ts": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4909182,
+    "ast_hash": "3bb7b8140d8f217055f580ab39103238",
+    "semantic_hash": ""
+  },
+  "app/hr/payroll-management/page.tsx": {
+    "mtime": 1795092097.769461,
+    "seen": 1795094911.4909244,
+    "ast_hash": "9ae8125545abb0a8fb55b1b46caea1f7",
+    "semantic_hash": ""
+  },
+  "prisma/migrations/20261123000000_add_status_constraints/migration.sql": {
+    "mtime": 1795094278.6370716,
+    "seen": 1795094911.4915042,
+    "ast_hash": "fe1798abde05e7646dde61a34949129a",
+    "semantic_hash": ""
+  },
+  "app/api/admin/compensation/adjustments/recommendations/route.ts": {
+    "mtime": 1795095190.665667,
+    "seen": 1795095374.3069506,
+    "ast_hash": "a3724812faadb9429fa92409a97c5b21",
+    "semantic_hash": ""
+  },
+  "docs/ADMIN-SETTINGS-PROMPT.md": {
+    "mtime": 1795095374.9699178,
+    "seen": 1795095690.724355,
+    "ast_hash": "783dd4f483067453849e2f74f423a948",
+    "semantic_hash": ""
+  },
+  "package-lock.json": {
+    "mtime": 1795009591.579384,
+    "seen": 1795090246.7892072,
+    "ast_hash": "b829000edb75cffbe0af91a752c85414",
+    "semantic_hash": ""
+  }
+}

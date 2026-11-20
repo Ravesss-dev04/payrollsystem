@@ -8,7 +8,7 @@ const settingsSections = [
     href: "/admin/settings/organization",
   },
   {
-    title: "Branches, departments, and teams",
+    title: "Branches and departments",
     description: "Maintain the organization structure used by workforce records.",
     href: "/admin/settings/structure",
   },

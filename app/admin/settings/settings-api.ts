@@ -6,7 +6,13 @@ export { parseCsrfCookie } from "../../lib/auth/csrf";
 
 const unitSchema = z.object({
   id: z.string().min(1),
+  code: z.string().nullable().optional(),
   name: z.string().min(1),
+  location: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  branchId: z.string().nullable().optional(),
+  branch: z.object({ id: z.string(), code: z.string().nullable().optional(), name: z.string(), active: z.boolean() }).nullable().optional(),
+  _count: z.object({ departments: z.number().optional(), employeeAssignments: z.number().optional() }).optional(),
   active: z.boolean(),
 });
 
@@ -64,6 +70,15 @@ function messageForApiError(code: unknown): string {
   }
   if (code === "department_has_active_teams") {
     return "Deactivate this department's teams before deactivating the department.";
+  }
+  if (code === "department_has_active_employees") {
+    return "Reassign active employees before deactivating this department.";
+  }
+  if (code === "branch_has_active_departments") {
+    return "Reassign or deactivate active departments before deactivating this branch.";
+  }
+  if (code === "branch_not_found") {
+    return "Select an active branch from the organization structure.";
   }
   if (code === "policy_effective_date_must_increase") {
     return "The new policy date must be later than the current policy date.";

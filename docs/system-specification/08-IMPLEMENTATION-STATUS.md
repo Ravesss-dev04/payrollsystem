@@ -1,7 +1,7 @@
 # Implementation Status
 
-**As of:** 2026-11-18
-**Current milestone:** User/role management and attendance-policy APIs and interfaces implemented; database migration and external service integration remain unverified
+**As of:** 2026-11-20
+**Current milestone:** Organization Settings implementation is in progress; organization structure metadata migration is applied and focused settings tests pass
 **Checkout snapshot:** Branch `backend`; work is uncommitted. No migration was applied.
 
 ## Status definitions
@@ -24,8 +24,8 @@
 | Admin-only dashboard route | VERIFIED | The Admin layout waits for request-time rendering before validating the session; `dashboard:read` is not granted to HR. Role tests deny HR, Employee, and malformed role values. |
 | Dashboard existing UI and appended snapshot | VERIFIED | Static fixtures and duplicate activity/approval sections are removed. Existing card/chart layout is retained with explicit unavailable states; persisted account aggregates and one sanitized activity panel display below. Snapshot UI supports manual refresh and visible-page 30-second polling. |
 | Dashboard authentication and summary API | VERIFIED | Admin authentication is deferred with `connection()` inside Suspense. `GET /api/admin/dashboard/summary` returns test-account-excluded User role/status aggregates and a bounded, sanitized security/account feed with no-store caching and per-admin rate limiting. Live MySQL/auth integration and authenticated browser access were not exercised. |
-| Company and org structure | IMPLEMENTED | Admin-only Settings pages and APIs manage the single organization, branches, departments, teams, and versioned employment-status policy. Prisma models, constraints, transactional domain audit writes, and an additive migration are present. Migration application and live MySQL integration remain unverified; the migration assumes the existing `User` table is already present. |
-| Employment status policy | IMPLEMENTED | Admin configures versioned employment statuses with explicit headcount eligibility and effective dates. Login `AccountStatus` values are not reused. |
+| Company and org structure | IN PROGRESS | Organization profile, timezone validation, versioned employment-status APIs/history, branch/department metadata and relationships, details/history APIs, transactional audit writes, and applied migration are present. Team tables/APIs remain for dependent modules while the Team UI is removed from Organization Structure. Authenticated browser walkthroughs, broader downstream headcount/report verification, and full lifecycle API coverage remain. |
+| Employment status policy | IN PROGRESS | Admin configures versioned employment statuses with explicit headcount eligibility and effective dates; list/detail/history retrieval is now exposed. Login `AccountStatus` values are not reused. Downstream acceptance coverage remains incomplete. |
 | Employee lifecycle and assignment | IMPLEMENTED | HR-owned employee records and effective-dated status/department assignments are backed by additive Prisma models, audited transactions, strict HR APIs, and an Admin-only one-to-one account link. Focused tests pass; migration is generated but not applied, and live MySQL integration remains unverified. Team Leader scope is deferred. |
 | User management and invitations | IMPLEMENTED | Database-backed search, list/detail, editing, permission restrictions, account status/session revocation, invitations, 48-hour hashed one-time tokens, SMTP delivery-state handling, and private Cloudflare R2 profile images are implemented. Migration and live SMTP/R2 operations remain unverified. |
 | Roles and permissions UI | IMPLEMENTED | Only the four supported database roles are shown; role grants are centrally persisted, locked permissions are enforced server-side, and TL has no grants. Migration and live database behavior remain unverified. |

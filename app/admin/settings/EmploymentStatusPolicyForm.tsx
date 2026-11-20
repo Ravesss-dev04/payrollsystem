@@ -9,11 +9,20 @@ import {
 } from "./settings-api";
 
 type PolicyDefinition = SettingsEmploymentStatus & { active: boolean };
+type PolicyVersion = {
+  id: string;
+  version: number;
+  effectiveFrom: string;
+  createdAt: string;
+  definitions: PolicyDefinition[];
+};
 
 export function EmploymentStatusPolicyForm({
   initialDefinitions,
+  initialPolicies = [],
 }: {
   initialDefinitions: SettingsEmploymentStatus[];
+  initialPolicies?: PolicyVersion[];
 }) {
   const [definitions, setDefinitions] = useState<PolicyDefinition[]>(
     initialDefinitions.map((definition) => ({ ...definition, active: true })),
@@ -143,6 +152,18 @@ export function EmploymentStatusPolicyForm({
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="rounded-xl border border-[#EDEAF6] bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="text-lg font-semibold">Policy history</h2>
+        <p className="mt-1 text-sm text-[#73718A]">Previous versions remain preserved and are not overwritten by a new effective-dated policy.</p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[620px] text-left text-sm">
+            <thead><tr className="border-b border-[#EDEAF6] text-xs text-[#73718A]"><th className="px-3 py-2">Version</th><th className="px-3 py-2">Effective from</th><th className="px-3 py-2">Statuses</th><th className="px-3 py-2">Created</th></tr></thead>
+            <tbody>{initialPolicies.map((policy) => <tr key={policy.id} className="border-b border-[#F3F1F8]"><td className="px-3 py-2 font-semibold">v{policy.version}</td><td className="px-3 py-2">{policy.effectiveFrom}</td><td className="px-3 py-2">{policy.definitions.filter((definition) => definition.active).map((definition) => `${definition.code}${definition.headcountEligible ? " ✓" : ""}`).join(", ")}</td><td className="px-3 py-2">{new Date(policy.createdAt).toLocaleString()}</td></tr>)}</tbody>
+          </table>
+          {initialPolicies.length === 0 && <p className="mt-3 text-sm text-[#73718A]">No policy versions are configured.</p>}
+        </div>
       </section>
 
       <form

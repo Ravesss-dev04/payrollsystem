@@ -14,7 +14,9 @@ export const grades: PayGrade[] = [
   id: String(code),
   code: String(code),
   description: String(description),
-  amount: String(amount),
+  position: "",
+  minAmount: String(amount),
+  maxAmount: String(amount),
   assigned: Number(assigned),
   basis: "Monthly",
   effective: "2026-01-01",
@@ -97,6 +99,7 @@ export const allowances: AllowancePolicy[] = [
 export const bonuses: BonusProgram[] = [
   {
     id: "b1",
+    code: "PERF_BONUS",
     name: "Performance Bonus",
     description: "Subject to program requirements.",
     type: "Percentage-Based",
@@ -111,6 +114,7 @@ export const bonuses: BonusProgram[] = [
   },
   {
     id: "b2",
+    code: "REFERRAL_INC",
     name: "Referral Incentive",
     description: "Per qualified referral.",
     type: "Fixed Amount",
@@ -125,6 +129,7 @@ export const bonuses: BonusProgram[] = [
   },
   {
     id: "b3",
+    code: "QUARTERLY_BONUS",
     name: "Quarterly Bonus",
     description: "Per eligible employee, subject to program requirements.",
     type: "Fixed Amount",

@@ -47,21 +47,13 @@ describe("Admin settings forms", () => {
         initialDepartments: [
           { id: "department-1", name: "People", active: true },
         ],
-        initialTeams: [
-          {
-            id: "team-1",
-            name: "Payroll",
-            active: true,
-            department: { id: "department-1", name: "People" },
-          },
-        ],
       }),
     );
 
     expect(markup).toContain("North");
     expect(markup).toContain("People");
-    expect(markup).toContain("Payroll");
-    expect(markup).toContain('aria-label="Department for team"');
+    expect(markup).toContain('aria-label="Department branch"');
+    expect(markup).not.toContain("Teams");
     expect(markup).toContain("Deactivate");
   });
 
